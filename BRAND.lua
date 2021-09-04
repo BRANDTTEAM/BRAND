@@ -4,7 +4,7 @@
 --                - BRAND -                 --
 --        -- https://t.me/CXRCX --         --
 ------------------------------------------------ 
-DevBRAND  = dofile("./libs/redis.lua").connect("127.0.0.1", 6379)
+DevAbs  = dofile("./libs/redis.lua").connect("127.0.0.1", 6379)
 serpent = dofile("./libs/serpent.lua")
 JSON    = dofile("./libs/dkjson.lua")
 json    = dofile("./libs/JSON.lua")
