@@ -212,17 +212,13 @@ if len == nil then len = '*l' end
 local line, err = client.network.socket:receive(len)
 if not err then return line else
 print("\27[36m"..[[                                           
----------------------------------------------
-|    ____             ____                  |
-|   |  _ \  _____   _|  _ \ _ __ _____  __  |
-|   | | | |/ _ \ \ / / |_) | '__/ _ \ \/ /  |
-|   | |_| |  __/\ V /|  __/| | | (_) >  <   |
-|   |____/ \___| \_/ |_|   |_|  \___/_/\_\  |
-|-------------------------------------------|
-|This Source Was Developed By (ABS) @IQ_ABS.|
-|  This Is The Source Channel @Dev_Prox .   |
-|               - DevProx -                 |
----------------------------------------------
+____        _          ____  
+| __ ) _ __ / \   _ __ |  _ \ 
+|  _ \| '__/ _ \ | '_ \| | | |
+| |_) | | / ___ \| | | | |_| |
+|____/|_|/_/   \_\_| |_|____/
+
+      
 ]]..'\27[m')
 Config = dofile("config.lua")
 DevId = Config.DevId
