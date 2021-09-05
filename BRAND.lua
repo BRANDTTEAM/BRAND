@@ -22,10 +22,10 @@ UpTime  = io.popen([[uptime | awk -F'( |,|:)+' '{if ($7=="min") m=$6; else {if (
 --     Source BRAND     --
 local AutoSet = function() 
 if not DevAbs:get(Server.."IdBRAND") then 
-io.write('\27[1;35m\nالان ارسل ايدي المطور الاساسي ↫ ⤈\n\27[0;33;49m') 
+io.write('\27[1;35m\n Send id sodu ↫ ⤈\n\27[0;33;49m') 
 local DevId = io.read():gsub(' ','') 
 if tostring(DevId):match('%d+') then 
-io.write('\27[1;36mتم حفظ ايدي المطور الاساسي\n27[0;39;49m') 
+io.write('\27[1;36m ok \n27[0;39;49m') 
 DevAbs:set(Server.."IdBRAND",DevId) 
 else 
 print('\27[1;31m┉ ᑅ━━━━━━ᑅ𝗕𝗥ᑀ━━━━━━ᑀ\nلم يتم حفظ ايدي المطور الاساسي ارسله مره اخرى\n┉ ᑅ━━━━━━ᑅ𝗕𝗥ᑀ━━━━━━ᑀ') 
@@ -33,7 +33,7 @@ end
 os.execute('lua BRAND.lua') 
 end 
 if not DevAbs:get(Server.."TokenBRAND") then 
-io.write('\27[1;35m\nالان قم بارسال توكن البوت ↫ ⤈\n\27[0;33;49m') 
+io.write('\27[1;35m\n send token  ↫ ⤈\n\27[0;33;49m') 
 local TokenBot = io.read() 
 if TokenBot ~= '' then 
 local url , res = https.request('https://api.telegram.org/bot'..TokenBot..'/getMe') 
