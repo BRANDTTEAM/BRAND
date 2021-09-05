@@ -41,20 +41,19 @@ sudo luarocks install dkjson
 sudo luarocks install Lua-cURL
 sudo luarocks install luautf8
 cd .. ;sudo rm -rf luarocks*
-sudo timedatectl set-timezone Asia/Baghdad
-echo -e "\033[0;36m"
+sudo timedatectl set-timezone Asia/Baghdad"
+echo -e "\033[0echo -e "\033[0;36m"
 echo -e "---------------------------------------------"
-echo -e "|    ____             ____                  |"
-echo -e "|   |  _ \  _____   _|  _ \ _ __ _____  __  |"
-echo -e "|   | | | |/ _ \ \ / / |_) | '__/ _ \ \/ /  |"
-echo -e "|   | |_| |  __/\ V /|  __/| | | (_) >  <   |"
-echo -e "|   |____/ \___| \_/ |_|   |_|  \___/_/\_\  |"
-echo -e "|-------------------------------------------|"
-echo -e "|This Source Was Developed By (ABS) @FIIFFFFF.|"
+echo -e "                                              "                  
+echo -e "             BRAND                                "
+echo -e "                                             "
+echo -e "                                             " 
+echo -e "                                             "
+echo -e " ------------------------------------------- "
+echo -e "|This Source Was Developed By (murtaza) @FIIFFFFF.|"
 echo -e "|  This Is The Source Channel @DDDFDI .   |"
 echo -e "|               - BRAND -                 |"
-echo -e "---------------------------------------------"
-echo -e "\033[0m"
+echo -e "---------------------------------------------m"
 cd $THIS_DIR && sudo chmod +x tg
 lua BRAND.lua
 }
